@@ -1,3 +1,36 @@
 <resources>
     <string name="app_name">ASTON_CourseProject_RickMorty</string>
+
+    <string name="menu_episode">Episodes</string>
+    <string name="menu_character">Characters</string>
+    <string name="menu_location">Locations</string>
+
+    <string name="details_name">Name:</string>
+    <string name="details_status">Status:</string>
+    <string name="details_species">Species:</string>
+    <string name="details_type">Type:</string>
+    <string name="details_gender">Gender:</string>
+    <string name="details_origin">Origin location:</string>
+    <string name="details_location">Last known location:</string>
+    <string name="details_episodes">Appeared in episodes:</string>
+    <string name="details_dimension">Dimension:</string>
+    <string name="details_resident">Residents:</string>
+    <string name="details_airdate">Air date:</string>
+    <string name="details_episode">Episode code:</string>
+    <string name="details_characters">Characters:</string>
+
+    <string name="recycler_locName">Location name</string>
+    <string name="recycler_locType">Location type</string>
+    <string name="recycler_locDimension">Location dimension</string>
+    <string name="recycler_charName">Character name</string>
+    <string name="recycler_charSpecies">Character species</string>
+    <string name="recycler_charStatus">Character status</string>
+    <string name="recycler_charGender">Character gender</string>
+    <string name="recycler_epiName">Episode name</string>
+    <string name="recycler_epiEpisode">Episode number</string>
+    <string name="recycler_epiAirDate">Episode air date</string>
+
+    <string name="recycler_filter">Show filter</string>
+
+    <string name="content_description_avatar">Avatar</string>
 </resources>
