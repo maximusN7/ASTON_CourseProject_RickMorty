@@ -8,12 +8,14 @@ import androidx.lifecycle.ViewModel
 import com.example.aston_courseproject_rickmorty.fragments.CharacterFragment
 import com.example.aston_courseproject_rickmorty.fragments.EpisodeFragment
 import com.example.aston_courseproject_rickmorty.fragments.LocationFragment
+import com.example.aston_courseproject_rickmorty.model.CharacterModel
 
 
 class MainViewModel(val mResourceProvider: ResourceProvider) : ViewModel() {
 
     val titleString = MutableLiveData<String>()
     val currentFragment = MutableLiveData<Fragment>()
+    val characterModel = CharacterModel()
 
     init {
         titleString.value = mResourceProvider.getString("menu_character")

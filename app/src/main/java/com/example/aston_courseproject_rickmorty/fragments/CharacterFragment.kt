@@ -1,11 +1,25 @@
 package com.example.aston_courseproject_rickmorty.fragments
 
+import android.app.AlertDialog
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.aston_courseproject_rickmorty.R
+import com.example.aston_courseproject_rickmorty.model.Character
+import com.example.aston_courseproject_rickmorty.model.CharacterModel
+import com.example.aston_courseproject_rickmorty.model.CharacterModel.Companion.ListOfCharacters
+import com.example.aston_courseproject_rickmorty.recycler_view.CharacterRecyclerAdapter
+import com.example.aston_courseproject_rickmorty.utils.RecyclerDecorator
+import java.lang.Appendable
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -36,6 +50,24 @@ class CharacterFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_character, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val recyclerCharacterList: RecyclerView = view.findViewById(R.id.recyclerView_characters)
+        recyclerCharacterList.setHasFixedSize(true)
+        val layoutManager: RecyclerView.LayoutManager = GridLayoutManager(context, 2)
+        recyclerCharacterList.layoutManager = layoutManager
+
+        val sidePadding = 5
+        val topPadding = 5
+        recyclerCharacterList.addItemDecoration(RecyclerDecorator(sidePadding, topPadding))
+
+        val adapter = CharacterRecyclerAdapter((activity as AppCompatActivity), ListOfCharacters)
+        adapter.notifyDataSetChanged()
+        recyclerCharacterList.adapter = adapter
+
     }
 
     companion object {
