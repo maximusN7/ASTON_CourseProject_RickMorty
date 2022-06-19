@@ -33,4 +33,5 @@
     <string name="recycler_filter">Show filter</string>
 
     <string name="content_description_avatar">Avatar</string>
+    <string name="content_description_logo">Logo</string>
 </resources>
