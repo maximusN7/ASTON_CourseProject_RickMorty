@@ -4,11 +4,13 @@ import com.example.aston_courseproject_rickmorty.model.AllCharacters
 import com.example.aston_courseproject_rickmorty.model.Character
 import retrofit2.Call
 import retrofit2.http.GET
+import retrofit2.http.Url
+
 
 interface RetrofitServices {
     @GET("character")
     fun getCharacterList(): Call<AllCharacters>
 
-    @GET("character/1")
-    fun getCharacter1(): Call<Character>
+    @GET
+    fun getOneCharacter(@Url url: String?): Call<Character>
 }
