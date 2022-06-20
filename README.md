@@ -32,3 +32,6 @@ Repository for Ignatev Maxim's Course Project for ASTON
 
 Добавлен splash screen, представляющий из себя увеличивающуюся иконку приложения, что позволяет совместить её с встроенным в android12 splasScreen и при этом иметь 
 возможность гибкой настройки собственного splashScreen. Длительность анимации 1.5 секнуды.
+
+Загрузка в RecyclerView происходит с CharacterModel. По запросу из CharacterViewModel загруженые по url данные передаются в LiveData, которая прослушивается в 
+CharacterFragment. В данный момент на загрузку данных двется 1 секунда, затем это будет изменено с учетом coroutines.

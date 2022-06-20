@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import com.example.aston_courseproject_rickmorty.fragments.CharacterFragment
 import com.example.aston_courseproject_rickmorty.fragments.EpisodeFragment
 import com.example.aston_courseproject_rickmorty.fragments.LocationFragment
+import com.example.aston_courseproject_rickmorty.model.CharacterModel
 
 
 class MainViewModel(val mResourceProvider: ResourceProvider) : ViewModel() {

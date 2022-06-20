@@ -1,7 +1,10 @@
 package com.example.aston_courseproject_rickmorty
 
+import android.content.Context
+import android.net.ConnectivityManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Observer
@@ -22,8 +25,6 @@ class MainActivity : AppCompatActivity() {
         viewModel =
             ViewModelProvider(this, MainViewModelFactory(this))[MainViewModel::class.java]
 
-        viewModel.changeCurrentFragment(CharacterFragment())
-
         viewModel.titleString.observe(this) {
             title = it
         }
@@ -35,8 +36,14 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+//        val connectivityManager = this.getSystemService(
+//            Context.CONNECTIVITY_SERVICE
+//        ) as ConnectivityManager
+//        if (connectivityManager.activeNetworkInfo?.isConnected!!) Log.e("AAA", "connected") else Log.e("AAA", "not connected")
+
+
         val bottomNavigation = findViewById<BottomNavigationView>(R.id.bottom_navigation)
-        bottomNavigation.setOnNavigationItemSelectedListener {
+        bottomNavigation.setOnItemSelectedListener {
             when (it.itemId) {
                 R.id.ic_character -> {
                     viewModel.changeCurrentFragment(CharacterFragment())
@@ -50,6 +57,7 @@ class MainActivity : AppCompatActivity() {
             }
             true
         }
+        bottomNavigation.selectedItemId = R.id.ic_character
     }
 
 }
