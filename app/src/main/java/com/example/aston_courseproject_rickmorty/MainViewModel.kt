@@ -15,7 +15,6 @@ class MainViewModel(val mResourceProvider: ResourceProvider) : ViewModel() {
 
     val titleString = MutableLiveData<String>()
     val currentFragment = MutableLiveData<Fragment>()
-    val characterModel = CharacterModel()
 
     init {
         titleString.value = mResourceProvider.getString("menu_character")

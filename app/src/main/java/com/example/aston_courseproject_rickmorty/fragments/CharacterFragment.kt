@@ -1,25 +1,20 @@
 package com.example.aston_courseproject_rickmorty.fragments
 
-import android.app.AlertDialog
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.*
 import com.example.aston_courseproject_rickmorty.R
 import com.example.aston_courseproject_rickmorty.model.Character
-import com.example.aston_courseproject_rickmorty.model.CharacterModel
-import com.example.aston_courseproject_rickmorty.model.CharacterModel.Companion.ListOfCharacters
 import com.example.aston_courseproject_rickmorty.recycler_view.CharacterRecyclerAdapter
+import com.example.aston_courseproject_rickmorty.utils.CharacterDiffUtilCallback
 import com.example.aston_courseproject_rickmorty.utils.RecyclerDecorator
-import java.lang.Appendable
+import com.example.aston_courseproject_rickmorty.viewmodel.CharacterViewModel
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -36,12 +31,18 @@ class CharacterFragment : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
 
+    private lateinit var viewModel: CharacterViewModel
+    lateinit var listForRecycler: MutableList<Character>
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
+
+        viewModel = ViewModelProvider(this)[CharacterViewModel::class.java]
+
     }
 
     override fun onCreateView(
@@ -64,11 +65,28 @@ class CharacterFragment : Fragment() {
         val topPadding = 5
         recyclerCharacterList.addItemDecoration(RecyclerDecorator(sidePadding, topPadding))
 
-        val adapter = CharacterRecyclerAdapter((activity as AppCompatActivity), ListOfCharacters)
-        adapter.notifyDataSetChanged()
+        listForRecycler = mutableListOf()
+        val adapter: CharacterRecyclerAdapter = CharacterRecyclerAdapter(
+            (activity as AppCompatActivity),
+            listForRecycler
+        )
+
         recyclerCharacterList.adapter = adapter
+        val characterDiffUtilCallback = CharacterDiffUtilCallback(emptyList(), listForRecycler)
+        val characterDiffResult = DiffUtil.calculateDiff(characterDiffUtilCallback)
+        recyclerCharacterList.adapter?.let { characterDiffResult.dispatchUpdatesTo(it) }
+
+
+        viewModel.characterList.observe(viewLifecycleOwner) {
+            listForRecycler.clear()
+            listForRecycler.addAll(it)
+            val characterDiffUtilCallback = CharacterDiffUtilCallback(emptyList(), listForRecycler)
+            val characterDiffResult = DiffUtil.calculateDiff(characterDiffUtilCallback)
+            recyclerCharacterList.adapter?.let { it2 -> characterDiffResult.dispatchUpdatesTo(it2) }
+        }
 
     }
+
 
     companion object {
         /**

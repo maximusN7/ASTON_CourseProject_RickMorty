@@ -4,7 +4,7 @@ import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query
 
-class Character(
+data class Character(
     val id: Int?,
     val name: String?,
     val status: String?,
