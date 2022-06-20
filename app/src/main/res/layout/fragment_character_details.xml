@@ -126,7 +126,7 @@
             app:layout_constraintTop_toBottomOf="@+id/imageView_avatar" />
 
         <LinearLayout
-            android:id="@+id/linearLayout"
+            android:id="@+id/linearLayoutOrigin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
@@ -166,10 +166,10 @@
             android:layout_margin="5dp"
             android:text="@string/details_location"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
+            app:layout_constraintTop_toBottomOf="@+id/linearLayoutOrigin" />
 
         <LinearLayout
-            android:id="@+id/linearLayout2"
+            android:id="@+id/linearLayoutLocation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
@@ -208,7 +208,7 @@
             android:layout_margin="5dp"
             android:text="@string/details_episodes"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayout2" />
+            app:layout_constraintTop_toBottomOf="@+id/linearLayoutLocation" />
 
         <LinearLayout
             android:layout_width="match_parent"

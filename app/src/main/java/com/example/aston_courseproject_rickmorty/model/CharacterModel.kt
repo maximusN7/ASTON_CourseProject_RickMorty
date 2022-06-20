@@ -19,27 +19,10 @@ class CharacterModel {
 
     private val mService: RetrofitServices = Common.retrofitService
     var listOfCharacters: MutableList<Character> = mutableListOf()
-
+    lateinit var currentCharacter: Character
 
     init {
         loadAllCharacters()
-    }
-
-    private fun loadOneCharacter() {
-        mService.getCharacter1().enqueue(object : Callback<Character> {
-            override fun onResponse(
-                call: Call<Character>,
-                response: Response<Character>
-            ) {
-                val resp = response.body() as Character
-                //ListOfCharacters.add(response.body() as Character)
-            }
-
-            override fun onFailure(call: Call<Character>, t: Throwable) {
-                Log.e("CharacterModel", t.toString())
-            }
-
-        })
     }
 
     private fun loadAllCharacters() {

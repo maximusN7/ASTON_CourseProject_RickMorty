@@ -34,3 +34,6 @@ Repository for Ignatev Maxim's Course Project for ASTON
 
 Загрузка в RecyclerView происходит с CharacterModel. По запросу из CharacterViewModel загруженые по url данные передаются в LiveData, которая прослушивается в 
 CharacterFragment. В данный момент на загрузку данных двется 1 секунда, затем это будет изменено с учетом coroutines.
+
+Данные в CharacterDetailsFragment поступают из CharacterDetailsModel, где по ссылке и id загружатся из сети. На данном этапе отображаются только те данные, которые не 
+зависят от локаций или эпизодов. Работает навигация с RecyclerView со списком персонажей в CharacterDetailsFragment.

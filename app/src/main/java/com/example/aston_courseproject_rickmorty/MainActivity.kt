@@ -31,7 +31,7 @@ class MainActivity : AppCompatActivity() {
 
         viewModel.currentFragment.observe(this) {
             supportFragmentManager.beginTransaction().apply {
-                replace(R.id.fragmentContainerView, it)
+                replace(R.id.fragmentContainerView, it, "current_main_fragment")
                 commit()
             }
         }
