@@ -1,9 +1,6 @@
 package com.example.aston_courseproject_rickmorty.retrofit
 
-import com.example.aston_courseproject_rickmorty.model.AllCharacters
-import com.example.aston_courseproject_rickmorty.model.AllLocations
-import com.example.aston_courseproject_rickmorty.model.Character
-import com.example.aston_courseproject_rickmorty.model.Location
+import com.example.aston_courseproject_rickmorty.model.*
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -28,4 +25,10 @@ interface RetrofitServices {
 
     @GET
     fun getOneLocationByUrl(@Url url: String?): Call<Location>
+
+    @GET("episode")
+    fun getEpisodeList(): Call<AllEpisodes>
+
+    @GET("episode/{id}")
+    fun getOneEpisode(@Path("id") id: Int): Call<Episode>
 }

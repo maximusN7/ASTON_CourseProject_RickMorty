@@ -123,6 +123,5 @@ class LocationFragment : Fragment(), LocationRecyclerAdapter.LocationViewHolder.
         transaction.add(R.id.fragmentContainerView, fragment)
         transaction.addToBackStack(null)
         transaction.commit()
-
     }
 }

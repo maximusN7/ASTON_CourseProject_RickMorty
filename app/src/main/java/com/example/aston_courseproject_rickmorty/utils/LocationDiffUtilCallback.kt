@@ -1,8 +1,6 @@
 package com.example.aston_courseproject_rickmorty.utils
 
-import android.util.Log
 import androidx.recyclerview.widget.DiffUtil
-import com.example.aston_courseproject_rickmorty.model.Character
 import com.example.aston_courseproject_rickmorty.model.Location
 
 class LocationDiffUtilCallback(
@@ -19,17 +17,17 @@ class LocationDiffUtilCallback(
     }
 
     override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        val oldContact: Location = oldList[oldItemPosition]
-        val newContact: Location = newList[newItemPosition]
-        return oldContact.id == newContact.id
+        val oldLocation: Location = oldList[oldItemPosition]
+        val newLocation: Location = newList[newItemPosition]
+        return oldLocation.id == newLocation.id
     }
 
     override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        val oldContact: Location = oldList[oldItemPosition]
-        val newContact: Location = newList[newItemPosition]
+        val oldLocation: Location = oldList[oldItemPosition]
+        val newLocation: Location = newList[newItemPosition]
 
-        return (oldContact.name == newContact.name
-                && oldContact.type == newContact.type
-                && oldContact.dimension == newContact.dimension)
+        return (oldLocation.name == newLocation.name
+                && oldLocation.type == newLocation.type
+                && oldLocation.dimension == newLocation.dimension)
     }
 }
