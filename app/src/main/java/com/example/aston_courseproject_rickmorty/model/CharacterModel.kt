@@ -19,7 +19,6 @@ class CharacterModel {
 
     private val mService: RetrofitServices = Common.retrofitService
     var listOfCharacters: MutableList<Character> = mutableListOf()
-    lateinit var currentCharacter: Character
 
     init {
         loadAllCharacters()

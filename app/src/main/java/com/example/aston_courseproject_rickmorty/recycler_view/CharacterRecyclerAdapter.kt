@@ -15,7 +15,6 @@ import com.example.aston_courseproject_rickmorty.fragments.CharacterDetailsFragm
 import com.example.aston_courseproject_rickmorty.model.Character
 import com.squareup.picasso.Picasso
 
-
 class CharacterRecyclerAdapter(private val context: Context, private val characterList: MutableList<Character>, val itemClickListener: CharacterViewHolder.ItemClickListener) :
     RecyclerView.Adapter<CharacterRecyclerAdapter.CharacterViewHolder>() {
 

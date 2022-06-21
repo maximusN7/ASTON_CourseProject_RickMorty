@@ -1,6 +1,6 @@
 package com.example.aston_courseproject_rickmorty.model
 
-class Location(
+data class Location(
     val id: Int,
     val name: String,
     val type: String,
@@ -10,3 +10,7 @@ class Location(
     val created: String
 ) {
 }
+
+class AllLocations(val info: LocationsInfo, val results: MutableList<Location>)
+
+class LocationsInfo(val count: Int, val pages: Int, val next: String?, val prev: String?)
