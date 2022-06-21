@@ -118,15 +118,14 @@ class EpisodeFragment : Fragment(), EpisodeRecyclerAdapter.EpisodeViewHolder.Ite
     }
 
     override fun onItemClick(episode: Episode) {
-        TODO("Not yet implemented")
-//        val fragment: Fragment = EpisodeDetailsFragment.newInstance(episode.id!!)
-//
-//        val transaction: FragmentTransaction = requireActivity().supportFragmentManager.beginTransaction()
-//
-//        requireActivity().supportFragmentManager.findFragmentByTag("current_main_fragment")
-//            ?.let { transaction.hide(it) }
-//        transaction.add(R.id.fragmentContainerView, fragment)
-//        transaction.addToBackStack(null)
-//        transaction.commit()
+        val fragment: Fragment = EpisodeDetailsFragment.newInstance(episode.id!!)
+
+        val transaction: FragmentTransaction = requireActivity().supportFragmentManager.beginTransaction()
+
+        requireActivity().supportFragmentManager.findFragmentByTag("current_main_fragment")
+            ?.let { transaction.hide(it) }
+        transaction.add(R.id.fragmentContainerView, fragment)
+        transaction.addToBackStack(null)
+        transaction.commit()
     }
 }

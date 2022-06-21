@@ -6,27 +6,20 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.aston_courseproject_rickmorty.R
 import com.example.aston_courseproject_rickmorty.model.Character
-import com.example.aston_courseproject_rickmorty.model.Episode
 import com.example.aston_courseproject_rickmorty.model.Location
 import com.example.aston_courseproject_rickmorty.recycler_view.CharacterRecyclerAdapter
 import com.example.aston_courseproject_rickmorty.utils.CharacterDiffUtilCallback
-import com.example.aston_courseproject_rickmorty.utils.LocationDiffUtilCallback
 import com.example.aston_courseproject_rickmorty.utils.RecyclerDecorator
-import com.example.aston_courseproject_rickmorty.viewmodel.CharacterDetailsViewModel
-import com.example.aston_courseproject_rickmorty.viewmodel.CharacterDetailsViewModelFactory
 import com.example.aston_courseproject_rickmorty.viewmodel.LocationDetailsViewModel
 import com.example.aston_courseproject_rickmorty.viewmodel.LocationDetailsViewModelFactory
-import com.squareup.picasso.Picasso
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -79,15 +72,15 @@ class LocationDetailsFragment : Fragment(), CharacterRecyclerAdapter.CharacterVi
         }
     }
 
-    fun updateView(currentCharacter: Location) {
+    fun updateView(currentLocation: Location) {
 
         val textViewName = view?.findViewById<TextView>(R.id.textView_name)
         val textViewType = view?.findViewById<TextView>(R.id.textView_type)
         val textViewDimension = view?.findViewById<TextView>(R.id.textView_dimension)
 
-        textViewName?.text = currentCharacter.name
-        textViewType?.text = currentCharacter.type
-        textViewDimension?.text = currentCharacter.dimension
+        textViewName?.text = currentLocation.name
+        textViewType?.text = currentLocation.type
+        textViewDimension?.text = currentLocation.dimension
 
         initRecyclerView()
     }
