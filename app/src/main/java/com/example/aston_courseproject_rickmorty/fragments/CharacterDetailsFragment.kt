@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.aston_courseproject_rickmorty.R
 import com.example.aston_courseproject_rickmorty.model.Character
 import com.example.aston_courseproject_rickmorty.model.Episode
+import com.example.aston_courseproject_rickmorty.model.Location
 import com.example.aston_courseproject_rickmorty.recycler_view.CharacterRecyclerAdapter
 import com.example.aston_courseproject_rickmorty.utils.CharacterDiffUtilCallback
 import com.example.aston_courseproject_rickmorty.utils.RecyclerDecorator
@@ -66,6 +67,12 @@ class CharacterDetailsFragment : Fragment() {
         viewModel.currentCharacter.observe(viewLifecycleOwner) {
             updateView(it)
         }
+        viewModel.currentLocation.observe(viewLifecycleOwner) {
+            updateViewLocation(it)
+        }
+        viewModel.currentOrigin.observe(viewLifecycleOwner) {
+            updateViewOrigin(it)
+        }
     }
 
     fun updateView(currentCharacter: Character) {
@@ -83,27 +90,27 @@ class CharacterDetailsFragment : Fragment() {
         textViewType?.text = currentCharacter.type
         textViewGender?.text = currentCharacter.gender
 
-        val textViewOriginName = view?.findViewById<TextView>(R.id.textView_originName)
-        val textViewOriginType = view?.findViewById<TextView>(R.id.textView_originType)
-        val textViewOriginDimension = view?.findViewById<TextView>(R.id.textView_originDimension)
+        initRecyclerView()
+    }
 
-        textViewOriginName?.text = currentCharacter.origin.name
-
-        // TODO: Get location from url
-        // textViewOriginType =
-        // textViewOriginDimension =
-
+    fun updateViewLocation(location: Location) {
         val textViewLocationName = view?.findViewById<TextView>(R.id.textView_locationName)
         val textViewLocationType = view?.findViewById<TextView>(R.id.textView_locationType)
         val textViewLocationDimension = view?.findViewById<TextView>(R.id.textView_locationDimension)
 
-        textViewLocationName?.text = currentCharacter.location.name
+        textViewLocationName?.text = if (location.name != "") location.name else "unknown"
+        textViewLocationType?.text = location.type
+        textViewLocationDimension?.text = location.dimension
+    }
 
-        // TODO: Get location from url
-        // textViewLocationType =
-        // textViewLocationDimension =
+    fun updateViewOrigin(location: Location) {
+        val textViewOriginName = view?.findViewById<TextView>(R.id.textView_originName)
+        val textViewOriginType = view?.findViewById<TextView>(R.id.textView_originType)
+        val textViewOriginDimension = view?.findViewById<TextView>(R.id.textView_originDimension)
 
-        initRecyclerView()
+        textViewOriginName?.text = if (location.name != "") location.name else "unknown"
+        textViewOriginType?.text = location.type
+        textViewOriginDimension?.text = location.dimension
     }
 
     fun initRecyclerView() {

@@ -1,7 +1,6 @@
 package com.example.aston_courseproject_rickmorty.fragments
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -13,14 +12,10 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.aston_courseproject_rickmorty.R
-import com.example.aston_courseproject_rickmorty.model.Character
 import com.example.aston_courseproject_rickmorty.model.Location
-import com.example.aston_courseproject_rickmorty.recycler_view.CharacterRecyclerAdapter
 import com.example.aston_courseproject_rickmorty.recycler_view.LocationRecyclerAdapter
-import com.example.aston_courseproject_rickmorty.utils.CharacterDiffUtilCallback
 import com.example.aston_courseproject_rickmorty.utils.LocationDiffUtilCallback
 import com.example.aston_courseproject_rickmorty.utils.RecyclerDecorator
-import com.example.aston_courseproject_rickmorty.viewmodel.CharacterViewModel
 import com.example.aston_courseproject_rickmorty.viewmodel.LocationViewModel
 
 // TODO: Rename parameter arguments, choose names that match
@@ -119,15 +114,15 @@ class LocationFragment : Fragment(), LocationRecyclerAdapter.LocationViewHolder.
     }
 
     override fun onItemClick(location: Location) {
-//        val fragment: Fragment = LocationDetailsFragment.newInstance(location.id!!)
-//
-//        val transaction: FragmentTransaction = requireActivity().supportFragmentManager.beginTransaction()
-//
-//        requireActivity().supportFragmentManager.findFragmentByTag("current_main_fragment")
-//            ?.let { transaction.hide(it) }
-//        transaction.add(R.id.fragmentContainerView, fragment)
-//        transaction.addToBackStack(null)
-//        transaction.commit()
-        Log.e("AAA", "Pressed ${location.name}")
+        val fragment: Fragment = LocationDetailsFragment.newInstance(location.id!!)
+
+        val transaction: FragmentTransaction = requireActivity().supportFragmentManager.beginTransaction()
+
+        requireActivity().supportFragmentManager.findFragmentByTag("current_main_fragment")
+            ?.let { transaction.hide(it) }
+        transaction.add(R.id.fragmentContainerView, fragment)
+        transaction.addToBackStack(null)
+        transaction.commit()
+
     }
 }
