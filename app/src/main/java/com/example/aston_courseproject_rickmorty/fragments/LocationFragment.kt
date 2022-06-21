@@ -120,7 +120,7 @@ class LocationFragment : Fragment(), LocationRecyclerAdapter.LocationViewHolder.
 
         requireActivity().supportFragmentManager.findFragmentByTag("current_main_fragment")
             ?.let { transaction.hide(it) }
-        transaction.add(R.id.fragmentContainerView, fragment)
+        transaction.replace(R.id.fragmentContainerView, fragment)
         transaction.addToBackStack(null)
         transaction.commit()
     }

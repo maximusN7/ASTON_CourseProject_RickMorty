@@ -8,22 +8,23 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.aston_courseproject_rickmorty.R
 import com.example.aston_courseproject_rickmorty.model.Character
 import com.example.aston_courseproject_rickmorty.model.Episode
 import com.example.aston_courseproject_rickmorty.model.Location
-import com.example.aston_courseproject_rickmorty.recycler_view.CharacterRecyclerAdapter
-import com.example.aston_courseproject_rickmorty.utils.CharacterDiffUtilCallback
+import com.example.aston_courseproject_rickmorty.recycler_view.EpisodeRecyclerAdapter
+import com.example.aston_courseproject_rickmorty.recycler_view.LocationRecyclerAdapter
+import com.example.aston_courseproject_rickmorty.utils.EpisodeDiffUtilCallback
+import com.example.aston_courseproject_rickmorty.utils.LocationDiffUtilCallback
 import com.example.aston_courseproject_rickmorty.utils.RecyclerDecorator
 import com.example.aston_courseproject_rickmorty.viewmodel.CharacterDetailsViewModel
 import com.example.aston_courseproject_rickmorty.viewmodel.CharacterDetailsViewModelFactory
-import com.example.aston_courseproject_rickmorty.viewmodel.CharacterViewModel
 import com.squareup.picasso.Picasso
-import org.w3c.dom.Text
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -34,13 +35,17 @@ private const val ARG_PARAM1 = "param1"
  * Use the [CharacterDetailsFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class CharacterDetailsFragment : Fragment() {
+class CharacterDetailsFragment : Fragment(), EpisodeRecyclerAdapter.EpisodeViewHolder.ItemClickListener, LocationRecyclerAdapter.LocationViewHolder.ItemClickListener {
     // TODO: Rename and change types of parameters
     private var param1: Int? = null
 
     private lateinit var viewModel: CharacterDetailsViewModel
     lateinit var listForRecycler: MutableList<Episode>
+    lateinit var listForRecyclerOrigin: MutableList<Location>
+    lateinit var listForRecyclerLocation: MutableList<Location>
     lateinit var recyclerEpisodesList: RecyclerView
+    lateinit var recyclerLocation: RecyclerView
+    lateinit var recyclerOrigin: RecyclerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,10 +73,25 @@ class CharacterDetailsFragment : Fragment() {
             updateView(it)
         }
         viewModel.currentLocation.observe(viewLifecycleOwner) {
-            updateViewLocation(it)
+            listForRecyclerLocation.clear()
+            listForRecyclerLocation.add(it)
+            val locationDiffUtilCallback = LocationDiffUtilCallback(emptyList(), listForRecyclerLocation)
+            val locationDiffResult = DiffUtil.calculateDiff(locationDiffUtilCallback)
+            recyclerLocation.adapter?.let { locationDiffResult.dispatchUpdatesTo(it) }
         }
         viewModel.currentOrigin.observe(viewLifecycleOwner) {
-            updateViewOrigin(it)
+            listForRecyclerOrigin.clear()
+            listForRecyclerOrigin.add(it)
+            val originDiffUtilCallback = LocationDiffUtilCallback(emptyList(), listForRecyclerOrigin)
+            val originDiffResult = DiffUtil.calculateDiff(originDiffUtilCallback)
+            recyclerOrigin.adapter?.let { originDiffResult.dispatchUpdatesTo(it) }
+        }
+        viewModel.episodeList.observe(viewLifecycleOwner) {
+            listForRecycler.clear()
+            listForRecycler.addAll(it)
+            val episodeDiffUtilCallback = EpisodeDiffUtilCallback(emptyList(), listForRecycler)
+            val episodeDiffResult = DiffUtil.calculateDiff(episodeDiffUtilCallback)
+            recyclerEpisodesList.adapter?.let { episodeDiffResult.dispatchUpdatesTo(it) }
         }
     }
 
@@ -90,33 +110,15 @@ class CharacterDetailsFragment : Fragment() {
         textViewType?.text = currentCharacter.type
         textViewGender?.text = currentCharacter.gender
 
-        initRecyclerView()
+        initEpisodesRecyclerView()
+        initOriginRecyclerView()
+        initLocationRecyclerView()
     }
 
-    fun updateViewLocation(location: Location) {
-        val textViewLocationName = view?.findViewById<TextView>(R.id.textView_locationName)
-        val textViewLocationType = view?.findViewById<TextView>(R.id.textView_locationType)
-        val textViewLocationDimension = view?.findViewById<TextView>(R.id.textView_locationDimension)
-
-        textViewLocationName?.text = if (location.name != "") location.name else "unknown"
-        textViewLocationType?.text = location.type
-        textViewLocationDimension?.text = location.dimension
-    }
-
-    fun updateViewOrigin(location: Location) {
-        val textViewOriginName = view?.findViewById<TextView>(R.id.textView_originName)
-        val textViewOriginType = view?.findViewById<TextView>(R.id.textView_originType)
-        val textViewOriginDimension = view?.findViewById<TextView>(R.id.textView_originDimension)
-
-        textViewOriginName?.text = if (location.name != "") location.name else "unknown"
-        textViewOriginType?.text = location.type
-        textViewOriginDimension?.text = location.dimension
-    }
-
-    fun initRecyclerView() {
+    fun initEpisodesRecyclerView() {
         recyclerEpisodesList = requireView().findViewById(R.id.recycler_episodes)
         recyclerEpisodesList.setHasFixedSize(true)
-        val layoutManager: RecyclerView.LayoutManager = GridLayoutManager(context, 2)
+        val layoutManager: RecyclerView.LayoutManager = LinearLayoutManager(context)
         recyclerEpisodesList.layoutManager = layoutManager
 
         val sidePadding = 5
@@ -124,17 +126,62 @@ class CharacterDetailsFragment : Fragment() {
         recyclerEpisodesList.addItemDecoration(RecyclerDecorator(sidePadding, topPadding))
 
         listForRecycler = mutableListOf()
-        // TODO: Connect EpisodeRecyclerAdapter
-//        val adapter: CharacterRecyclerAdapter = CharacterRecyclerAdapter(
-//            (activity as AppCompatActivity),
-//            listForRecycler, this
-//        )
 
-//        recyclerEpisodesList.adapter = adapter
-        // TODO: create EpisodeDiffUtilCallback
-//        val characterDiffUtilCallback = CharacterDiffUtilCallback(emptyList(), listForRecycler)
-//        val characterDiffResult = DiffUtil.calculateDiff(characterDiffUtilCallback)
-//        recyclerEpisodesList.adapter?.let { characterDiffResult.dispatchUpdatesTo(it) }
+        val adapter: EpisodeRecyclerAdapter = EpisodeRecyclerAdapter(
+            (activity as AppCompatActivity),
+            listForRecycler, this
+        )
+
+        recyclerEpisodesList.adapter = adapter
+        val episodeDiffUtilCallback = EpisodeDiffUtilCallback(emptyList(), listForRecycler)
+        val episodeDiffResult = DiffUtil.calculateDiff(episodeDiffUtilCallback)
+        recyclerEpisodesList.adapter?.let { episodeDiffResult.dispatchUpdatesTo(it) }
+    }
+
+    fun initOriginRecyclerView() {
+        recyclerOrigin= requireView().findViewById(R.id.recycler_origin)
+        recyclerOrigin.setHasFixedSize(true)
+        val layoutManager: RecyclerView.LayoutManager = LinearLayoutManager(context)
+        recyclerOrigin.layoutManager = layoutManager
+
+        val sidePadding = 5
+        val topPadding = 5
+        recyclerOrigin.addItemDecoration(RecyclerDecorator(sidePadding, topPadding))
+
+        listForRecyclerOrigin = mutableListOf()
+
+        val adapterOrigin: LocationRecyclerAdapter = LocationRecyclerAdapter(
+            (activity as AppCompatActivity),
+            listForRecyclerOrigin, this
+        )
+
+        recyclerOrigin.adapter = adapterOrigin
+        val originDiffUtilCallback = LocationDiffUtilCallback(emptyList(), listForRecyclerOrigin)
+        val originDiffResult = DiffUtil.calculateDiff(originDiffUtilCallback)
+        recyclerOrigin.adapter?.let { originDiffResult.dispatchUpdatesTo(it) }
+    }
+
+    fun initLocationRecyclerView() {
+        recyclerLocation= requireView().findViewById(R.id.recycler_location)
+        recyclerLocation.setHasFixedSize(true)
+        val layoutManager: RecyclerView.LayoutManager = LinearLayoutManager(context)
+        recyclerLocation.layoutManager = layoutManager
+
+        val sidePadding = 5
+        val topPadding = 5
+        recyclerLocation.addItemDecoration(RecyclerDecorator(sidePadding, topPadding))
+
+        listForRecyclerLocation = mutableListOf()
+
+        val adapterOrigin: LocationRecyclerAdapter = LocationRecyclerAdapter(
+            (activity as AppCompatActivity),
+            listForRecyclerLocation, this
+        )
+
+        recyclerLocation.adapter = adapterOrigin
+        val locationDiffUtilCallback = LocationDiffUtilCallback(emptyList(), listForRecyclerLocation)
+        val locationDiffResult = DiffUtil.calculateDiff(locationDiffUtilCallback)
+        recyclerLocation.adapter?.let { locationDiffResult.dispatchUpdatesTo(it) }
     }
 
     companion object {
@@ -154,5 +201,29 @@ class CharacterDetailsFragment : Fragment() {
                     putInt(ARG_PARAM1, param1)
                 }
             }
+    }
+
+    override fun onItemClick(episode: Episode) {
+        val fragment: Fragment = EpisodeDetailsFragment.newInstance(episode.id!!)
+
+        val transaction: FragmentTransaction = requireActivity().supportFragmentManager.beginTransaction()
+
+        requireActivity().supportFragmentManager.findFragmentByTag("current_main_fragment")
+            ?.let { transaction.hide(it) }
+        transaction.replace(R.id.fragmentContainerView, fragment)
+        transaction.addToBackStack(null)
+        transaction.commit()
+    }
+
+    override fun onItemClick(location: Location) {
+        val fragment: Fragment = LocationDetailsFragment.newInstance(location.id!!)
+
+        val transaction: FragmentTransaction = requireActivity().supportFragmentManager.beginTransaction()
+
+        requireActivity().supportFragmentManager.findFragmentByTag("current_main_fragment")
+            ?.let { transaction.hide(it) }
+        transaction.replace(R.id.fragmentContainerView, fragment)
+        transaction.addToBackStack(null)
+        transaction.commit()
     }
 }

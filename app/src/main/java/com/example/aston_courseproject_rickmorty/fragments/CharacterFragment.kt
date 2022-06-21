@@ -119,7 +119,7 @@ class CharacterFragment : Fragment(), CharacterRecyclerAdapter.CharacterViewHold
 
         requireActivity().supportFragmentManager.findFragmentByTag("current_main_fragment")
             ?.let { transaction.hide(it) }
-        transaction.add(R.id.fragmentContainerView, fragment)
+        transaction.replace(R.id.fragmentContainerView, fragment)
         transaction.addToBackStack(null)
         transaction.commit()
     }

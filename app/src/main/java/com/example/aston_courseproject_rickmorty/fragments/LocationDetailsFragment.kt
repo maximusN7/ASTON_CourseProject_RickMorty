@@ -1,13 +1,13 @@
 package com.example.aston_courseproject_rickmorty.fragments
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -129,6 +129,14 @@ class LocationDetailsFragment : Fragment(), CharacterRecyclerAdapter.CharacterVi
     }
 
     override fun onItemClick(character: Character) {
-        Log.e("AAA", "pressed: ${character.name}")
+        val fragment: Fragment = CharacterDetailsFragment.newInstance(character.id!!)
+
+        val transaction: FragmentTransaction = requireActivity().supportFragmentManager.beginTransaction()
+
+        requireActivity().supportFragmentManager.findFragmentByTag("current_main_fragment")
+            ?.let { transaction.hide(it) }
+        transaction.replace(R.id.fragmentContainerView, fragment)
+        transaction.addToBackStack(null)
+        transaction.commit()
     }
 }

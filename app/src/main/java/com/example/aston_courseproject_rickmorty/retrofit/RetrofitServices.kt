@@ -31,4 +31,7 @@ interface RetrofitServices {
 
     @GET("episode/{id}")
     fun getOneEpisode(@Path("id") id: Int): Call<Episode>
+
+    @GET("episode/{ids}")
+    fun getSeveralEpisodes(@Path("ids") ids: String): Call<MutableList<Episode>>
 }

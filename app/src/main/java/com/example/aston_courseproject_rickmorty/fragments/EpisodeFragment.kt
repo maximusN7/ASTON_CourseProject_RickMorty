@@ -13,14 +13,10 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.aston_courseproject_rickmorty.R
 import com.example.aston_courseproject_rickmorty.model.Episode
-import com.example.aston_courseproject_rickmorty.model.Location
 import com.example.aston_courseproject_rickmorty.recycler_view.EpisodeRecyclerAdapter
-import com.example.aston_courseproject_rickmorty.recycler_view.LocationRecyclerAdapter
 import com.example.aston_courseproject_rickmorty.utils.EpisodeDiffUtilCallback
-import com.example.aston_courseproject_rickmorty.utils.LocationDiffUtilCallback
 import com.example.aston_courseproject_rickmorty.utils.RecyclerDecorator
 import com.example.aston_courseproject_rickmorty.viewmodel.EpisodeViewModel
-import com.example.aston_courseproject_rickmorty.viewmodel.LocationViewModel
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -124,7 +120,7 @@ class EpisodeFragment : Fragment(), EpisodeRecyclerAdapter.EpisodeViewHolder.Ite
 
         requireActivity().supportFragmentManager.findFragmentByTag("current_main_fragment")
             ?.let { transaction.hide(it) }
-        transaction.add(R.id.fragmentContainerView, fragment)
+        transaction.replace(R.id.fragmentContainerView, fragment)
         transaction.addToBackStack(null)
         transaction.commit()
     }
