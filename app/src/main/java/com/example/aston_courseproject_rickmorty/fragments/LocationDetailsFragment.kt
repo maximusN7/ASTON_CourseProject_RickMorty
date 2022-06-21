@@ -1,33 +1,58 @@
 package com.example.aston_courseproject_rickmorty.fragments
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.aston_courseproject_rickmorty.R
+import com.example.aston_courseproject_rickmorty.model.Character
+import com.example.aston_courseproject_rickmorty.model.Episode
+import com.example.aston_courseproject_rickmorty.model.Location
+import com.example.aston_courseproject_rickmorty.recycler_view.CharacterRecyclerAdapter
+import com.example.aston_courseproject_rickmorty.utils.CharacterDiffUtilCallback
+import com.example.aston_courseproject_rickmorty.utils.LocationDiffUtilCallback
+import com.example.aston_courseproject_rickmorty.utils.RecyclerDecorator
+import com.example.aston_courseproject_rickmorty.viewmodel.CharacterDetailsViewModel
+import com.example.aston_courseproject_rickmorty.viewmodel.CharacterDetailsViewModelFactory
+import com.example.aston_courseproject_rickmorty.viewmodel.LocationDetailsViewModel
+import com.example.aston_courseproject_rickmorty.viewmodel.LocationDetailsViewModelFactory
+import com.squareup.picasso.Picasso
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
 /**
  * A simple [Fragment] subclass.
  * Use the [LocationDetailsFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class LocationDetailsFragment : Fragment() {
+class LocationDetailsFragment : Fragment(), CharacterRecyclerAdapter.CharacterViewHolder.ItemClickListener {
     // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    private var param1: Int? = null
+
+    private lateinit var viewModel: LocationDetailsViewModel
+    lateinit var listForRecycler: MutableList<Character>
+    lateinit var recyclerCharacterList: RecyclerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+            param1 = it.getInt(ARG_PARAM1)
         }
+
+        viewModel = ViewModelProvider(this, LocationDetailsViewModelFactory(param1!!))[LocationDetailsViewModel::class.java]
+
     }
 
     override fun onCreateView(
@@ -36,6 +61,59 @@ class LocationDetailsFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_location_details, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+
+        viewModel.currentLocation.observe(viewLifecycleOwner) {
+            updateView(it)
+        }
+        viewModel.characterList.observe(viewLifecycleOwner) {
+            listForRecycler.clear()
+            listForRecycler.addAll(it)
+            val characterDiffUtilCallback = CharacterDiffUtilCallback(emptyList(), listForRecycler)
+            val characterDiffResult = DiffUtil.calculateDiff(characterDiffUtilCallback)
+            recyclerCharacterList.adapter?.let { characterDiffResult.dispatchUpdatesTo(it) }
+        }
+    }
+
+    fun updateView(currentCharacter: Location) {
+
+        val textViewName = view?.findViewById<TextView>(R.id.textView_name)
+        val textViewType = view?.findViewById<TextView>(R.id.textView_type)
+        val textViewDimension = view?.findViewById<TextView>(R.id.textView_dimension)
+
+        textViewName?.text = currentCharacter.name
+        textViewType?.text = currentCharacter.type
+        textViewDimension?.text = currentCharacter.dimension
+
+        initRecyclerView()
+    }
+
+    fun initRecyclerView() {
+        recyclerCharacterList = requireView().findViewById(R.id.recycler_residents)
+        recyclerCharacterList.setHasFixedSize(true)
+        val layoutManager: RecyclerView.LayoutManager = LinearLayoutManager(context)
+        recyclerCharacterList.layoutManager = layoutManager
+
+        val sidePadding = 5
+        val topPadding = 5
+        recyclerCharacterList.addItemDecoration(RecyclerDecorator(sidePadding, topPadding))
+
+        listForRecycler = mutableListOf()
+
+        val adapter: CharacterRecyclerAdapter = CharacterRecyclerAdapter(
+            (activity as AppCompatActivity),
+            listForRecycler, this
+        )
+
+        recyclerCharacterList.adapter = adapter
+
+        val characterDiffUtilCallback = CharacterDiffUtilCallback(emptyList(), listForRecycler)
+        val characterDiffResult = DiffUtil.calculateDiff(characterDiffUtilCallback)
+        recyclerCharacterList.adapter?.let { characterDiffResult.dispatchUpdatesTo(it) }
     }
 
     companion object {
@@ -49,12 +127,15 @@ class LocationDetailsFragment : Fragment() {
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(param1: String, param2: String) =
+        fun newInstance(param1: Int) =
             LocationDetailsFragment().apply {
                 arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+                    putInt(ARG_PARAM1, param1)
                 }
             }
+    }
+
+    override fun onItemClick(character: Character) {
+        Log.e("AAA", "pressed: ${character.name}")
     }
 }
