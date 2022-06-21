@@ -44,3 +44,6 @@ Repository for Ignatev Maxim's Course Project for ASTON
 
 Данные в LocationDetailsFragment поступают из LocationDetailsModel, где по ссылке и id загружатся из сети. Данные в RecyclerView со списоком персонажей поступают также 
 из LocationDetailsModel. Работает навигация с RecyclerView со списком локацийв LocationDetailsFragment.
+
+Загрузка в RecyclerView Для EpisodeFragemnt происходит с EpisodeModel. По запросу из EpisodeViewModel загруженые по url данные передаются в LiveData, 
+которая прослушивается в EpisodeFragment. В данный момент на загрузку данных дается 1 секунда, затем это будет изменено с учетом coroutines.

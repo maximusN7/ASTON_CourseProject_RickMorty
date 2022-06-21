@@ -17,17 +17,10 @@ data class Character(
     val episode: Array<String?>,
     val url: String?,
     val created: String?
-) {
-
-    interface CharacterService {
-        @GET("character")
-        fun getOneCharacter(@Query("q") location: String): Call<Character>
-    }
-
-}
+)
 
 class LocationForCharacter(val name: String?, val url: String?)
 
-class AllCharacters(val info: CharactersInfo, val results: MutableList<Character>)
+class AllCharacters(val info: Info, val results: MutableList<Character>)
 
-class CharactersInfo(val count: Int, val pages: Int, val next: String, val prev: String? = null)
+class Info(val count: Int, val pages: Int, val next: String?, val prev: String?)

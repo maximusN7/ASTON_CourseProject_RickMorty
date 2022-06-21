@@ -1,6 +1,5 @@
 package com.example.aston_courseproject_rickmorty.utils
 
-import android.util.Log
 import androidx.recyclerview.widget.DiffUtil
 import com.example.aston_courseproject_rickmorty.model.Character
 
@@ -18,18 +17,18 @@ class CharacterDiffUtilCallback(
     }
 
     override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        val oldContact: Character = oldList[oldItemPosition]
-        val newContact: Character = newList[newItemPosition]
-        return oldContact.id == newContact.id
+        val oldCharacter: Character = oldList[oldItemPosition]
+        val newCharacter: Character = newList[newItemPosition]
+        return oldCharacter.id == newCharacter.id
     }
 
     override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        val oldContact: Character = oldList[oldItemPosition]
-        val newContact: Character = newList[newItemPosition]
+        val oldCharacter: Character = oldList[oldItemPosition]
+        val newCharacter: Character = newList[newItemPosition]
 
-        return (oldContact.name == newContact.name
-                && oldContact.species == newContact.species
-                && oldContact.status == newContact.status
-                && oldContact.gender == newContact.gender)
+        return (oldCharacter.name == newCharacter.name
+                && oldCharacter.species == newCharacter.species
+                && oldCharacter.status == newCharacter.status
+                && oldCharacter.gender == newCharacter.gender)
     }
 }

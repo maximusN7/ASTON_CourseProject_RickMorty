@@ -8,9 +8,6 @@ data class Location(
     val residents: Array<String>,
     val url: String,
     val created: String
-) {
-}
+)
 
-class AllLocations(val info: LocationsInfo, val results: MutableList<Location>)
-
-class LocationsInfo(val count: Int, val pages: Int, val next: String?, val prev: String?)
+class AllLocations(val info: Info, val results: MutableList<Location>)
