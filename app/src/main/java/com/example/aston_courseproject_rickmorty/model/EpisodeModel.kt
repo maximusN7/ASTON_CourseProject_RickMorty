@@ -28,7 +28,7 @@ class EpisodeModel {
             }
 
             override fun onFailure(call: Call<AllEpisodes>, t: Throwable) {
-                Log.e("LocationModel", t.toString())
+                Log.e("EpisodeModel", t.toString())
             }
 
         })

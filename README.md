@@ -47,3 +47,6 @@ Repository for Ignatev Maxim's Course Project for ASTON
 
 Загрузка в RecyclerView Для EpisodeFragemnt происходит с EpisodeModel. По запросу из EpisodeViewModel загруженые по url данные передаются в LiveData, 
 которая прослушивается в EpisodeFragment. В данный момент на загрузку данных дается 1 секунда, затем это будет изменено с учетом coroutines.
+
+Данные в EpisodeDetailsFragment поступают из EpisodeDetailsModel, где по ссылке и id загружатся из сети. Данные в RecyclerView со списоком персонажей поступают также 
+из EpisodeDetailsModel. Работает навигация с RecyclerView со списком эпизодов EpisodeDetailsFragment.
