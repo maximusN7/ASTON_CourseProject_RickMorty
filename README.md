@@ -50,3 +50,7 @@ Repository for Ignatev Maxim's Course Project for ASTON
 
 Данные в EpisodeDetailsFragment поступают из EpisodeDetailsModel, где по ссылке и id загружатся из сети. Данные в RecyclerView со списоком персонажей поступают также 
 из EpisodeDetailsModel. Работает навигация с RecyclerView со списком эпизодов EpisodeDetailsFragment.
+
+Навигация между элементами работает полностью. На трёх главных Fragment системная кнопка назад закрывает приложение. При переходе по нескольким Fragments серией нажатий 
+на элементы переходы заносятся в BackStack. При нажатии при этом на системную кнопку назад, возвращается предыдущий закрытый Fragment до тех пор, пока не дойдет до одного 
+из трёх главных Fragments. При переходе с любого другого Fragment на один из главных через нижнюю навигационную панель BackStack очищается.

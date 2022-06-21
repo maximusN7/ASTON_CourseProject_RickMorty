@@ -1,13 +1,8 @@
 package com.example.aston_courseproject_rickmorty
 
-import android.content.Context
-import android.net.ConnectivityManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentTransaction
-import androidx.lifecycle.Observer
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
 import com.example.aston_courseproject_rickmorty.fragments.CharacterFragment
 import com.example.aston_courseproject_rickmorty.fragments.EpisodeFragment
@@ -30,10 +25,18 @@ class MainActivity : AppCompatActivity() {
         }
 
         viewModel.currentFragment.observe(this) {
+
+            val fragments = supportFragmentManager.fragments
+            for (fragment in fragments) {
+                supportFragmentManager.beginTransaction().remove(fragment).commit()
+            }
+            supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+
             supportFragmentManager.beginTransaction().apply {
                 replace(R.id.fragmentContainerView, it, "current_main_fragment")
                 commit()
             }
+
         }
 
 //        val connectivityManager = this.getSystemService(

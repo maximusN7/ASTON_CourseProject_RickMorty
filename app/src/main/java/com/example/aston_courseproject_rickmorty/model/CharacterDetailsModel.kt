@@ -29,6 +29,7 @@ class CharacterDetailsModel(characterID: Int) {
                 currentCharacter = response.body() as Character
                 loadOneOrigin(currentCharacter.origin.url!!)
                 loadOneLocation(currentCharacter.location.url!!)
+                loadSeveralEpisodes(currentCharacter.episode)
             }
 
             override fun onFailure(call: Call<Character>, t: Throwable) {
@@ -72,6 +73,23 @@ class CharacterDetailsModel(characterID: Int) {
         })
     }
 
+    private fun loadSeveralEpisodes(urls: Array<String?>) {
+        mService.getSeveralEpisodes(separateIdFromUrl(urls)).enqueue(object :
+            Callback<MutableList<Episode>> {
+            override fun onResponse(
+                call: Call<MutableList<Episode>>,
+                response: Response<MutableList<Episode>>
+            ) {
+                episodeList = response.body() as MutableList<Episode>
+            }
+
+            override fun onFailure(call: Call<MutableList<Episode>>, t: Throwable) {
+                Log.e("LocationDetailsModel", t.toString())
+            }
+
+        })
+    }
+
     fun getOneCharacter(): Character {
         return currentCharacter
     }
@@ -82,5 +100,19 @@ class CharacterDetailsModel(characterID: Int) {
 
     fun getLocation(): Location {
         return currentLocation
+    }
+
+    fun getSeveralEpisodes(): MutableList<Episode> {
+        return episodeList
+    }
+
+    fun separateIdFromUrl(urlArray: Array<String?>): String{
+        var str = ""
+        for (url in urlArray) {
+            val baseUrl = "https://rickandmortyapi.com/api/episode/"
+            str += "${url!!.substring(baseUrl.length)},"
+        }
+
+        return str.dropLast(1)
     }
 }

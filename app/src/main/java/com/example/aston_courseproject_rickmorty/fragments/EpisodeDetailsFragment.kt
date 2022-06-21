@@ -1,13 +1,13 @@
 package com.example.aston_courseproject_rickmorty.fragments
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -15,15 +15,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.aston_courseproject_rickmorty.R
 import com.example.aston_courseproject_rickmorty.model.Character
 import com.example.aston_courseproject_rickmorty.model.Episode
-import com.example.aston_courseproject_rickmorty.model.Location
 import com.example.aston_courseproject_rickmorty.recycler_view.CharacterRecyclerAdapter
-import com.example.aston_courseproject_rickmorty.recycler_view.EpisodeRecyclerAdapter
 import com.example.aston_courseproject_rickmorty.utils.CharacterDiffUtilCallback
 import com.example.aston_courseproject_rickmorty.utils.RecyclerDecorator
 import com.example.aston_courseproject_rickmorty.viewmodel.EpisodeDetailsViewModel
 import com.example.aston_courseproject_rickmorty.viewmodel.EpisodeDetailsViewModelFactory
-import com.example.aston_courseproject_rickmorty.viewmodel.LocationDetailsViewModel
-import com.example.aston_courseproject_rickmorty.viewmodel.LocationDetailsViewModelFactory
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -133,6 +129,14 @@ class EpisodeDetailsFragment : Fragment(), CharacterRecyclerAdapter.CharacterVie
     }
 
     override fun onItemClick(character: Character) {
-        Log.e("AAA", "pressed: ${character.name}")
+        val fragment: Fragment = CharacterDetailsFragment.newInstance(character.id!!)
+
+        val transaction: FragmentTransaction = requireActivity().supportFragmentManager.beginTransaction()
+
+        requireActivity().supportFragmentManager.findFragmentByTag("current_main_fragment")
+            ?.let { transaction.hide(it) }
+        transaction.replace(R.id.fragmentContainerView, fragment)
+        transaction.addToBackStack(null)
+        transaction.commit()
     }
 }

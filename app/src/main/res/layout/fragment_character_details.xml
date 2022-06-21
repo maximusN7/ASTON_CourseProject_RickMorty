@@ -125,39 +125,14 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/imageView_avatar" />
 
-        <LinearLayout
-            android:id="@+id/linearLayoutOrigin"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_origin"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:layout_margin="5dp"
-            android:orientation="vertical"
-            android:background="@color/white_layout"
-            android:elevation="2dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView_originPlaceHolder">
-
-            <TextView
-                android:id="@+id/textView_originName"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/recycler_locName"
-                android:textSize="20sp"/>
-
-            <TextView
-                android:id="@+id/textView_originType"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/recycler_locType"
-                android:textSize="16sp"/>
-
-            <TextView
-                android:id="@+id/textView_originDimension"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/recycler_locDimension"
-                android:textSize="16sp"/>
-        </LinearLayout>
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintTop_toBottomOf="@+id/textView_originPlaceHolder"
+            tools:layout_editor_absoluteX="10dp" />
 
         <TextView
             android:id="@+id/textView_locationPlaceHolder"
@@ -166,40 +141,16 @@
             android:layout_margin="5dp"
             android:text="@string/details_location"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayoutOrigin" />
+            app:layout_constraintTop_toBottomOf="@+id/recycler_origin" />
 
-        <LinearLayout
-            android:id="@+id/linearLayoutLocation"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_location"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:layout_margin="5dp"
-            android:elevation="2dp"
-            android:background="@color/white_layout"
-            android:orientation="vertical"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView_locationPlaceHolder">
-
-            <TextView
-                android:id="@+id/textView_locationName"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/recycler_locName"
-                android:textSize="20sp"/>
-
-            <TextView
-                android:id="@+id/textView_locationType"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/recycler_locType"
-                android:textSize="16sp"/>
-
-            <TextView
-                android:id="@+id/textView_locationDimension"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/recycler_locDimension"
-                android:textSize="16sp"/>
-        </LinearLayout>
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintTop_toBottomOf="@+id/textView_locationPlaceHolder"
+            tools:layout_editor_absoluteX="10dp" />
 
         <TextView
             android:id="@+id/textView_episodePlaceHolder"
@@ -208,7 +159,7 @@
             android:layout_margin="5dp"
             android:text="@string/details_episodes"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayoutLocation" />
+            app:layout_constraintTop_toBottomOf="@+id/recycler_location" />
 
         <LinearLayout
             android:layout_width="match_parent"
