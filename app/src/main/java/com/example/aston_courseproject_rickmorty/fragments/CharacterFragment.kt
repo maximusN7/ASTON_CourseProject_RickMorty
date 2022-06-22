@@ -7,15 +7,18 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.*
 import com.example.aston_courseproject_rickmorty.MainViewModel
 import com.example.aston_courseproject_rickmorty.MainViewModelFactory
 import com.example.aston_courseproject_rickmorty.R
 import com.example.aston_courseproject_rickmorty.model.Character
+import com.example.aston_courseproject_rickmorty.recycler_view.CharacterPaginationRecyclerAdapter
 import com.example.aston_courseproject_rickmorty.recycler_view.CharacterRecyclerAdapter
 import com.example.aston_courseproject_rickmorty.utils.CharacterDiffUtilCallback
 import com.example.aston_courseproject_rickmorty.utils.RecyclerDecorator
 import com.example.aston_courseproject_rickmorty.viewmodel.CharacterViewModel
+import kotlinx.coroutines.flow.collectLatest
 
 
 /**
@@ -23,18 +26,26 @@ import com.example.aston_courseproject_rickmorty.viewmodel.CharacterViewModel
  * Use the [CharacterFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class CharacterFragment : Fragment(), CharacterRecyclerAdapter.CharacterViewHolder.ItemClickListener {
+class CharacterFragment : Fragment(), CharacterPaginationRecyclerAdapter.CharacterViewHolder.ItemClickListener {
 
     private lateinit var viewModel: CharacterViewModel
     private lateinit var mainViewModel: MainViewModel
     private var listForRecycler: MutableList<Character> = mutableListOf()
     private lateinit var recyclerCharacterList: RecyclerView
+    private lateinit var mAdapter: CharacterPaginationRecyclerAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let { }
 
         viewModel = ViewModelProvider(this)[CharacterViewModel::class.java]
+
+        mAdapter = CharacterPaginationRecyclerAdapter(this)
+        lifecycleScope.launchWhenCreated {
+            viewModel.characterList.collectLatest {
+                mAdapter.submitData(it)
+            }
+        }
 
         mainViewModel = ViewModelProvider(requireActivity(), MainViewModelFactory(requireContext()))[MainViewModel::class.java]
     }
@@ -53,23 +64,20 @@ class CharacterFragment : Fragment(), CharacterRecyclerAdapter.CharacterViewHold
 
         initRecyclerView()
 
-        viewModel.characterList.observe(viewLifecycleOwner) {
-            listForRecycler.clear()
-            listForRecycler.addAll(it)
-            notifyWithDiffUtil()
-        }
+        //viewModel.characterList.observe(viewLifecycleOwner) {
+            //listForRecycler.addAll(it)
+            //notifyWithDiffUtil()
+        //}
 
     }
 
     private fun initRecyclerView() {
-        val mLayoutManager: RecyclerView.LayoutManager = GridLayoutManager(context, 2)
         val sidePadding = 5
         val topPadding = 5
-        val mAdapter = CharacterRecyclerAdapter((activity as AppCompatActivity), listForRecycler, this)
         recyclerCharacterList = requireView().findViewById(R.id.recyclerView_characters)
         recyclerCharacterList.apply {
             setHasFixedSize(true)
-            layoutManager = mLayoutManager
+            layoutManager = GridLayoutManager(context, 2)
             addItemDecoration(RecyclerDecorator(sidePadding, topPadding))
             adapter = mAdapter
         }

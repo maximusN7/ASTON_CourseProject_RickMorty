@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -14,10 +15,13 @@ import com.example.aston_courseproject_rickmorty.MainViewModel
 import com.example.aston_courseproject_rickmorty.MainViewModelFactory
 import com.example.aston_courseproject_rickmorty.R
 import com.example.aston_courseproject_rickmorty.model.Location
+import com.example.aston_courseproject_rickmorty.recycler_view.EpisodePaginationRecyclerAdapter
+import com.example.aston_courseproject_rickmorty.recycler_view.LocationPaginationRecyclerAdapter
 import com.example.aston_courseproject_rickmorty.recycler_view.LocationRecyclerAdapter
 import com.example.aston_courseproject_rickmorty.utils.LocationDiffUtilCallback
 import com.example.aston_courseproject_rickmorty.utils.RecyclerDecorator
 import com.example.aston_courseproject_rickmorty.viewmodel.LocationViewModel
+import kotlinx.coroutines.flow.collectLatest
 
 
 /**
@@ -25,18 +29,26 @@ import com.example.aston_courseproject_rickmorty.viewmodel.LocationViewModel
  * Use the [LocationFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class LocationFragment : Fragment(), LocationRecyclerAdapter.LocationViewHolder.ItemClickListener {
+class LocationFragment : Fragment(), LocationPaginationRecyclerAdapter.LocationViewHolder.ItemClickListener {
 
     private lateinit var viewModel: LocationViewModel
     private lateinit var mainViewModel: MainViewModel
     private var listForRecycler: MutableList<Location> = mutableListOf()
     private lateinit var recyclerLocationList: RecyclerView
+    private lateinit var mAdapter: LocationPaginationRecyclerAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let { }
 
         viewModel = ViewModelProvider(this)[LocationViewModel::class.java]
+
+        mAdapter = LocationPaginationRecyclerAdapter(this)
+        lifecycleScope.launchWhenCreated {
+            viewModel.locationList.collectLatest {
+                mAdapter.submitData(it)
+            }
+        }
 
         mainViewModel = ViewModelProvider(requireActivity(), MainViewModelFactory(requireContext()))[MainViewModel::class.java]
     }
@@ -55,21 +67,20 @@ class LocationFragment : Fragment(), LocationRecyclerAdapter.LocationViewHolder.
 
         initRecyclerView()
 
-        viewModel.locationList.observe(viewLifecycleOwner) {
-            listForRecycler.clear()
+        /*viewModel.locationList.observe(viewLifecycleOwner) {
             listForRecycler.addAll(it)
             notifyWithDiffUtil()
-        }
+        }*/
     }
 
     private fun initRecyclerView() {
         val mLayoutManager: RecyclerView.LayoutManager = GridLayoutManager(context, 2)
         val sidePadding = 5
         val topPadding = 5
-        val mAdapter = LocationRecyclerAdapter(
+        /*val mAdapter = LocationRecyclerAdapter(
             (activity as AppCompatActivity),
             listForRecycler, this
-        )
+        )*/
         recyclerLocationList = requireView().findViewById(R.id.recyclerView_locations)
         recyclerLocationList.apply {
             setHasFixedSize(true)

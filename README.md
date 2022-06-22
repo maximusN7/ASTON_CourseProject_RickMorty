@@ -56,3 +56,6 @@ Repository for Ignatev Maxim's Course Project for ASTON
 из трёх главных Fragments. При переходе с любого другого Fragment на один из главных через нижнюю навигационную панель BackStack очищается.
 
 Добавлена кнопка Back в ToolBar. Отображается на DetailsFragments и действует аналогично системной кнопке Back. Title изменяется в соответствие с текущим Fragment.
+
+Пагинация добавлена для трех основных экранов со списками. Заменены Model на PagingSource для этих списков. Заменены адаптеры для RecyclerView на PaginationAdapter.
+На странице 20 элементов, максимум для пагинации 100 элементов одновременно.
