@@ -7,11 +7,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.aston_courseproject_rickmorty.MainViewModel
+import com.example.aston_courseproject_rickmorty.MainViewModelFactory
 import com.example.aston_courseproject_rickmorty.R
 import com.example.aston_courseproject_rickmorty.model.Character
 import com.example.aston_courseproject_rickmorty.model.Location
@@ -21,9 +22,8 @@ import com.example.aston_courseproject_rickmorty.utils.RecyclerDecorator
 import com.example.aston_courseproject_rickmorty.viewmodel.LocationDetailsViewModel
 import com.example.aston_courseproject_rickmorty.viewmodel.LocationDetailsViewModelFactory
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
+
+private const val ARG_LOCATION_ID = "locationId"
 
 /**
  * A simple [Fragment] subclass.
@@ -31,27 +31,29 @@ private const val ARG_PARAM1 = "param1"
  * create an instance of this fragment.
  */
 class LocationDetailsFragment : Fragment(), CharacterRecyclerAdapter.CharacterViewHolder.ItemClickListener {
-    // TODO: Rename and change types of parameters
-    private var param1: Int? = null
+    private var locationId: Int? = null
 
     private lateinit var viewModel: LocationDetailsViewModel
-    lateinit var listForRecycler: MutableList<Character>
-    lateinit var recyclerCharacterList: RecyclerView
+    private lateinit var mainViewModel: MainViewModel
+    private lateinit var listForRecycler: MutableList<Character>
+    private lateinit var recyclerCharacterList: RecyclerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            param1 = it.getInt(ARG_PARAM1)
+            locationId = it.getInt(ARG_LOCATION_ID)
         }
 
-        viewModel = ViewModelProvider(this, LocationDetailsViewModelFactory(param1!!))[LocationDetailsViewModel::class.java]
+        viewModel = ViewModelProvider(this, LocationDetailsViewModelFactory(locationId!!))[LocationDetailsViewModel::class.java]
 
+        mainViewModel = ViewModelProvider(requireActivity(), MainViewModelFactory(requireContext()))[MainViewModel::class.java]
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_location_details, container, false)
     }
@@ -59,21 +61,17 @@ class LocationDetailsFragment : Fragment(), CharacterRecyclerAdapter.CharacterVi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
         viewModel.currentLocation.observe(viewLifecycleOwner) {
             updateView(it)
         }
         viewModel.characterList.observe(viewLifecycleOwner) {
             listForRecycler.clear()
             listForRecycler.addAll(it)
-            val characterDiffUtilCallback = CharacterDiffUtilCallback(emptyList(), listForRecycler)
-            val characterDiffResult = DiffUtil.calculateDiff(characterDiffUtilCallback)
-            recyclerCharacterList.adapter?.let { characterDiffResult.dispatchUpdatesTo(it) }
+            notifyWithDiffUtil()
         }
     }
 
-    fun updateView(currentLocation: Location) {
-
+    private fun updateView(currentLocation: Location) {
         val textViewName = view?.findViewById<TextView>(R.id.textView_name)
         val textViewType = view?.findViewById<TextView>(R.id.textView_type)
         val textViewDimension = view?.findViewById<TextView>(R.id.textView_dimension)
@@ -85,25 +83,26 @@ class LocationDetailsFragment : Fragment(), CharacterRecyclerAdapter.CharacterVi
         initRecyclerView()
     }
 
-    fun initRecyclerView() {
-        recyclerCharacterList = requireView().findViewById(R.id.recycler_residents)
-        recyclerCharacterList.setHasFixedSize(true)
-        val layoutManager: RecyclerView.LayoutManager = LinearLayoutManager(context)
-        recyclerCharacterList.layoutManager = layoutManager
-
+    private fun initRecyclerView() {
+        val mLayoutManager: RecyclerView.LayoutManager = LinearLayoutManager(context)
         val sidePadding = 5
         val topPadding = 5
-        recyclerCharacterList.addItemDecoration(RecyclerDecorator(sidePadding, topPadding))
-
-        listForRecycler = mutableListOf()
-
-        val adapter: CharacterRecyclerAdapter = CharacterRecyclerAdapter(
+        val mAdapter = CharacterRecyclerAdapter(
             (activity as AppCompatActivity),
             listForRecycler, this
         )
+        recyclerCharacterList = requireView().findViewById(R.id.recycler_residents)
+        recyclerCharacterList.apply {
+            setHasFixedSize(true)
+            layoutManager = mLayoutManager
+            addItemDecoration(RecyclerDecorator(sidePadding, topPadding))
+            adapter = mAdapter
+        }
 
-        recyclerCharacterList.adapter = adapter
+        notifyWithDiffUtil()
+    }
 
+    private fun notifyWithDiffUtil() {
         val characterDiffUtilCallback = CharacterDiffUtilCallback(emptyList(), listForRecycler)
         val characterDiffResult = DiffUtil.calculateDiff(characterDiffUtilCallback)
         recyclerCharacterList.adapter?.let { characterDiffResult.dispatchUpdatesTo(it) }
@@ -114,29 +113,20 @@ class LocationDetailsFragment : Fragment(), CharacterRecyclerAdapter.CharacterVi
          * Use this factory method to create a new instance of
          * this fragment using the provided parameters.
          *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
+         * @param locationId Parameter 1.
          * @return A new instance of fragment LocationDetailsFragment.
          */
-        // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(param1: Int) =
+        fun newInstance(locationId: Int) =
             LocationDetailsFragment().apply {
                 arguments = Bundle().apply {
-                    putInt(ARG_PARAM1, param1)
+                    putInt(ARG_LOCATION_ID, locationId)
                 }
             }
     }
 
     override fun onItemClick(character: Character) {
         val fragment: Fragment = CharacterDetailsFragment.newInstance(character.id!!)
-
-        val transaction: FragmentTransaction = requireActivity().supportFragmentManager.beginTransaction()
-
-        requireActivity().supportFragmentManager.findFragmentByTag("current_main_fragment")
-            ?.let { transaction.hide(it) }
-        transaction.replace(R.id.fragmentContainerView, fragment)
-        transaction.addToBackStack(null)
-        transaction.commit()
+        mainViewModel.changeCurrentDetailsFragment(fragment)
     }
 }
