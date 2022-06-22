@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -14,10 +15,13 @@ import com.example.aston_courseproject_rickmorty.MainViewModel
 import com.example.aston_courseproject_rickmorty.MainViewModelFactory
 import com.example.aston_courseproject_rickmorty.R
 import com.example.aston_courseproject_rickmorty.model.Episode
+import com.example.aston_courseproject_rickmorty.recycler_view.CharacterPaginationRecyclerAdapter
+import com.example.aston_courseproject_rickmorty.recycler_view.EpisodePaginationRecyclerAdapter
 import com.example.aston_courseproject_rickmorty.recycler_view.EpisodeRecyclerAdapter
 import com.example.aston_courseproject_rickmorty.utils.EpisodeDiffUtilCallback
 import com.example.aston_courseproject_rickmorty.utils.RecyclerDecorator
 import com.example.aston_courseproject_rickmorty.viewmodel.EpisodeViewModel
+import kotlinx.coroutines.flow.collectLatest
 
 
 /**
@@ -25,18 +29,26 @@ import com.example.aston_courseproject_rickmorty.viewmodel.EpisodeViewModel
  * Use the [EpisodeFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class EpisodeFragment : Fragment(), EpisodeRecyclerAdapter.EpisodeViewHolder.ItemClickListener {
+class EpisodeFragment : Fragment(), EpisodePaginationRecyclerAdapter.EpisodeViewHolder.ItemClickListener {
 
     private lateinit var viewModel: EpisodeViewModel
     private lateinit var mainViewModel: MainViewModel
     private var listForRecycler: MutableList<Episode> = mutableListOf()
     private lateinit var recyclerEpisodeList: RecyclerView
+    private lateinit var mAdapter: EpisodePaginationRecyclerAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let { }
 
         viewModel = ViewModelProvider(this)[EpisodeViewModel::class.java]
+
+        mAdapter = EpisodePaginationRecyclerAdapter(this)
+        lifecycleScope.launchWhenCreated {
+            viewModel.episodeList.collectLatest {
+                mAdapter.submitData(it)
+            }
+        }
 
         mainViewModel = ViewModelProvider(requireActivity(), MainViewModelFactory(requireContext()))[MainViewModel::class.java]
     }
@@ -55,23 +67,21 @@ class EpisodeFragment : Fragment(), EpisodeRecyclerAdapter.EpisodeViewHolder.Ite
 
         initRecyclerView()
 
-        viewModel.episodeList.observe(viewLifecycleOwner) {
-            listForRecycler.clear()
+        /*viewModel.episodeList.observe(viewLifecycleOwner) {
             listForRecycler.addAll(it)
             notifyWithDiffUtil()
-        }
+        }*/
 
     }
 
     private fun initRecyclerView() {
-        val mLayoutManager: RecyclerView.LayoutManager = GridLayoutManager(context, 2)
         val sidePadding = 5
         val topPadding = 5
-        val mAdapter = EpisodeRecyclerAdapter((activity as AppCompatActivity), listForRecycler, this)
+        //val mAdapter = EpisodeRecyclerAdapter((activity as AppCompatActivity), listForRecycler, this)
         recyclerEpisodeList = requireView().findViewById(R.id.recyclerView_episodes)
         recyclerEpisodeList.apply {
             setHasFixedSize(true)
-            layoutManager = mLayoutManager
+            layoutManager = GridLayoutManager(context, 2)
             addItemDecoration(RecyclerDecorator(sidePadding, topPadding))
             adapter = mAdapter
         }

@@ -1,16 +1,19 @@
 package com.example.aston_courseproject_rickmorty.recycler_view
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.paging.PagingDataAdapter
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.aston_courseproject_rickmorty.R
 import com.example.aston_courseproject_rickmorty.model.Episode
 
-class EpisodeRecyclerAdapter(private val context: Context, private val episodeList: MutableList<Episode>, val itemClickListener: EpisodeViewHolder.ItemClickListener) :
-    RecyclerView.Adapter<EpisodeRecyclerAdapter.EpisodeViewHolder>() {
+class EpisodePaginationRecyclerAdapter(private val itemClickListener: EpisodeViewHolder.ItemClickListener) :
+    PagingDataAdapter<Episode, EpisodePaginationRecyclerAdapter.EpisodeViewHolder>(
+        DiffUtilCallback()
+    ) {
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EpisodeViewHolder {
@@ -19,8 +22,8 @@ class EpisodeRecyclerAdapter(private val context: Context, private val episodeLi
     }
 
     override fun onBindViewHolder(holder: EpisodeViewHolder, position: Int) {
-        val listItem = episodeList[position]
-        holder.bind(listItem)
+        val listItem = getItem(position)
+        holder.bind(listItem!!)
 
         with (holder) {
             txtViewName.text = listItem.name
@@ -28,9 +31,6 @@ class EpisodeRecyclerAdapter(private val context: Context, private val episodeLi
             txtViewAirDate.text = listItem.air_date
         }
     }
-
-    override fun getItemCount() = episodeList.size
-
 
     class EpisodeViewHolder(itemView: View, val itemClickListener: ItemClickListener): RecyclerView.ViewHolder(itemView) {
         val txtViewName: TextView = itemView.findViewById(R.id.textView_name)
@@ -48,4 +48,18 @@ class EpisodeRecyclerAdapter(private val context: Context, private val episodeLi
             fun onItemClick(episode: Episode)
         }
     }
+
+    class DiffUtilCallback : DiffUtil.ItemCallback<Episode>() {
+        override fun areItemsTheSame(oldItem: Episode, newItem: Episode): Boolean {
+            return oldItem.id == newItem.id
+        }
+
+        override fun areContentsTheSame(oldItem: Episode, newItem: Episode): Boolean {
+            return (oldItem.name == newItem.name
+                    && oldItem.episode == newItem.episode
+                    && oldItem.air_date == newItem.air_date)
+        }
+
+    }
+
 }
