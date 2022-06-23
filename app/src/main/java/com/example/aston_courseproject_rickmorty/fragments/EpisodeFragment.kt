@@ -5,9 +5,12 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.paging.CombinedLoadStates
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -15,6 +18,7 @@ import com.example.aston_courseproject_rickmorty.MainViewModel
 import com.example.aston_courseproject_rickmorty.MainViewModelFactory
 import com.example.aston_courseproject_rickmorty.R
 import com.example.aston_courseproject_rickmorty.model.Episode
+import com.example.aston_courseproject_rickmorty.recycler_view.CharacterLoaderStateAdapter
 import com.example.aston_courseproject_rickmorty.recycler_view.CharacterPaginationRecyclerAdapter
 import com.example.aston_courseproject_rickmorty.recycler_view.EpisodePaginationRecyclerAdapter
 import com.example.aston_courseproject_rickmorty.recycler_view.EpisodeRecyclerAdapter
@@ -43,12 +47,7 @@ class EpisodeFragment : Fragment(), EpisodePaginationRecyclerAdapter.EpisodeView
 
         viewModel = ViewModelProvider(this)[EpisodeViewModel::class.java]
 
-        mAdapter = EpisodePaginationRecyclerAdapter(this)
-        lifecycleScope.launchWhenCreated {
-            viewModel.episodeList.collectLatest {
-                mAdapter.submitData(it)
-            }
-        }
+        //mAdapter = EpisodePaginationRecyclerAdapter(this)
 
         mainViewModel = ViewModelProvider(requireActivity(), MainViewModelFactory(requireContext()))[MainViewModel::class.java]
     }
@@ -65,6 +64,20 @@ class EpisodeFragment : Fragment(), EpisodePaginationRecyclerAdapter.EpisodeView
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        mAdapter = EpisodePaginationRecyclerAdapter(this)
+        recyclerEpisodeList = view.findViewById(R.id.recyclerView_episodes)
+        recyclerEpisodeList.adapter = mAdapter.withLoadStateFooter(CharacterLoaderStateAdapter())
+        lifecycleScope.launchWhenCreated {
+            viewModel.episodeList.collectLatest {
+                mAdapter.submitData(it)
+            }
+        }
+        mAdapter.addLoadStateListener { state: CombinedLoadStates ->
+            recyclerEpisodeList.visibility = if (state.refresh != LoadState.Loading) View.VISIBLE else View.GONE
+            val pbView = view.findViewById<ProgressBar>(R.id.progress)
+            pbView.visibility = if (state.refresh == LoadState.Loading) View.VISIBLE else View.GONE
+        }
+
         initRecyclerView()
 
         /*viewModel.episodeList.observe(viewLifecycleOwner) {
@@ -78,15 +91,15 @@ class EpisodeFragment : Fragment(), EpisodePaginationRecyclerAdapter.EpisodeView
         val sidePadding = 5
         val topPadding = 5
         //val mAdapter = EpisodeRecyclerAdapter((activity as AppCompatActivity), listForRecycler, this)
-        recyclerEpisodeList = requireView().findViewById(R.id.recyclerView_episodes)
+        //recyclerEpisodeList = requireView().findViewById(R.id.recyclerView_episodes)
         recyclerEpisodeList.apply {
             setHasFixedSize(true)
             layoutManager = GridLayoutManager(context, 2)
             addItemDecoration(RecyclerDecorator(sidePadding, topPadding))
-            adapter = mAdapter
+            //adapter = mAdapter
         }
 
-        notifyWithDiffUtil()
+        //notifyWithDiffUtil()
     }
 
     private fun notifyWithDiffUtil() {
@@ -109,8 +122,8 @@ class EpisodeFragment : Fragment(), EpisodePaginationRecyclerAdapter.EpisodeView
             }
     }
 
-    override fun onItemClick(episode: Episode) {
-        val fragment: Fragment = EpisodeDetailsFragment.newInstance(episode.id)
+    override fun onItemClick(episode: Episode?) {
+        val fragment: Fragment = EpisodeDetailsFragment.newInstance(episode?.id!!)
         mainViewModel.changeCurrentDetailsFragment(fragment)
     }
 }

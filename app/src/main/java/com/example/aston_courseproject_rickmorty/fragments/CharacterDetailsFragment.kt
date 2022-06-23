@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
@@ -25,7 +26,10 @@ import com.example.aston_courseproject_rickmorty.utils.LocationDiffUtilCallback
 import com.example.aston_courseproject_rickmorty.utils.RecyclerDecorator
 import com.example.aston_courseproject_rickmorty.viewmodel.CharacterDetailsViewModel
 import com.example.aston_courseproject_rickmorty.viewmodel.CharacterDetailsViewModelFactory
+import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
+import jp.wasabeef.picasso.transformations.CropCircleTransformation
+import java.lang.Exception
 
 
 private const val ARG_CHARACTER_ID = "characterId"
@@ -40,9 +44,9 @@ class CharacterDetailsFragment : Fragment(), EpisodeRecyclerAdapter.EpisodeViewH
 
     private lateinit var viewModel: CharacterDetailsViewModel
     private lateinit var mainViewModel: MainViewModel
-    private lateinit var listForRecycler: MutableList<Episode>
-    private lateinit var listForRecyclerOrigin: MutableList<Location>
-    private lateinit var listForRecyclerLocation: MutableList<Location>
+    private var listForRecycler: MutableList<Episode> = mutableListOf()
+    private var listForRecyclerOrigin: MutableList<Location> = mutableListOf()
+    private var listForRecyclerLocation: MutableList<Location> = mutableListOf()
     private lateinit var recyclerEpisodesList: RecyclerView
     private lateinit var recyclerLocation: RecyclerView
     private lateinit var recyclerOrigin: RecyclerView
@@ -97,17 +101,29 @@ class CharacterDetailsFragment : Fragment(), EpisodeRecyclerAdapter.EpisodeViewH
         val textViewSpecies = view?.findViewById<TextView>(R.id.textView_species)
         val textViewType = view?.findViewById<TextView>(R.id.textView_type)
         val textViewGender = view?.findViewById<TextView>(R.id.textView_gender)
+        val imageProgressBar = view?.findViewById<ProgressBar>(R.id.image_progressbar)
+
+        initEpisodesRecyclerView()
+        initOriginRecyclerView()
+        initLocationRecyclerView()
 
         Picasso.get().load(currentCharacter.image).into(imageView)
+        Picasso.get()
+            .load(currentCharacter.image)
+            .transform(CropCircleTransformation())
+            .into(imageView, object : Callback {
+                override fun onSuccess() {
+                    imageProgressBar?.visibility = View.GONE
+                }
+
+                override fun onError(e: Exception?) {
+                }
+            })
         textViewName?.text = currentCharacter.name
         textViewStatus?.text = currentCharacter.status
         textViewSpecies?.text = currentCharacter.species
         textViewType?.text = currentCharacter.type
         textViewGender?.text = currentCharacter.gender
-
-        initEpisodesRecyclerView()
-        initOriginRecyclerView()
-        initLocationRecyclerView()
     }
 
     private fun initEpisodesRecyclerView() {
@@ -167,22 +183,22 @@ class CharacterDetailsFragment : Fragment(), EpisodeRecyclerAdapter.EpisodeViewH
         notifyWithDiffUtil(recyclerLocation)
     }
 
-    private fun notifyWithDiffUtil(recyclerView: RecyclerView) {
+    private fun notifyWithDiffUtil(recyclerView: RecyclerView?) {
         when (recyclerView) {
-            recyclerLocation -> {
-                val locationDiffUtilCallback = LocationDiffUtilCallback(emptyList(), listForRecyclerLocation)
-                val locationDiffResult = DiffUtil.calculateDiff(locationDiffUtilCallback)
-                recyclerView.adapter?.let { locationDiffResult.dispatchUpdatesTo(it) }
+            recyclerEpisodesList -> {
+                val episodeDiffUtilCallback = EpisodeDiffUtilCallback(emptyList(), listForRecycler)
+                val episodeDiffResult = DiffUtil.calculateDiff(episodeDiffUtilCallback)
+                recyclerView.adapter?.let { episodeDiffResult.dispatchUpdatesTo(it) }
             }
             recyclerOrigin -> {
                 val originDiffUtilCallback = LocationDiffUtilCallback(emptyList(), listForRecyclerOrigin)
                 val originDiffResult = DiffUtil.calculateDiff(originDiffUtilCallback)
-                recyclerOrigin.adapter?.let { originDiffResult.dispatchUpdatesTo(it) }
+                recyclerView.adapter?.let { originDiffResult.dispatchUpdatesTo(it) }
             }
-            recyclerEpisodesList -> {
-                val episodeDiffUtilCallback = EpisodeDiffUtilCallback(emptyList(), listForRecycler)
-                val episodeDiffResult = DiffUtil.calculateDiff(episodeDiffUtilCallback)
-                recyclerEpisodesList.adapter?.let { episodeDiffResult.dispatchUpdatesTo(it) }
+            recyclerLocation -> {
+                val locationDiffUtilCallback = LocationDiffUtilCallback(emptyList(), listForRecyclerLocation)
+                val locationDiffResult = DiffUtil.calculateDiff(locationDiffUtilCallback)
+                recyclerView.adapter?.let { locationDiffResult.dispatchUpdatesTo(it) }
             }
         }
 

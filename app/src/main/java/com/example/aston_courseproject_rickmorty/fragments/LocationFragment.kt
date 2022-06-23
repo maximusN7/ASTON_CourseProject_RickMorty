@@ -5,9 +5,12 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.paging.CombinedLoadStates
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -15,6 +18,7 @@ import com.example.aston_courseproject_rickmorty.MainViewModel
 import com.example.aston_courseproject_rickmorty.MainViewModelFactory
 import com.example.aston_courseproject_rickmorty.R
 import com.example.aston_courseproject_rickmorty.model.Location
+import com.example.aston_courseproject_rickmorty.recycler_view.CharacterLoaderStateAdapter
 import com.example.aston_courseproject_rickmorty.recycler_view.EpisodePaginationRecyclerAdapter
 import com.example.aston_courseproject_rickmorty.recycler_view.LocationPaginationRecyclerAdapter
 import com.example.aston_courseproject_rickmorty.recycler_view.LocationRecyclerAdapter
@@ -43,12 +47,7 @@ class LocationFragment : Fragment(), LocationPaginationRecyclerAdapter.LocationV
 
         viewModel = ViewModelProvider(this)[LocationViewModel::class.java]
 
-        mAdapter = LocationPaginationRecyclerAdapter(this)
-        lifecycleScope.launchWhenCreated {
-            viewModel.locationList.collectLatest {
-                mAdapter.submitData(it)
-            }
-        }
+        //mAdapter = LocationPaginationRecyclerAdapter(this)
 
         mainViewModel = ViewModelProvider(requireActivity(), MainViewModelFactory(requireContext()))[MainViewModel::class.java]
     }
@@ -64,6 +63,20 @@ class LocationFragment : Fragment(), LocationPaginationRecyclerAdapter.LocationV
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        mAdapter = LocationPaginationRecyclerAdapter(this)
+        recyclerLocationList = view.findViewById(R.id.recyclerView_locations)
+        recyclerLocationList.adapter = mAdapter.withLoadStateFooter(CharacterLoaderStateAdapter())
+        lifecycleScope.launchWhenCreated {
+            viewModel.locationList.collectLatest {
+                mAdapter.submitData(it)
+            }
+        }
+        mAdapter.addLoadStateListener { state: CombinedLoadStates ->
+            recyclerLocationList.visibility = if (state.refresh != LoadState.Loading) View.VISIBLE else View.GONE
+            val pbView = view.findViewById<ProgressBar>(R.id.progress)
+            pbView.visibility = if (state.refresh == LoadState.Loading) View.VISIBLE else View.GONE
+        }
 
         initRecyclerView()
 
@@ -81,12 +94,12 @@ class LocationFragment : Fragment(), LocationPaginationRecyclerAdapter.LocationV
             (activity as AppCompatActivity),
             listForRecycler, this
         )*/
-        recyclerLocationList = requireView().findViewById(R.id.recyclerView_locations)
+        //recyclerLocationList = requireView().findViewById(R.id.recyclerView_locations)
         recyclerLocationList.apply {
             setHasFixedSize(true)
             layoutManager = mLayoutManager
             addItemDecoration(RecyclerDecorator(sidePadding, topPadding))
-            adapter = mAdapter
+            //adapter = mAdapter
         }
 
         notifyWithDiffUtil()
@@ -112,8 +125,8 @@ class LocationFragment : Fragment(), LocationPaginationRecyclerAdapter.LocationV
             }
     }
 
-    override fun onItemClick(location: Location) {
-        val fragment: Fragment = LocationDetailsFragment.newInstance(location.id)
+    override fun onItemClick(location: Location?) {
+        val fragment: Fragment = LocationDetailsFragment.newInstance(location?.id!!)
         mainViewModel.changeCurrentDetailsFragment(fragment)
     }
 }

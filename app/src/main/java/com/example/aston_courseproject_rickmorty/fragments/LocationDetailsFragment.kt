@@ -35,7 +35,7 @@ class LocationDetailsFragment : Fragment(), CharacterRecyclerAdapter.CharacterVi
 
     private lateinit var viewModel: LocationDetailsViewModel
     private lateinit var mainViewModel: MainViewModel
-    private lateinit var listForRecycler: MutableList<Character>
+    private var listForRecycler: MutableList<Character> = mutableListOf()
     private lateinit var recyclerCharacterList: RecyclerView
 
     override fun onCreate(savedInstanceState: Bundle?) {

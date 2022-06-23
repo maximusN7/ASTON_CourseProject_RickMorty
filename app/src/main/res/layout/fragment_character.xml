@@ -42,4 +42,13 @@
             app:layout_constraintTop_toBottomOf="@+id/button_filter"
             app:spanCount="2" />
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ProgressBar
+        android:id="@+id/progress"
+        style="?android:indeterminateProgressStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        />
 </FrameLayout>

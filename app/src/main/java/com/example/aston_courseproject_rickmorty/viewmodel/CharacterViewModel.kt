@@ -32,6 +32,6 @@ class CharacterViewModel : ViewModel() {
     }*/
     var retrofitServices: RetrofitServices = Common.retrofitService
 
-    val characterList: Flow<PagingData<Character>> = Pager (PagingConfig(pageSize = 20, maxSize = 100),
+    val characterList: Flow<PagingData<Character>> = Pager (PagingConfig(pageSize = 20, maxSize = 120),
         pagingSourceFactory = {CharacterPagingSource(retrofitServices)}).flow.cachedIn(viewModelScope)
 }
