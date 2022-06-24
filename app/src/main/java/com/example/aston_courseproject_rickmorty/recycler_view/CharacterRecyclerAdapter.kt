@@ -1,21 +1,21 @@
 package com.example.aston_courseproject_rickmorty.recycler_view
 
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
-import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.example.aston_courseproject_rickmorty.R
-import com.example.aston_courseproject_rickmorty.fragments.CharacterDetailsFragment
 import com.example.aston_courseproject_rickmorty.model.Character
+import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
+import jp.wasabeef.picasso.transformations.CropCircleTransformation
+import java.lang.Exception
 
-class CharacterRecyclerAdapter(private val context: Context, private val characterList: MutableList<Character>, val itemClickListener: CharacterViewHolder.ItemClickListener) :
+class CharacterRecyclerAdapter(private val characterList: MutableList<Character>, val itemClickListener: CharacterViewHolder.ItemClickListener) :
     RecyclerView.Adapter<CharacterRecyclerAdapter.CharacterViewHolder>() {
 
 
@@ -28,12 +28,26 @@ class CharacterRecyclerAdapter(private val context: Context, private val charact
         val listItem = characterList[position]
         holder.bind(listItem)
 
-        Picasso.get().load(characterList[position].image).into(holder.imageView)
+        Picasso.get()
+            .load(listItem.image)
+            .transform(CropCircleTransformation())
+            .into(holder.imageView, object : Callback {
+                override fun onSuccess() {
+                    holder.imageProgressBar.visibility = View.GONE
+                    holder.cellProgressBar.visibility = View.GONE
+                }
+
+                override fun onError(e: Exception?) {
+                }
+            })
         with (holder) {
-            txtViewName.text = characterList[position].name
-            txtViewSpecies.text = characterList[position].species
-            txtViewStatus.text = characterList[position].status
-            txtViewGender.text = characterList[position].gender
+            txtViewName.text = listItem.name ?: ""
+            txtViewSpecies.text = listItem.species ?: ""
+            txtViewStatus.text = listItem.status ?: ""
+            txtViewGender.text = listItem.gender ?: ""
+        }
+        if (holder.txtViewName.text == "") {
+            holder.cellProgressBar.visibility = View.VISIBLE
         }
     }
 
@@ -46,8 +60,10 @@ class CharacterRecyclerAdapter(private val context: Context, private val charact
         val txtViewSpecies: TextView = itemView.findViewById(R.id.textView_species)
         val txtViewStatus: TextView = itemView.findViewById(R.id.textView_status)
         val txtViewGender: TextView = itemView.findViewById(R.id.textView_gender)
+        val imageProgressBar: ProgressBar = itemView.findViewById(R.id.image_progressbar)
+        val cellProgressBar: ProgressBar = itemView.findViewById(R.id.cell_progressbar)
 
-        fun bind(listItem: Character) {
+        fun bind(listItem: Character?) {
             itemView.setOnClickListener {
                 itemClickListener.onItemClick(listItem)
             }
@@ -55,7 +71,7 @@ class CharacterRecyclerAdapter(private val context: Context, private val charact
 
         interface ItemClickListener {
 
-            fun onItemClick(character: Character)
+            fun onItemClick(character: Character?)
         }
     }
 

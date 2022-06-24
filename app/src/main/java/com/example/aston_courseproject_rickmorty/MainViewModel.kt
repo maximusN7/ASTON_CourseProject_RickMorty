@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import com.example.aston_courseproject_rickmorty.fragments.*
 
 
-class MainViewModel(val mResourceProvider: ResourceProvider) : ViewModel() {
+class MainViewModel(private val mResourceProvider: ResourceProvider) : ViewModel() {
 
     val titleString = MutableLiveData<String>()
     val showToolbar = MutableLiveData<Boolean>()
@@ -39,7 +39,7 @@ class MainViewModel(val mResourceProvider: ResourceProvider) : ViewModel() {
         currentDetailsFragment.value = fragment
     }
 
-    fun changeTitle(titleId: String) {
+    private fun changeTitle(titleId: String) {
         titleString.value = mResourceProvider.getString(titleId)
     }
 

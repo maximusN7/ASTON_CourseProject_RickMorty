@@ -16,8 +16,11 @@
         <entry key="..\:/ASTONprogects/ASTON_CourseProject_RickMorty/app/src/main/res/layout/fragment_episode_details.xml" value="0.3458333333333333" />
         <entry key="..\:/ASTONprogects/ASTON_CourseProject_RickMorty/app/src/main/res/layout/fragment_location.xml" value="0.32518115942028986" />
         <entry key="..\:/ASTONprogects/ASTON_CourseProject_RickMorty/app/src/main/res/layout/fragment_location_details.xml" value="0.3458333333333333" />
+        <entry key="..\:/ASTONprogects/ASTON_CourseProject_RickMorty/app/src/main/res/layout/item_character_loader.xml" value="0.3458333333333333" />
+        <entry key="..\:/ASTONprogects/ASTON_CourseProject_RickMorty/app/src/main/res/layout/loader_motion.xml" value="0.28894927536231885" />
         <entry key="..\:/ASTONprogects/ASTON_CourseProject_RickMorty/app/src/main/res/layout/location_cell.xml" value="0.3328125" />
         <entry key="..\:/ASTONprogects/ASTON_CourseProject_RickMorty/app/src/main/res/menu/nav_bar.xml" value="0.3251282051282051" />
+        <entry key="..\:/ASTONprogects/ASTON_CourseProject_RickMorty/app/src/main/res/xml/motion_loader.xml" value="0.34479166666666666" />
       </map>
     </option>
   </component>

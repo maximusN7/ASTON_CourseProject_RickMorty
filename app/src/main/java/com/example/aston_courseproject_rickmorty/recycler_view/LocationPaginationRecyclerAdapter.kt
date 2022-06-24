@@ -3,6 +3,7 @@ package com.example.aston_courseproject_rickmorty.recycler_view
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
@@ -23,12 +24,17 @@ class LocationPaginationRecyclerAdapter(private val itemClickListener: LocationV
 
     override fun onBindViewHolder(holder: LocationViewHolder, position: Int) {
         val listItem = getItem(position)
-        holder.bind(listItem!!)
+        holder.bind(listItem)
 
         with (holder) {
-            txtViewName.text = listItem.name
-            txtViewType.text = listItem.type
-            txtViewDimension.text = listItem.dimension
+            txtViewName.text = listItem?.name ?: ""
+            txtViewType.text = listItem?.type ?: ""
+            txtViewDimension.text = listItem?.dimension ?: ""
+        }
+        if (holder.txtViewName.text == "") {
+            holder.cellProgressBar.visibility = View.VISIBLE
+        } else {
+            holder.cellProgressBar.visibility = View.GONE
         }
     }
 
@@ -36,8 +42,9 @@ class LocationPaginationRecyclerAdapter(private val itemClickListener: LocationV
         val txtViewName: TextView = itemView.findViewById(R.id.textView_name)
         val txtViewType: TextView = itemView.findViewById(R.id.textView_type)
         val txtViewDimension: TextView = itemView.findViewById(R.id.textView_dimension)
+        val cellProgressBar: ProgressBar = itemView.findViewById(R.id.cell_progressbar)
 
-        fun bind(listItem: Location) {
+        fun bind(listItem: Location?) {
             itemView.setOnClickListener {
                 itemClickListener.onItemClick(listItem)
             }
@@ -45,7 +52,7 @@ class LocationPaginationRecyclerAdapter(private val itemClickListener: LocationV
 
         interface ItemClickListener {
 
-            fun onItemClick(location: Location)
+            fun onItemClick(location: Location?)
         }
     }
 

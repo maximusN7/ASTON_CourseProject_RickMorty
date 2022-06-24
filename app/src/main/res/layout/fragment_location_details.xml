@@ -7,6 +7,7 @@
     tools:context=".fragments.LocationDetailsFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/location_detailsLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="10dp">
@@ -95,5 +96,14 @@
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ProgressBar
+        android:id="@+id/progress"
+        style="?android:indeterminateProgressStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        />
 
 </FrameLayout>

@@ -93,7 +93,7 @@ class MainActivity : AppCompatActivity() {
         checkFragment()
     }
 
-    fun checkFragment() {
+    private fun checkFragment() {
         val currentFragment = supportFragmentManager.findFragmentByTag("current_main_fragment")
         viewModel.checkFragment(currentFragment!!)
     }

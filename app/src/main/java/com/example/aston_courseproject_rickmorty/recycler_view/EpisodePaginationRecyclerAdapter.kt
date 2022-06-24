@@ -3,6 +3,7 @@ package com.example.aston_courseproject_rickmorty.recycler_view
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
@@ -23,12 +24,17 @@ class EpisodePaginationRecyclerAdapter(private val itemClickListener: EpisodeVie
 
     override fun onBindViewHolder(holder: EpisodeViewHolder, position: Int) {
         val listItem = getItem(position)
-        holder.bind(listItem!!)
+        holder.bind(listItem)
 
         with (holder) {
-            txtViewName.text = listItem.name
-            txtViewEpisode.text = listItem.episode
-            txtViewAirDate.text = listItem.air_date
+            txtViewName.text = listItem?.name ?: ""
+            txtViewEpisode.text = listItem?.episode ?: ""
+            txtViewAirDate.text = listItem?.air_date ?: ""
+        }
+        if (holder.txtViewName.text == "") {
+            holder.cellProgressBar.visibility = View.VISIBLE
+        } else {
+            holder.cellProgressBar.visibility = View.GONE
         }
     }
 
@@ -36,8 +42,9 @@ class EpisodePaginationRecyclerAdapter(private val itemClickListener: EpisodeVie
         val txtViewName: TextView = itemView.findViewById(R.id.textView_name)
         val txtViewEpisode: TextView = itemView.findViewById(R.id.textView_episode)
         val txtViewAirDate: TextView = itemView.findViewById(R.id.textView_airdate)
+        val cellProgressBar: ProgressBar = itemView.findViewById(R.id.cell_progressbar)
 
-        fun bind(listItem: Episode) {
+        fun bind(listItem: Episode?) {
             itemView.setOnClickListener {
                 itemClickListener.onItemClick(listItem)
             }
@@ -45,7 +52,7 @@ class EpisodePaginationRecyclerAdapter(private val itemClickListener: EpisodeVie
 
         interface ItemClickListener {
 
-            fun onItemClick(episode: Episode)
+            fun onItemClick(episode: Episode?)
         }
     }
 

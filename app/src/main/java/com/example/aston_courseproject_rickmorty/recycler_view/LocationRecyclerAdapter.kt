@@ -1,9 +1,11 @@
 package com.example.aston_courseproject_rickmorty.recycler_view
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.aston_courseproject_rickmorty.R
@@ -23,9 +25,15 @@ class LocationRecyclerAdapter(private val context: Context, private val location
         holder.bind(listItem)
 
         with (holder) {
-            txtViewName.text = locationList[position].name
-            txtViewType.text = locationList[position].type
-            txtViewDimension.text = locationList[position].dimension
+            txtViewName.text = listItem.name ?: ""
+            txtViewType.text = listItem.type ?: ""
+            txtViewDimension.text = listItem.dimension ?: ""
+        }
+
+        if (holder.txtViewName.text == "") {
+            holder.cellProgressBar.visibility = View.VISIBLE
+        } else {
+            holder.cellProgressBar.visibility = View.GONE
         }
     }
 
@@ -36,8 +44,9 @@ class LocationRecyclerAdapter(private val context: Context, private val location
         val txtViewName: TextView = itemView.findViewById(R.id.textView_name)
         val txtViewType: TextView = itemView.findViewById(R.id.textView_type)
         val txtViewDimension: TextView = itemView.findViewById(R.id.textView_dimension)
+        val cellProgressBar: ProgressBar = itemView.findViewById(R.id.cell_progressbar)
 
-        fun bind(listItem: Location) {
+        fun bind(listItem: Location?) {
             itemView.setOnClickListener {
                 itemClickListener.onItemClick(listItem)
             }
@@ -45,7 +54,7 @@ class LocationRecyclerAdapter(private val context: Context, private val location
 
         interface ItemClickListener {
 
-            fun onItemClick(location: Location)
+            fun onItemClick(location: Location?)
         }
     }
 

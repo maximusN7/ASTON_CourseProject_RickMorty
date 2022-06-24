@@ -6,6 +6,13 @@
     android:theme="@style/Theme.MaterialComponents.Light"
     android:id="@+id/character_card">
 
+    <ProgressBar
+        android:id="@+id/cell_progressbar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:elevation="3dp"/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -15,14 +22,27 @@
         android:elevation="2dp"
         android:background="@color/white_layout">
 
-        <ImageView
-            android:id="@+id/imageView_avatar"
-            android:layout_width="75dp"
-            android:layout_height="75dp"
-            android:layout_margin="5dp"
-            android:elevation="3dp"
-            android:src="@drawable/ic_character"
-            android:contentDescription="@string/content_description_avatar" />
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/imageView_avatar"
+                android:layout_width="75dp"
+                android:layout_height="75dp"
+                android:layout_margin="5dp"
+                android:elevation="3dp"
+                android:src="@drawable/ic_character"
+                android:contentDescription="@string/content_description_avatar" />
+
+            <ProgressBar
+                android:id="@+id/image_progressbar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"/>
+
+        </FrameLayout>
+
 
         <TextView
             android:id="@+id/textView_name"
