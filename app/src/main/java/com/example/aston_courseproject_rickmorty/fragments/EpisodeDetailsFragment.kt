@@ -7,14 +7,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.aston_courseproject_rickmorty.MainViewModel
-import com.example.aston_courseproject_rickmorty.MainViewModelFactory
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.aston_courseproject_rickmorty.R
 import com.example.aston_courseproject_rickmorty.model.Character
 import com.example.aston_courseproject_rickmorty.model.Episode
@@ -22,7 +20,7 @@ import com.example.aston_courseproject_rickmorty.recycler_view.CharacterRecycler
 import com.example.aston_courseproject_rickmorty.utils.CharacterDiffUtilCallback
 import com.example.aston_courseproject_rickmorty.utils.RecyclerDecorator
 import com.example.aston_courseproject_rickmorty.viewmodel.EpisodeDetailsViewModel
-import com.example.aston_courseproject_rickmorty.viewmodel.EpisodeDetailsViewModelFactory
+import com.example.aston_courseproject_rickmorty.viewmodel.factory.EpisodeDetailsViewModelFactory
 
 
 private const val ARG_EPISODE_ID = "episodeId"
@@ -36,7 +34,6 @@ class EpisodeDetailsFragment : Fragment(), CharacterRecyclerAdapter.CharacterVie
     private var episodeId: Int? = null
 
     private lateinit var viewModel: EpisodeDetailsViewModel
-    private lateinit var mainViewModel: MainViewModel
     private var listForRecycler: MutableList<Character> = mutableListOf()
     private lateinit var recyclerCharacterList: RecyclerView
 
@@ -46,9 +43,8 @@ class EpisodeDetailsFragment : Fragment(), CharacterRecyclerAdapter.CharacterVie
             episodeId = it.getInt(ARG_EPISODE_ID)
         }
 
-        viewModel = ViewModelProvider(this, EpisodeDetailsViewModelFactory(episodeId!!))[EpisodeDetailsViewModel::class.java]
+        viewModel = ViewModelProvider(this, EpisodeDetailsViewModelFactory(episodeId!!, requireContext(), requireActivity()))[EpisodeDetailsViewModel::class.java]
 
-        mainViewModel = ViewModelProvider(requireActivity(), MainViewModelFactory(requireContext()))[MainViewModel::class.java]
     }
 
     override fun onCreateView(
@@ -77,6 +73,16 @@ class EpisodeDetailsFragment : Fragment(), CharacterRecyclerAdapter.CharacterVie
             listForRecycler.clear()
             listForRecycler.addAll(it)
             notifyWithDiffUtil()
+        }
+
+        val swipeRefreshLayout = view.findViewById<SwipeRefreshLayout>(R.id.swipeRefreshLayout)
+        swipeRefreshLayout.setOnRefreshListener {
+
+            //TODO: add logic, when coroutines are enabled
+            this.viewModelStore.clear()
+            viewModel = ViewModelProvider(this, EpisodeDetailsViewModelFactory(episodeId!!, requireContext(), requireActivity()))[EpisodeDetailsViewModel::class.java]
+
+            swipeRefreshLayout.isRefreshing = false
         }
     }
 
@@ -134,7 +140,6 @@ class EpisodeDetailsFragment : Fragment(), CharacterRecyclerAdapter.CharacterVie
     }
 
     override fun onItemClick(character: Character?) {
-        val fragment: Fragment = CharacterDetailsFragment.newInstance(character?.id!!)
-        mainViewModel.changeCurrentDetailsFragment(fragment)
+        viewModel.openFragment(character)
     }
 }

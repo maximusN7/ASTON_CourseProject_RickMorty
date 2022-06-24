@@ -2,6 +2,7 @@ package com.example.aston_courseproject_rickmorty.viewmodel
 
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData

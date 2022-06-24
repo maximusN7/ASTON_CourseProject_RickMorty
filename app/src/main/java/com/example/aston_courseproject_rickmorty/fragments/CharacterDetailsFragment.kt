@@ -1,7 +1,6 @@
 package com.example.aston_courseproject_rickmorty.fragments
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -15,8 +14,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.aston_courseproject_rickmorty.MainViewModel
-import com.example.aston_courseproject_rickmorty.MainViewModelFactory
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.aston_courseproject_rickmorty.R
 import com.example.aston_courseproject_rickmorty.model.Character
 import com.example.aston_courseproject_rickmorty.model.Episode
@@ -27,7 +25,7 @@ import com.example.aston_courseproject_rickmorty.utils.EpisodeDiffUtilCallback
 import com.example.aston_courseproject_rickmorty.utils.LocationDiffUtilCallback
 import com.example.aston_courseproject_rickmorty.utils.RecyclerDecorator
 import com.example.aston_courseproject_rickmorty.viewmodel.CharacterDetailsViewModel
-import com.example.aston_courseproject_rickmorty.viewmodel.CharacterDetailsViewModelFactory
+import com.example.aston_courseproject_rickmorty.viewmodel.factory.CharacterDetailsViewModelFactory
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import jp.wasabeef.picasso.transformations.CropCircleTransformation
@@ -104,6 +102,16 @@ class CharacterDetailsFragment : Fragment(), EpisodeRecyclerAdapter.EpisodeViewH
             listForRecycler.clear()
             listForRecycler.addAll(it)
             notifyWithDiffUtil(recyclerEpisodesList)
+        }
+
+        val swipeRefreshLayout = view.findViewById<SwipeRefreshLayout>(R.id.swipeRefreshLayout)
+        swipeRefreshLayout.setOnRefreshListener {
+
+            //TODO: add logic, when coroutines are enabled
+            this.viewModelStore.clear()
+            viewModel = ViewModelProvider(this, CharacterDetailsViewModelFactory(characterId!!, requireContext(), requireActivity()))[CharacterDetailsViewModel::class.java]
+
+            swipeRefreshLayout.isRefreshing = false
         }
     }
 
