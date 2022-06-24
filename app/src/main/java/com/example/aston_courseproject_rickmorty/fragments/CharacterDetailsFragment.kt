@@ -1,6 +1,7 @@
 package com.example.aston_courseproject_rickmorty.fragments
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +10,7 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -43,7 +45,6 @@ class CharacterDetailsFragment : Fragment(), EpisodeRecyclerAdapter.EpisodeViewH
     private var characterId: Int? = null
 
     private lateinit var viewModel: CharacterDetailsViewModel
-    private lateinit var mainViewModel: MainViewModel
     private var listForRecycler: MutableList<Episode> = mutableListOf()
     private var listForRecyclerOrigin: MutableList<Location> = mutableListOf()
     private var listForRecyclerLocation: MutableList<Location> = mutableListOf()
@@ -57,9 +58,8 @@ class CharacterDetailsFragment : Fragment(), EpisodeRecyclerAdapter.EpisodeViewH
             characterId = it.getInt(ARG_CHARACTER_ID)
         }
 
-        viewModel = ViewModelProvider(this, CharacterDetailsViewModelFactory(characterId!!))[CharacterDetailsViewModel::class.java]
+        viewModel = ViewModelProvider(this, CharacterDetailsViewModelFactory(characterId!!, requireContext(), requireActivity()))[CharacterDetailsViewModel::class.java]
 
-        mainViewModel = ViewModelProvider(requireActivity(), MainViewModelFactory(requireContext()))[MainViewModel::class.java]
     }
 
     override fun onCreateView(
@@ -74,7 +74,18 @@ class CharacterDetailsFragment : Fragment(), EpisodeRecyclerAdapter.EpisodeViewH
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val detailsLayout = view.findViewById<ConstraintLayout>(R.id.character_detailsLayout)
+        detailsLayout.visibility = View.INVISIBLE
+        val pbView = view.findViewById<ProgressBar>(R.id.progress)
+        pbView.visibility = View.VISIBLE
+
         viewModel.currentCharacter.observe(viewLifecycleOwner) {
+            detailsLayout.visibility = View.VISIBLE
+            pbView.visibility = View.GONE
+            if (it.origin.name == "unknown") {
+                listForRecyclerOrigin.clear()
+                listForRecyclerOrigin.add(Location(-1, "unknown", "", "", emptyArray(), "", ""))
+            }
             updateView(it)
         }
         viewModel.currentLocation.observe(viewLifecycleOwner) {
@@ -83,9 +94,11 @@ class CharacterDetailsFragment : Fragment(), EpisodeRecyclerAdapter.EpisodeViewH
             notifyWithDiffUtil(recyclerLocation)
         }
         viewModel.currentOrigin.observe(viewLifecycleOwner) {
-            listForRecyclerOrigin.clear()
-            listForRecyclerOrigin.add(it)
-            notifyWithDiffUtil(recyclerOrigin)
+            if (listForRecyclerOrigin.size == 0) {
+                listForRecyclerOrigin.clear()
+                listForRecyclerOrigin.add(it)
+                notifyWithDiffUtil(recyclerOrigin)
+            }
         }
         viewModel.episodeList.observe(viewLifecycleOwner) {
             listForRecycler.clear()
@@ -106,8 +119,6 @@ class CharacterDetailsFragment : Fragment(), EpisodeRecyclerAdapter.EpisodeViewH
         initEpisodesRecyclerView()
         initOriginRecyclerView()
         initLocationRecyclerView()
-
-        Picasso.get().load(currentCharacter.image).into(imageView)
         Picasso.get()
             .load(currentCharacter.image)
             .transform(CropCircleTransformation())
@@ -131,7 +142,6 @@ class CharacterDetailsFragment : Fragment(), EpisodeRecyclerAdapter.EpisodeViewH
         val sidePadding = 5
         val topPadding = 5
         val mAdapter = EpisodeRecyclerAdapter(
-            (activity as AppCompatActivity),
             listForRecycler, this
         )
         recyclerEpisodesList = requireView().findViewById(R.id.recycler_episodes)
@@ -221,13 +231,11 @@ class CharacterDetailsFragment : Fragment(), EpisodeRecyclerAdapter.EpisodeViewH
             }
     }
 
-    override fun onItemClick(episode: Episode) {
-        val fragment: Fragment = EpisodeDetailsFragment.newInstance(episode.id)
-        mainViewModel.changeCurrentDetailsFragment(fragment)
+    override fun onItemClick(episode: Episode?) {
+        viewModel.openFragment(episode)
     }
 
-    override fun onItemClick(location: Location) {
-        val fragment: Fragment = LocationDetailsFragment.newInstance(location.id)
-        mainViewModel.changeCurrentDetailsFragment(fragment)
+    override fun onItemClick(location: Location?) {
+        viewModel.openFragment(location)
     }
 }

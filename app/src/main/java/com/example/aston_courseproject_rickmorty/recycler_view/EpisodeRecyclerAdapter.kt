@@ -1,15 +1,15 @@
 package com.example.aston_courseproject_rickmorty.recycler_view
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.aston_courseproject_rickmorty.R
 import com.example.aston_courseproject_rickmorty.model.Episode
 
-class EpisodeRecyclerAdapter(private val context: Context, private val episodeList: MutableList<Episode>, val itemClickListener: EpisodeViewHolder.ItemClickListener) :
+class EpisodeRecyclerAdapter(private val episodeList: MutableList<Episode>, val itemClickListener: EpisodeViewHolder.ItemClickListener) :
     RecyclerView.Adapter<EpisodeRecyclerAdapter.EpisodeViewHolder>() {
 
 
@@ -23,9 +23,14 @@ class EpisodeRecyclerAdapter(private val context: Context, private val episodeLi
         holder.bind(listItem)
 
         with (holder) {
-            txtViewName.text = listItem.name
-            txtViewEpisode.text = listItem.episode
-            txtViewAirDate.text = listItem.air_date
+            txtViewName.text = listItem.name ?: ""
+            txtViewEpisode.text = listItem.episode ?: ""
+            txtViewAirDate.text = listItem.air_date ?: ""
+        }
+        if (holder.txtViewName.text == "") {
+            holder.cellProgressBar.visibility = View.VISIBLE
+        } else {
+            holder.cellProgressBar.visibility = View.GONE
         }
     }
 
@@ -36,8 +41,9 @@ class EpisodeRecyclerAdapter(private val context: Context, private val episodeLi
         val txtViewName: TextView = itemView.findViewById(R.id.textView_name)
         val txtViewEpisode: TextView = itemView.findViewById(R.id.textView_episode)
         val txtViewAirDate: TextView = itemView.findViewById(R.id.textView_airdate)
+        val cellProgressBar: ProgressBar = itemView.findViewById(R.id.cell_progressbar)
 
-        fun bind(listItem: Episode) {
+        fun bind(listItem: Episode?) {
             itemView.setOnClickListener {
                 itemClickListener.onItemClick(listItem)
             }
@@ -45,7 +51,7 @@ class EpisodeRecyclerAdapter(private val context: Context, private val episodeLi
 
         interface ItemClickListener {
 
-            fun onItemClick(episode: Episode)
+            fun onItemClick(episode: Episode?)
         }
     }
 }

@@ -17,7 +17,7 @@ import com.squareup.picasso.Picasso
 import jp.wasabeef.picasso.transformations.CropCircleTransformation
 import java.lang.Exception
 
-class CharacterPaginationRecyclerAdapter(context: Context, private val itemClickListener: CharacterViewHolder.ItemClickListener) :
+class CharacterPaginationRecyclerAdapter(private val itemClickListener: CharacterViewHolder.ItemClickListener) :
     PagingDataAdapter<Character, CharacterPaginationRecyclerAdapter.CharacterViewHolder>(
         DiffUtilCallback()
     ) {

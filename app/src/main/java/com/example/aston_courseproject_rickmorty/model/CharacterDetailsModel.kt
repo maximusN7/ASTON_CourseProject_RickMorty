@@ -84,7 +84,7 @@ class CharacterDetailsModel(characterID: Int) {
             }
 
             override fun onFailure(call: Call<MutableList<Episode>>, t: Throwable) {
-                Log.e("LocationDetailsModel", t.toString())
+                Log.e("CharacterDetailsModel", t.toString())
             }
 
         })
@@ -106,7 +106,7 @@ class CharacterDetailsModel(characterID: Int) {
         return episodeList
     }
 
-    fun separateIdFromUrl(urlArray: Array<String?>): String{
+    private fun separateIdFromUrl(urlArray: Array<String?>): String{
         var str = ""
         for (url in urlArray) {
             val baseUrl = "https://rickandmortyapi.com/api/episode/"

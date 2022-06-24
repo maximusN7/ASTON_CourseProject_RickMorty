@@ -34,6 +34,7 @@
     <string name="recycler_epiAirDate">Episode air date</string>
 
     <string name="recycler_filter">Show filter</string>
+    <string name="recycler_error">Unable to load information</string>
 
     <string name="content_description_avatar">Avatar</string>
     <string name="content_description_logo">Logo</string>

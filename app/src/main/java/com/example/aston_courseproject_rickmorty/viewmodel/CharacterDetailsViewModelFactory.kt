@@ -1,14 +1,16 @@
 package com.example.aston_courseproject_rickmorty.viewmodel
 
 import android.content.Context
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.aston_courseproject_rickmorty.MainViewModel
-import com.example.aston_courseproject_rickmorty.ResourceProvider
+import com.example.aston_courseproject_rickmorty.MainViewModelFactory
 
-class CharacterDetailsViewModelFactory(val characterID: Int) : ViewModelProvider.Factory {
+class CharacterDetailsViewModelFactory(private val characterID: Int, context: Context, owner: FragmentActivity) : ViewModelProvider.Factory {
+    private var mainViewModel: MainViewModel = ViewModelProvider(owner, MainViewModelFactory(context))[MainViewModel::class.java]
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return CharacterDetailsViewModel(characterID) as T
+        return CharacterDetailsViewModel(characterID, mainViewModel) as T
     }
 }

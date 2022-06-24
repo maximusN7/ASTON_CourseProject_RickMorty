@@ -5,8 +5,10 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -61,7 +63,14 @@ class EpisodeDetailsFragment : Fragment(), CharacterRecyclerAdapter.CharacterVie
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val detailsLayout = view.findViewById<ConstraintLayout>(R.id.episode_detailsLayout)
+        detailsLayout.visibility = View.INVISIBLE
+        val pbView = view.findViewById<ProgressBar>(R.id.progress)
+        pbView.visibility = View.VISIBLE
+
         viewModel.currentEpisode.observe(viewLifecycleOwner) {
+            detailsLayout.visibility = View.VISIBLE
+            pbView.visibility = View.GONE
             updateView(it)
         }
         viewModel.characterList.observe(viewLifecycleOwner) {
@@ -88,7 +97,6 @@ class EpisodeDetailsFragment : Fragment(), CharacterRecyclerAdapter.CharacterVie
         val sidePadding = 5
         val topPadding = 5
         val mAdapter = CharacterRecyclerAdapter(
-            (activity as AppCompatActivity),
             listForRecycler, this
         )
         recyclerCharacterList = requireView().findViewById(R.id.recycler_characters)
@@ -125,8 +133,8 @@ class EpisodeDetailsFragment : Fragment(), CharacterRecyclerAdapter.CharacterVie
             }
     }
 
-    override fun onItemClick(character: Character) {
-        val fragment: Fragment = CharacterDetailsFragment.newInstance(character.id!!)
+    override fun onItemClick(character: Character?) {
+        val fragment: Fragment = CharacterDetailsFragment.newInstance(character?.id!!)
         mainViewModel.changeCurrentDetailsFragment(fragment)
     }
 }

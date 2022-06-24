@@ -17,7 +17,6 @@ import com.example.aston_courseproject_rickmorty.R
 import com.example.aston_courseproject_rickmorty.model.Character
 import com.example.aston_courseproject_rickmorty.recycler_view.CharacterLoaderStateAdapter
 import com.example.aston_courseproject_rickmorty.recycler_view.CharacterPaginationRecyclerAdapter
-import com.example.aston_courseproject_rickmorty.utils.CharacterDiffUtilCallback
 import com.example.aston_courseproject_rickmorty.utils.RecyclerDecorator
 import com.example.aston_courseproject_rickmorty.viewmodel.CharacterViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -32,7 +31,7 @@ class CharacterFragment : Fragment(), CharacterPaginationRecyclerAdapter.Charact
 
     private lateinit var viewModel: CharacterViewModel
     private lateinit var mainViewModel: MainViewModel
-    private var listForRecycler: MutableList<Character> = mutableListOf()
+    //private var listForRecycler: MutableList<Character> = mutableListOf()
     private lateinit var recyclerCharacterList: RecyclerView
     /*private val mAdapter: CharacterPaginationRecyclerAdapter by lazy(LazyThreadSafetyMode.NONE) {
         CharacterPaginationRecyclerAdapter(requireContext(), this)
@@ -62,7 +61,7 @@ class CharacterFragment : Fragment(), CharacterPaginationRecyclerAdapter.Charact
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        mAdapter = CharacterPaginationRecyclerAdapter(requireContext(), this)
+        mAdapter = CharacterPaginationRecyclerAdapter(this)
         recyclerCharacterList = view.findViewById(R.id.recyclerView_characters)
         recyclerCharacterList.adapter = mAdapter.withLoadStateFooter(footer = CharacterLoaderStateAdapter())
         lifecycleScope.launchWhenCreated {
@@ -99,11 +98,11 @@ class CharacterFragment : Fragment(), CharacterPaginationRecyclerAdapter.Charact
         //notifyWithDiffUtil()
     }
 
-    private fun notifyWithDiffUtil() {
+    /*private fun notifyWithDiffUtil() {
         val characterDiffUtilCallback = CharacterDiffUtilCallback(emptyList(), listForRecycler)
         val characterDiffResult = DiffUtil.calculateDiff(characterDiffUtilCallback)
         recyclerCharacterList.adapter?.let { characterDiffResult.dispatchUpdatesTo(it) }
-    }
+    }*/
 
     companion object {
         /**

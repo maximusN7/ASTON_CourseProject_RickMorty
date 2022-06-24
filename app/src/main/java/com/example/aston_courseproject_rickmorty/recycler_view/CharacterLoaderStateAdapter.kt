@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
+import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.paging.LoadState
 import androidx.paging.LoadStateAdapter
@@ -49,7 +50,9 @@ class CharacterLoaderStateAdapter : LoadStateAdapter<CharacterLoaderStateAdapter
 
         override fun bind(loadState: LoadState) {
             val pbView = progressLayout.findViewById<ProgressBar>(R.id.pbLoader)
+            val pbError = progressLayout.findViewById<TextView>(R.id.textView_error)
             pbView.visibility = View.VISIBLE
+            pbError.visibility = View.GONE
         }
     }
 
@@ -67,7 +70,9 @@ class CharacterLoaderStateAdapter : LoadStateAdapter<CharacterLoaderStateAdapter
 
         override fun bind(loadState: LoadState) {
             val pbView = progressLayout.findViewById<ProgressBar>(R.id.pbLoader)
-            pbView.visibility = View.INVISIBLE
+            val pbError = progressLayout.findViewById<TextView>(R.id.textView_error)
+            pbView.visibility = View.GONE
+            pbError.visibility = View.VISIBLE
         }
     }
 
