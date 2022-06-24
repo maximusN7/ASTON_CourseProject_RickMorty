@@ -7,14 +7,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.aston_courseproject_rickmorty.MainViewModel
-import com.example.aston_courseproject_rickmorty.MainViewModelFactory
 import com.example.aston_courseproject_rickmorty.R
 import com.example.aston_courseproject_rickmorty.model.Character
 import com.example.aston_courseproject_rickmorty.model.Location
@@ -22,7 +21,7 @@ import com.example.aston_courseproject_rickmorty.recycler_view.CharacterRecycler
 import com.example.aston_courseproject_rickmorty.utils.CharacterDiffUtilCallback
 import com.example.aston_courseproject_rickmorty.utils.RecyclerDecorator
 import com.example.aston_courseproject_rickmorty.viewmodel.LocationDetailsViewModel
-import com.example.aston_courseproject_rickmorty.viewmodel.LocationDetailsViewModelFactory
+import com.example.aston_courseproject_rickmorty.viewmodel.factory.LocationDetailsViewModelFactory
 
 
 private const val ARG_LOCATION_ID = "locationId"
@@ -46,9 +45,8 @@ class LocationDetailsFragment : Fragment(), CharacterRecyclerAdapter.CharacterVi
             locationId = it.getInt(ARG_LOCATION_ID)
         }
 
-        viewModel = ViewModelProvider(this, LocationDetailsViewModelFactory(locationId!!))[LocationDetailsViewModel::class.java]
+        viewModel = ViewModelProvider(this, LocationDetailsViewModelFactory(locationId!!, requireContext(), requireActivity()))[LocationDetailsViewModel::class.java]
 
-        mainViewModel = ViewModelProvider(requireActivity(), MainViewModelFactory(requireContext()))[MainViewModel::class.java]
     }
 
     override fun onCreateView(
@@ -77,6 +75,16 @@ class LocationDetailsFragment : Fragment(), CharacterRecyclerAdapter.CharacterVi
             listForRecycler.clear()
             listForRecycler.addAll(it)
             notifyWithDiffUtil()
+        }
+
+        val swipeRefreshLayout = view.findViewById<SwipeRefreshLayout>(R.id.swipeRefreshLayout)
+        swipeRefreshLayout.setOnRefreshListener {
+
+            //TODO: add logic, when coroutines are enabled
+            this.viewModelStore.clear()
+            viewModel = ViewModelProvider(this, LocationDetailsViewModelFactory(locationId!!, requireContext(), requireActivity()))[LocationDetailsViewModel::class.java]
+
+            swipeRefreshLayout.isRefreshing = false
         }
     }
 
@@ -134,7 +142,6 @@ class LocationDetailsFragment : Fragment(), CharacterRecyclerAdapter.CharacterVi
     }
 
     override fun onItemClick(character: Character?) {
-        val fragment: Fragment = CharacterDetailsFragment.newInstance(character?.id!!)
-        mainViewModel.changeCurrentDetailsFragment(fragment)
+        viewModel.openFragment(character)
     }
 }

@@ -2,6 +2,7 @@ package com.example.aston_courseproject_rickmorty.viewmodel
 
 import android.os.Handler
 import android.os.Looper
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,12 +10,15 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import com.example.aston_courseproject_rickmorty.MainViewModel
+import com.example.aston_courseproject_rickmorty.fragments.CharacterDetailsFragment
+import com.example.aston_courseproject_rickmorty.fragments.EpisodeDetailsFragment
 import com.example.aston_courseproject_rickmorty.model.*
 import com.example.aston_courseproject_rickmorty.retrofit.Common
 import com.example.aston_courseproject_rickmorty.retrofit.RetrofitServices
 import kotlinx.coroutines.flow.Flow
 
-class EpisodeViewModel : ViewModel() {
+class EpisodeViewModel(val mainViewModel: MainViewModel) : ViewModel() {
 
     /*val episodeModel = EpisodeModel()
     val episodeList = MutableLiveData<MutableList<Episode>>()
@@ -28,8 +32,11 @@ class EpisodeViewModel : ViewModel() {
         )
     }*/
 
-    var retrofitServices: RetrofitServices = Common.retrofitService
-
     val episodeList: Flow<PagingData<Episode>> = Pager (PagingConfig(pageSize = 20, maxSize = 100),
-        pagingSourceFactory = { EpisodePagingSource(retrofitServices) }).flow.cachedIn(viewModelScope)
+        pagingSourceFactory = { EpisodePagingSource() }).flow.cachedIn(viewModelScope)
+
+    fun openFragment(episode: Episode?) {
+        val fragment: Fragment = EpisodeDetailsFragment.newInstance(episode?.id!!)
+        mainViewModel.changeCurrentDetailsFragment(fragment)
+    }
 }

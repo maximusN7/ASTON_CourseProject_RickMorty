@@ -3,9 +3,10 @@ package com.example.aston_courseproject_rickmorty.model
 import android.net.Uri
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import com.example.aston_courseproject_rickmorty.retrofit.Common
 import com.example.aston_courseproject_rickmorty.retrofit.RetrofitServices
 
-class EpisodePagingSource(private val mService: RetrofitServices): PagingSource<Int, Episode>() {
+class EpisodePagingSource : PagingSource<Int, Episode>() {
 
     override fun getRefreshKey(state: PagingState<Int, Episode>): Int? {
         val anchorPosition = state.anchorPosition ?: return null
@@ -14,6 +15,7 @@ class EpisodePagingSource(private val mService: RetrofitServices): PagingSource<
     }
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Episode> {
+        val mService: RetrofitServices = Common.retrofitService
         return try {
             val page: Int = params.key ?: FIRST_PAGE
             val response = mService.getEpisodePagingList(page)

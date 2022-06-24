@@ -11,14 +11,18 @@ import androidx.lifecycle.lifecycleScope
 import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.*
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.aston_courseproject_rickmorty.MainViewModel
-import com.example.aston_courseproject_rickmorty.MainViewModelFactory
 import com.example.aston_courseproject_rickmorty.R
 import com.example.aston_courseproject_rickmorty.model.Character
 import com.example.aston_courseproject_rickmorty.recycler_view.CharacterLoaderStateAdapter
 import com.example.aston_courseproject_rickmorty.recycler_view.CharacterPaginationRecyclerAdapter
+import com.example.aston_courseproject_rickmorty.utils.CharacterDiffUtilCallback
 import com.example.aston_courseproject_rickmorty.utils.RecyclerDecorator
+import com.example.aston_courseproject_rickmorty.viewmodel.CharacterDetailsViewModel
 import com.example.aston_courseproject_rickmorty.viewmodel.CharacterViewModel
+import com.example.aston_courseproject_rickmorty.viewmodel.factory.CharacterDetailsViewModelFactory
+import com.example.aston_courseproject_rickmorty.viewmodel.factory.CharacterViewModelFactory
 import kotlinx.coroutines.flow.collectLatest
 
 
@@ -27,33 +31,30 @@ import kotlinx.coroutines.flow.collectLatest
  * Use the [CharacterFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class CharacterFragment : Fragment(), CharacterPaginationRecyclerAdapter.CharacterViewHolder.ItemClickListener {
+class CharacterFragment : Fragment(),
+    CharacterPaginationRecyclerAdapter.CharacterViewHolder.ItemClickListener {
 
     private lateinit var viewModel: CharacterViewModel
     private lateinit var mainViewModel: MainViewModel
+
     //private var listForRecycler: MutableList<Character> = mutableListOf()
     private lateinit var recyclerCharacterList: RecyclerView
+
     /*private val mAdapter: CharacterPaginationRecyclerAdapter by lazy(LazyThreadSafetyMode.NONE) {
         CharacterPaginationRecyclerAdapter(requireContext(), this)
     }*/
     private lateinit var mAdapter: CharacterPaginationRecyclerAdapter
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let { }
-
-        viewModel = ViewModelProvider(this)[CharacterViewModel::class.java]
-
-        //mAdapter = CharacterPaginationRecyclerAdapter(this, this)
-
-        mainViewModel = ViewModelProvider(requireActivity(), MainViewModelFactory(requireContext()))[MainViewModel::class.java]
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_character, container, false)
     }
@@ -61,25 +62,25 @@ class CharacterFragment : Fragment(), CharacterPaginationRecyclerAdapter.Charact
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        mAdapter = CharacterPaginationRecyclerAdapter(this)
         recyclerCharacterList = view.findViewById(R.id.recyclerView_characters)
-        recyclerCharacterList.adapter = mAdapter.withLoadStateFooter(footer = CharacterLoaderStateAdapter())
-        lifecycleScope.launchWhenCreated {
-            viewModel.characterList.collectLatest {
-                mAdapter.submitData(it)
-            }
-        }
-        mAdapter.addLoadStateListener { state: CombinedLoadStates ->
-            recyclerCharacterList.visibility = if (state.refresh != LoadState.Loading) View.VISIBLE else View.GONE
-            val pbView = view.findViewById<ProgressBar>(R.id.progress)
-            pbView.visibility = if (state.refresh == LoadState.Loading) View.VISIBLE else View.GONE
-        }
+        mAdapter = CharacterPaginationRecyclerAdapter(this)
+
+        createViewModelUpdateAdapter()
 
         initRecyclerView()
 
+        val swipeRefreshLayout = view.findViewById<SwipeRefreshLayout>(R.id.swipeRefreshLayout)
+        swipeRefreshLayout.setOnRefreshListener {
+            this.viewModelStore.clear()
+
+            createViewModelUpdateAdapter()
+
+            swipeRefreshLayout.isRefreshing = false
+        }
+
         //viewModel.characterList.observe(viewLifecycleOwner) {
-            //listForRecycler.addAll(it)
-            //notifyWithDiffUtil()
+        //listForRecycler.addAll(it)
+        //notifyWithDiffUtil()
         //}
 
     }
@@ -88,6 +89,8 @@ class CharacterFragment : Fragment(), CharacterPaginationRecyclerAdapter.Charact
         val sidePadding = 5
         val topPadding = 5
         //recyclerCharacterList = requireView().findViewById(R.id.recyclerView_characters)
+        recyclerCharacterList.adapter =
+            mAdapter.withLoadStateFooter(footer = CharacterLoaderStateAdapter())
         recyclerCharacterList.apply {
             setHasFixedSize(true)
             layoutManager = GridLayoutManager(context, 2)
@@ -96,6 +99,24 @@ class CharacterFragment : Fragment(), CharacterPaginationRecyclerAdapter.Charact
         }
 
         //notifyWithDiffUtil()
+    }
+
+    private fun createViewModelUpdateAdapter() {
+        viewModel = ViewModelProvider(
+            this,
+            CharacterViewModelFactory(requireContext(), requireActivity())
+        )[CharacterViewModel::class.java]
+        lifecycleScope.launchWhenCreated {
+            viewModel.characterList.collectLatest {
+                mAdapter.submitData(it)
+            }
+        }
+        mAdapter.addLoadStateListener { state: CombinedLoadStates ->
+            recyclerCharacterList.visibility =
+                if (state.refresh != LoadState.Loading) View.VISIBLE else View.GONE
+            val pbView = view?.findViewById<ProgressBar>(R.id.progress)
+            pbView?.visibility = if (state.refresh == LoadState.Loading) View.VISIBLE else View.GONE
+        }
     }
 
     /*private fun notifyWithDiffUtil() {
@@ -119,7 +140,6 @@ class CharacterFragment : Fragment(), CharacterPaginationRecyclerAdapter.Charact
     }
 
     override fun onItemClick(character: Character?) {
-        val fragment: Fragment = CharacterDetailsFragment.newInstance(character?.id!!)
-        mainViewModel.changeCurrentDetailsFragment(fragment)
+        viewModel.openFragment(character)
     }
 }

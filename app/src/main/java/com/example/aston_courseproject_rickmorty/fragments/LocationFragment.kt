@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.CombinedLoadStates
@@ -14,17 +13,16 @@ import androidx.paging.LoadState
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.aston_courseproject_rickmorty.MainViewModel
-import com.example.aston_courseproject_rickmorty.MainViewModelFactory
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.aston_courseproject_rickmorty.R
 import com.example.aston_courseproject_rickmorty.model.Location
 import com.example.aston_courseproject_rickmorty.recycler_view.CharacterLoaderStateAdapter
-import com.example.aston_courseproject_rickmorty.recycler_view.EpisodePaginationRecyclerAdapter
 import com.example.aston_courseproject_rickmorty.recycler_view.LocationPaginationRecyclerAdapter
 import com.example.aston_courseproject_rickmorty.recycler_view.LocationRecyclerAdapter
 import com.example.aston_courseproject_rickmorty.utils.LocationDiffUtilCallback
 import com.example.aston_courseproject_rickmorty.utils.RecyclerDecorator
 import com.example.aston_courseproject_rickmorty.viewmodel.LocationViewModel
+import com.example.aston_courseproject_rickmorty.viewmodel.factory.LocationViewModelFactory
 import kotlinx.coroutines.flow.collectLatest
 
 
@@ -36,7 +34,6 @@ import kotlinx.coroutines.flow.collectLatest
 class LocationFragment : Fragment(), LocationPaginationRecyclerAdapter.LocationViewHolder.ItemClickListener {
 
     private lateinit var viewModel: LocationViewModel
-    private lateinit var mainViewModel: MainViewModel
     private var listForRecycler: MutableList<Location> = mutableListOf()
     private lateinit var recyclerLocationList: RecyclerView
     private lateinit var mAdapter: LocationPaginationRecyclerAdapter
@@ -44,19 +41,12 @@ class LocationFragment : Fragment(), LocationPaginationRecyclerAdapter.LocationV
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let { }
-
-        viewModel = ViewModelProvider(this)[LocationViewModel::class.java]
-
-        //mAdapter = LocationPaginationRecyclerAdapter(this)
-
-        mainViewModel = ViewModelProvider(requireActivity(), MainViewModelFactory(requireContext()))[MainViewModel::class.java]
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_location, container, false)
     }
@@ -64,21 +54,21 @@ class LocationFragment : Fragment(), LocationPaginationRecyclerAdapter.LocationV
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        mAdapter = LocationPaginationRecyclerAdapter(this)
         recyclerLocationList = view.findViewById(R.id.recyclerView_locations)
-        recyclerLocationList.adapter = mAdapter.withLoadStateFooter(CharacterLoaderStateAdapter())
-        lifecycleScope.launchWhenCreated {
-            viewModel.locationList.collectLatest {
-                mAdapter.submitData(it)
-            }
-        }
-        mAdapter.addLoadStateListener { state: CombinedLoadStates ->
-            recyclerLocationList.visibility = if (state.refresh != LoadState.Loading) View.VISIBLE else View.GONE
-            val pbView = view.findViewById<ProgressBar>(R.id.progress)
-            pbView.visibility = if (state.refresh == LoadState.Loading) View.VISIBLE else View.GONE
-        }
+        mAdapter = LocationPaginationRecyclerAdapter(this)
+
+        createViewModelUpdateAdapter()
 
         initRecyclerView()
+
+        val swipeRefreshLayout = view.findViewById<SwipeRefreshLayout>(R.id.swipeRefreshLayout)
+        swipeRefreshLayout.setOnRefreshListener {
+            this.viewModelStore.clear()
+
+            createViewModelUpdateAdapter()
+
+            swipeRefreshLayout.isRefreshing = false
+        }
 
         /*viewModel.locationList.observe(viewLifecycleOwner) {
             listForRecycler.addAll(it)
@@ -95,6 +85,7 @@ class LocationFragment : Fragment(), LocationPaginationRecyclerAdapter.LocationV
             listForRecycler, this
         )*/
         //recyclerLocationList = requireView().findViewById(R.id.recyclerView_locations)
+        recyclerLocationList.adapter = mAdapter.withLoadStateFooter(CharacterLoaderStateAdapter())
         recyclerLocationList.apply {
             setHasFixedSize(true)
             layoutManager = mLayoutManager
@@ -102,13 +93,31 @@ class LocationFragment : Fragment(), LocationPaginationRecyclerAdapter.LocationV
             //adapter = mAdapter
         }
 
-        notifyWithDiffUtil()
+        //notifyWithDiffUtil()
     }
 
-    private fun notifyWithDiffUtil() {
+    /*private fun notifyWithDiffUtil() {
         val locationDiffUtilCallback = LocationDiffUtilCallback(emptyList(), listForRecycler)
         val locationDiffResult = DiffUtil.calculateDiff(locationDiffUtilCallback)
         recyclerLocationList.adapter?.let { locationDiffResult.dispatchUpdatesTo(it) }
+    }*/
+
+    private fun createViewModelUpdateAdapter() {
+        viewModel = ViewModelProvider(
+            this,
+            LocationViewModelFactory(requireContext(), requireActivity())
+        )[LocationViewModel::class.java]
+        lifecycleScope.launchWhenCreated {
+            viewModel.locationList.collectLatest {
+                mAdapter.submitData(it)
+            }
+        }
+        mAdapter.addLoadStateListener { state: CombinedLoadStates ->
+            recyclerLocationList.visibility =
+                if (state.refresh != LoadState.Loading) View.VISIBLE else View.GONE
+            val pbView = view?.findViewById<ProgressBar>(R.id.progress)
+            pbView?.visibility = if (state.refresh == LoadState.Loading) View.VISIBLE else View.GONE
+        }
     }
 
     companion object {
@@ -126,7 +135,6 @@ class LocationFragment : Fragment(), LocationPaginationRecyclerAdapter.LocationV
     }
 
     override fun onItemClick(location: Location?) {
-        val fragment: Fragment = LocationDetailsFragment.newInstance(location?.id!!)
-        mainViewModel.changeCurrentDetailsFragment(fragment)
+        viewModel.openFragment(location)
     }
 }
