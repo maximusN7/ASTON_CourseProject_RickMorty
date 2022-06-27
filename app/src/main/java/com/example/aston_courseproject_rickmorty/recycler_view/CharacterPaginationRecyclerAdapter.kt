@@ -1,6 +1,5 @@
 package com.example.aston_courseproject_rickmorty.recycler_view
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,7 +23,7 @@ class CharacterPaginationRecyclerAdapter(private val itemClickListener: Characte
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CharacterViewHolder {
-        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.character_cell, parent, false)
+        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.cell_character, parent, false)
         return CharacterViewHolder(itemView, itemClickListener)
     }
 

@@ -38,4 +38,43 @@
 
     <string name="content_description_avatar">Avatar</string>
     <string name="content_description_logo">Logo</string>
+
+
+
+    <string name="filter_apply">Apply filters</string>
+
+    <string name="filter_character">Character Filters</string>
+    <string name="filter_character_name">enter characters name</string>
+    <string name="filter_character_status">filter by status</string>
+    <string name="filter_character_species">filter by species</string>
+    <string name="filter_character_type">filter by type</string>
+    <string name="filter_character_gender">filter by gender</string>
+
+    <string name="filter_character_status_alive">alive</string>
+    <string name="filter_character_status_dead">dead</string>
+    <string name="filter_character_status_unknown">unknown</string>
+
+    <string name="filter_character_species_edit">type in species</string>
+    <string name="filter_character_type_edit">type in type</string>
+
+    <string name="filter_character_gender_female">female</string>
+    <string name="filter_character_gender_male">male</string>
+    <string name="filter_character_gender_genderless">genderless</string>
+    <string name="filter_character_gender_unknown">unknown</string>
+
+
+    <string name="filter_location">Location Filters</string>
+    <string name="filter_location_name">enter locations name</string>
+    <string name="filter_location_type">filter by type</string>
+    <string name="filter_location_dimension">filter by dimension</string>
+
+    <string name="filter_location_type_edit">type in type</string>
+    <string name="filter_location_dimension_edit">type in dimension</string>
+
+
+    <string name="filter_episode">Episode Filters</string>
+    <string name="filter_episode_name">enter episodes name</string>
+    <string name="filter_episode_episode">filter by episode code</string>
+
+    <string name="filter_episode_episode_edit">type in code</string>
 </resources>

@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ProgressBar
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -68,6 +69,11 @@ class LocationFragment : Fragment(), LocationPaginationRecyclerAdapter.LocationV
             createViewModelUpdateAdapter()
 
             swipeRefreshLayout.isRefreshing = false
+        }
+
+        val filterButton = view.findViewById<Button>(R.id.button_filter)
+        filterButton.setOnClickListener {
+            viewModel.openFilterDialog()
         }
 
         /*viewModel.locationList.observe(viewLifecycleOwner) {

@@ -13,12 +13,14 @@ import androidx.paging.cachedIn
 import com.example.aston_courseproject_rickmorty.MainViewModel
 import com.example.aston_courseproject_rickmorty.fragments.CharacterDetailsFragment
 import com.example.aston_courseproject_rickmorty.fragments.LocationDetailsFragment
+import com.example.aston_courseproject_rickmorty.fragments.dialogs.EpisodeFilterDialog
+import com.example.aston_courseproject_rickmorty.fragments.dialogs.LocationFilterDialog
 import com.example.aston_courseproject_rickmorty.model.*
 import com.example.aston_courseproject_rickmorty.retrofit.Common
 import com.example.aston_courseproject_rickmorty.retrofit.RetrofitServices
 import kotlinx.coroutines.flow.Flow
 
-class LocationViewModel(val mainViewModel: MainViewModel) : ViewModel() {
+class LocationViewModel(val mainViewModel: MainViewModel, private val dialogProcessor: LocationFilterDialog) : ViewModel() {
 
     /*val locationModel = LocationModel()
     val locationList = MutableLiveData<MutableList<Location>>()
@@ -38,5 +40,9 @@ class LocationViewModel(val mainViewModel: MainViewModel) : ViewModel() {
     fun openFragment(location: Location?) {
         val fragment: Fragment = LocationDetailsFragment.newInstance(location?.id!!)
         mainViewModel.changeCurrentDetailsFragment(fragment)
+    }
+
+    fun openFilterDialog() {
+        dialogProcessor.showDialog()
     }
 }

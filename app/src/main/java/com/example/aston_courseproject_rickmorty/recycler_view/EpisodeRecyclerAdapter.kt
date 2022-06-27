@@ -14,7 +14,7 @@ class EpisodeRecyclerAdapter(private val episodeList: MutableList<Episode>, val 
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EpisodeViewHolder {
-        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.episode_cell, parent, false)
+        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.cell_episode, parent, false)
         return EpisodeViewHolder(itemView, itemClickListener)
     }
 
