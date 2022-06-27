@@ -1,7 +1,6 @@
 package com.example.aston_courseproject_rickmorty.recycler_view
 
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,7 +15,7 @@ class LocationRecyclerAdapter(private val context: Context, private val location
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LocationViewHolder {
-        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.location_cell, parent, false)
+        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.cell_location, parent, false)
         return LocationViewHolder(itemView, itemClickListener)
     }
 

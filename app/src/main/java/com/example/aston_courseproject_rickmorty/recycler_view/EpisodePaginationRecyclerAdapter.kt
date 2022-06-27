@@ -18,7 +18,7 @@ class EpisodePaginationRecyclerAdapter(private val itemClickListener: EpisodeVie
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EpisodeViewHolder {
-        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.episode_cell, parent, false)
+        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.cell_episode, parent, false)
         return EpisodeViewHolder(itemView, itemClickListener)
     }
 

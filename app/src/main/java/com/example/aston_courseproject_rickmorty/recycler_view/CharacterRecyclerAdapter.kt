@@ -20,7 +20,7 @@ class CharacterRecyclerAdapter(private val characterList: MutableList<Character>
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CharacterViewHolder {
-        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.character_cell, parent, false)
+        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.cell_character, parent, false)
         return CharacterViewHolder(itemView, itemClickListener)
     }
 

@@ -18,7 +18,7 @@ class LocationPaginationRecyclerAdapter(private val itemClickListener: LocationV
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LocationViewHolder {
-        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.location_cell, parent, false)
+        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.cell_location, parent, false)
         return LocationViewHolder(itemView, itemClickListener)
     }
 

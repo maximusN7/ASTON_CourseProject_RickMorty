@@ -13,4 +13,27 @@
         <item name="android:windowBackground">@drawable/drawable_splash</item>
         <!-- Customize your theme here. -->
     </style>
+
+    <style name="Dialog" parent="Theme.AppCompat.Dialog.Alert">
+        <item name="android:windowNoTitle">false</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="checkboxStyle">@style/CheckBoxDialog</item>
+        <item name="radioButtonStyle">@style/RadioBoxDialog</item>
+        <item name="editTextStyle">@style/EditTextDialog</item>
+    </style>
+
+    <style name="CheckBoxDialog" parent="Widget.AppCompat.CompoundButton.CheckBox">
+        <item name="android:textColor">@color/black</item>
+        <item name="buttonTint">@color/black</item>
+    </style>
+    <style name="RadioBoxDialog" parent="Widget.AppCompat.CompoundButton.RadioButton">
+        <item name="android:textColor">@color/black</item>
+        <item name="buttonTint">@color/black</item>
+    </style>
+    <style name="EditTextDialog" parent="Widget.AppCompat.EditText">
+        <item name="android:textColorHint">@color/gray</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="backgroundTint">@color/black</item>
+    </style>
 </resources>

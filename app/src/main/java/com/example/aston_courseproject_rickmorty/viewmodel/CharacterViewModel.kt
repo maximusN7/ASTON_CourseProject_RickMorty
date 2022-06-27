@@ -13,26 +13,28 @@ import androidx.paging.cachedIn
 import com.example.aston_courseproject_rickmorty.MainViewModel
 import com.example.aston_courseproject_rickmorty.fragments.CharacterDetailsFragment
 import com.example.aston_courseproject_rickmorty.fragments.EpisodeDetailsFragment
+import com.example.aston_courseproject_rickmorty.fragments.dialogs.CharacterFilterDialog
 import com.example.aston_courseproject_rickmorty.model.Character
 import com.example.aston_courseproject_rickmorty.model.CharacterModel
 import com.example.aston_courseproject_rickmorty.model.CharacterPagingSource
 import com.example.aston_courseproject_rickmorty.model.Episode
 import kotlinx.coroutines.flow.Flow
 
-class CharacterViewModel(val mainViewModel: MainViewModel) : ViewModel() {
+class CharacterViewModel(val mainViewModel: MainViewModel, private val dialogProcessor: CharacterFilterDialog) : ViewModel() {
     /*val characterModel = CharacterModel()
     val characterList = MutableLiveData<MutableList<Character>>()
     var retrofitServices: RetrofitServices
-
+*/
     init {
+        /*
         retrofitServices = Common.retrofitService
         Handler(Looper.getMainLooper()).postDelayed(
             {
                 characterList.value = characterModel.getCharacterList()
             },
             1000 // value in milliseconds
-        )
-    }*/
+        )*/
+    }
 
     val characterList: Flow<PagingData<Character>> = Pager (PagingConfig(pageSize = 20, maxSize = 120),
         pagingSourceFactory = {CharacterPagingSource()}).flow.cachedIn(viewModelScope)
@@ -40,5 +42,9 @@ class CharacterViewModel(val mainViewModel: MainViewModel) : ViewModel() {
     fun openFragment(character: Character?) {
         val fragment: Fragment = CharacterDetailsFragment.newInstance(character?.id!!)
         mainViewModel.changeCurrentDetailsFragment(fragment)
+    }
+
+    fun openFilterDialog() {
+        dialogProcessor.showDialog()
     }
 }
