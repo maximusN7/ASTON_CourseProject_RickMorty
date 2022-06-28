@@ -1,45 +1,24 @@
 package com.example.aston_courseproject_rickmorty.viewmodel
 
-import android.os.Handler
-import android.os.Looper
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
-import androidx.paging.PagingData
-import androidx.paging.cachedIn
+import androidx.paging.*
 import com.example.aston_courseproject_rickmorty.MainViewModel
 import com.example.aston_courseproject_rickmorty.fragments.CharacterDetailsFragment
-import com.example.aston_courseproject_rickmorty.fragments.EpisodeDetailsFragment
 import com.example.aston_courseproject_rickmorty.fragments.dialogs.CharacterFilterDialog
-import com.example.aston_courseproject_rickmorty.model.Character
-import com.example.aston_courseproject_rickmorty.model.CharacterModel
-import com.example.aston_courseproject_rickmorty.model.CharacterPagingSource
-import com.example.aston_courseproject_rickmorty.model.Episode
-import kotlinx.coroutines.flow.Flow
+import com.example.aston_courseproject_rickmorty.model.CharacterForList
+import com.example.aston_courseproject_rickmorty.model.database.CharacterDatabase
+import com.example.aston_courseproject_rickmorty.repository.CharacterRepository
+import com.example.aston_courseproject_rickmorty.retrofit.Common
+import com.example.aston_courseproject_rickmorty.retrofit.RetrofitServices
 
-class CharacterViewModel(val mainViewModel: MainViewModel, private val dialogProcessor: CharacterFilterDialog) : ViewModel() {
-    /*val characterModel = CharacterModel()
-    val characterList = MutableLiveData<MutableList<Character>>()
-    var retrofitServices: RetrofitServices
-*/
-    init {
-        /*
-        retrofitServices = Common.retrofitService
-        Handler(Looper.getMainLooper()).postDelayed(
-            {
-                characterList.value = characterModel.getCharacterList()
-            },
-            1000 // value in milliseconds
-        )*/
-    }
+@ExperimentalPagingApi
+class CharacterViewModel(val mainViewModel: MainViewModel, private val dialogProcessor: CharacterFilterDialog, val database: CharacterDatabase) : BaseCharacterViewModel() {
 
-    val characterList: Flow<PagingData<Character>> = Pager (PagingConfig(pageSize = 20, maxSize = 120),
-        pagingSourceFactory = {CharacterPagingSource()}).flow.cachedIn(viewModelScope)
+    var retrofitServices: RetrofitServices = Common.retrofitService
+    private val repository = CharacterRepository(retrofitServices, database)
+    override val dataSource = repository.getCharactersFromMediator()
 
-    fun openFragment(character: Character?) {
+    fun openFragment(character: CharacterForList?) {
         val fragment: Fragment = CharacterDetailsFragment.newInstance(character?.id!!)
         mainViewModel.changeCurrentDetailsFragment(fragment)
     }

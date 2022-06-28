@@ -5,12 +5,13 @@ import android.os.Looper
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.paging.ExperimentalPagingApi
 import com.example.aston_courseproject_rickmorty.MainViewModel
 import com.example.aston_courseproject_rickmorty.fragments.CharacterDetailsFragment
 import com.example.aston_courseproject_rickmorty.model.Character
 import com.example.aston_courseproject_rickmorty.model.Location
 import com.example.aston_courseproject_rickmorty.model.LocationDetailsModel
-
+@ExperimentalPagingApi
 class LocationDetailsViewModel(locationID: Int, val mainViewModel: MainViewModel) : ViewModel() {
     val locationModel = LocationDetailsModel(locationID)
     val currentLocation = MutableLiveData<Location>()

@@ -10,6 +10,7 @@ import android.widget.ProgressBar
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.CombinedLoadStates
+import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.GridLayoutManager
@@ -33,6 +34,7 @@ import kotlinx.coroutines.flow.collectLatest
  * Use the [EpisodeFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
+@ExperimentalPagingApi
 class EpisodeFragment : Fragment(),
     EpisodePaginationRecyclerAdapter.EpisodeViewHolder.ItemClickListener {
 

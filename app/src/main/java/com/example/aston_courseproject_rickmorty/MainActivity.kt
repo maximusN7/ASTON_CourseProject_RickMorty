@@ -5,12 +5,13 @@ import android.os.Bundle
 import android.view.MenuItem
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
+import androidx.paging.ExperimentalPagingApi
 import com.example.aston_courseproject_rickmorty.fragments.CharacterFragment
 import com.example.aston_courseproject_rickmorty.fragments.EpisodeFragment
 import com.example.aston_courseproject_rickmorty.fragments.LocationFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
-
+@ExperimentalPagingApi
 class MainActivity : AppCompatActivity() {
 
     private lateinit var viewModel: MainViewModel
@@ -52,11 +53,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-//        val connectivityManager = this.getSystemService(
-//            Context.CONNECTIVITY_SERVICE
-//        ) as ConnectivityManager
-//        if (connectivityManager.activeNetworkInfo?.isConnected!!) Log.e("AAA", "connected") else Log.e("AAA", "not connected")
-
         val bottomNavigation = findViewById<BottomNavigationView>(R.id.bottom_navigation)
         bottomNavigation.setOnItemSelectedListener {
             when (it.itemId) {
@@ -80,7 +76,6 @@ class MainActivity : AppCompatActivity() {
         when (item.itemId) {
             android.R.id.home -> {
                 onBackPressed()
-                checkFragment()
                 return true
             }
         }
@@ -97,5 +92,4 @@ class MainActivity : AppCompatActivity() {
         val currentFragment = supportFragmentManager.findFragmentByTag("current_main_fragment")
         viewModel.checkFragment(currentFragment!!)
     }
-
 }

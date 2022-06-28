@@ -5,11 +5,13 @@ import android.os.Looper
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.paging.ExperimentalPagingApi
 import com.example.aston_courseproject_rickmorty.MainViewModel
 import com.example.aston_courseproject_rickmorty.fragments.CharacterDetailsFragment
 import com.example.aston_courseproject_rickmorty.fragments.EpisodeDetailsFragment
 import com.example.aston_courseproject_rickmorty.model.*
 
+@ExperimentalPagingApi
 class EpisodeDetailsViewModel(episodeID: Int, val mainViewModel: MainViewModel) : ViewModel() {
     val episodeModel = EpisodeDetailsModel(episodeID)
     val currentEpisode = MutableLiveData<Episode>()

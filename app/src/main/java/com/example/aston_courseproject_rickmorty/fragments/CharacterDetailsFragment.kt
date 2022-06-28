@@ -11,6 +11,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.ViewModelProvider
+import androidx.paging.ExperimentalPagingApi
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -39,6 +40,7 @@ private const val ARG_CHARACTER_ID = "characterId"
  * Use the [CharacterDetailsFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
+@ExperimentalPagingApi
 class CharacterDetailsFragment : Fragment(), EpisodeRecyclerAdapter.EpisodeViewHolder.ItemClickListener, LocationRecyclerAdapter.LocationViewHolder.ItemClickListener {
     private var characterId: Int? = null
 

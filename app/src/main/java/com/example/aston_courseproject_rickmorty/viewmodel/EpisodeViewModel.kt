@@ -6,10 +6,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
-import androidx.paging.PagingData
-import androidx.paging.cachedIn
+import androidx.paging.*
 import com.example.aston_courseproject_rickmorty.MainViewModel
 import com.example.aston_courseproject_rickmorty.fragments.CharacterDetailsFragment
 import com.example.aston_courseproject_rickmorty.fragments.EpisodeDetailsFragment
@@ -19,7 +16,7 @@ import com.example.aston_courseproject_rickmorty.model.*
 import com.example.aston_courseproject_rickmorty.retrofit.Common
 import com.example.aston_courseproject_rickmorty.retrofit.RetrofitServices
 import kotlinx.coroutines.flow.Flow
-
+@ExperimentalPagingApi
 class EpisodeViewModel(val mainViewModel: MainViewModel, private val dialogProcessor: EpisodeFilterDialog) : ViewModel() {
 
     /*val episodeModel = EpisodeModel()

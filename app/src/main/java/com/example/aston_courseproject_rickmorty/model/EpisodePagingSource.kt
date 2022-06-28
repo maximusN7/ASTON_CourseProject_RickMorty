@@ -19,7 +19,7 @@ class EpisodePagingSource : PagingSource<Int, Episode>() {
         return try {
             val page: Int = params.key ?: FIRST_PAGE
             val response = mService.getEpisodePagingList(page)
-            val prevPageNumber: Int? = if (page == 1) null else page - 1
+            val prevPageNumber: Int? = if (page == FIRST_PAGE) null else page - 1
             val nextPageNumber: Int? = if (response.info.next != null) {
                 val uriNext = Uri.parse(response.info.next)
                 val nextPageQuery = uriNext.getQueryParameter("page")
