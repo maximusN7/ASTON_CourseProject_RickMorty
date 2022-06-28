@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.aston_courseproject_rickmorty.R
 import com.example.aston_courseproject_rickmorty.model.Episode
+import com.example.aston_courseproject_rickmorty.model.EpisodeForList
 import com.example.aston_courseproject_rickmorty.recycler_view.CharacterLoaderStateAdapter
 import com.example.aston_courseproject_rickmorty.recycler_view.CharacterPaginationRecyclerAdapter
 import com.example.aston_courseproject_rickmorty.recycler_view.EpisodePaginationRecyclerAdapter
@@ -39,7 +40,6 @@ class EpisodeFragment : Fragment(),
     EpisodePaginationRecyclerAdapter.EpisodeViewHolder.ItemClickListener {
 
     private lateinit var viewModel: EpisodeViewModel
-    private var listForRecycler: MutableList<Episode> = mutableListOf()
     private lateinit var recyclerEpisodeList: RecyclerView
     private lateinit var mAdapter: EpisodePaginationRecyclerAdapter
 
@@ -79,36 +79,27 @@ class EpisodeFragment : Fragment(),
         filterButton.setOnClickListener {
             viewModel.openFilterDialog()
         }
-
-        /*viewModel.episodeList.observe(viewLifecycleOwner) {
-            listForRecycler.addAll(it)
-            notifyWithDiffUtil()
-        }*/
-
     }
 
     private fun initRecyclerView() {
         val sidePadding = 5
         val topPadding = 5
-        //val mAdapter = EpisodeRecyclerAdapter((activity as AppCompatActivity), listForRecycler, this)
         recyclerEpisodeList.adapter = mAdapter.withLoadStateFooter(CharacterLoaderStateAdapter())
         recyclerEpisodeList.apply {
             setHasFixedSize(true)
             layoutManager = GridLayoutManager(context, 2)
             addItemDecoration(RecyclerDecorator(sidePadding, topPadding))
-            //adapter = mAdapter
         }
-
-        //notifyWithDiffUtil()
     }
 
     private fun createViewModelUpdateAdapter() {
+        val appContext = activity?.applicationContext
         viewModel = ViewModelProvider(
             this,
-            EpisodeViewModelFactory(requireContext(), requireActivity())
+            EpisodeViewModelFactory(requireContext(), appContext!!, requireActivity())
         )[EpisodeViewModel::class.java]
         lifecycleScope.launchWhenCreated {
-            viewModel.episodeList.collectLatest {
+            viewModel.episodes.collectLatest {
                 mAdapter.submitData(it)
             }
         }
@@ -140,7 +131,7 @@ class EpisodeFragment : Fragment(),
             }
     }
 
-    override fun onItemClick(episode: Episode?) {
+    override fun onItemClick(episode: EpisodeForList?) {
         viewModel.openFragment(episode)
     }
 }

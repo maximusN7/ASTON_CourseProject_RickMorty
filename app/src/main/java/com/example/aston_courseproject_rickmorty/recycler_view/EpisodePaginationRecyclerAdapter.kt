@@ -10,9 +10,10 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.aston_courseproject_rickmorty.R
 import com.example.aston_courseproject_rickmorty.model.Episode
+import com.example.aston_courseproject_rickmorty.model.EpisodeForList
 
 class EpisodePaginationRecyclerAdapter(private val itemClickListener: EpisodeViewHolder.ItemClickListener) :
-    PagingDataAdapter<Episode, EpisodePaginationRecyclerAdapter.EpisodeViewHolder>(
+    PagingDataAdapter<EpisodeForList, EpisodePaginationRecyclerAdapter.EpisodeViewHolder>(
         DiffUtilCallback()
     ) {
 
@@ -44,7 +45,7 @@ class EpisodePaginationRecyclerAdapter(private val itemClickListener: EpisodeVie
         val txtViewAirDate: TextView = itemView.findViewById(R.id.textView_airdate)
         val cellProgressBar: ProgressBar = itemView.findViewById(R.id.cell_progressbar)
 
-        fun bind(listItem: Episode?) {
+        fun bind(listItem: EpisodeForList?) {
             itemView.setOnClickListener {
                 itemClickListener.onItemClick(listItem)
             }
@@ -52,16 +53,16 @@ class EpisodePaginationRecyclerAdapter(private val itemClickListener: EpisodeVie
 
         interface ItemClickListener {
 
-            fun onItemClick(episode: Episode?)
+            fun onItemClick(episode: EpisodeForList?)
         }
     }
 
-    class DiffUtilCallback : DiffUtil.ItemCallback<Episode>() {
-        override fun areItemsTheSame(oldItem: Episode, newItem: Episode): Boolean {
+    class DiffUtilCallback : DiffUtil.ItemCallback<EpisodeForList>() {
+        override fun areItemsTheSame(oldItem: EpisodeForList, newItem: EpisodeForList): Boolean {
             return oldItem.id == newItem.id
         }
 
-        override fun areContentsTheSame(oldItem: Episode, newItem: Episode): Boolean {
+        override fun areContentsTheSame(oldItem: EpisodeForList, newItem: EpisodeForList): Boolean {
             return (oldItem.name == newItem.name
                     && oldItem.episode == newItem.episode
                     && oldItem.air_date == newItem.air_date)

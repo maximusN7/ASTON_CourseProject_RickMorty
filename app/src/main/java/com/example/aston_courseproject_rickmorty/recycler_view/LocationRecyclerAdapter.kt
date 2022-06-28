@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.aston_courseproject_rickmorty.R
 import com.example.aston_courseproject_rickmorty.model.Location
 
-class LocationRecyclerAdapter(private val context: Context, private val locationList: MutableList<Location>, val itemClickListener: LocationViewHolder.ItemClickListener) :
+class LocationRecyclerAdapter(private val locationList: MutableList<Location>, val itemClickListener: LocationViewHolder.ItemClickListener) :
     RecyclerView.Adapter<LocationRecyclerAdapter.LocationViewHolder>() {
 
 

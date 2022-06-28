@@ -170,7 +170,6 @@ class CharacterDetailsFragment : Fragment(), EpisodeRecyclerAdapter.EpisodeViewH
         val sidePadding = 5
         val topPadding = 5
         val mAdapter = LocationRecyclerAdapter(
-            (activity as AppCompatActivity),
             listForRecyclerOrigin, this
         )
         recyclerOrigin= requireView().findViewById(R.id.recycler_origin)
@@ -189,7 +188,6 @@ class CharacterDetailsFragment : Fragment(), EpisodeRecyclerAdapter.EpisodeViewH
         val sidePadding = 5
         val topPadding = 5
         val mAdapter = LocationRecyclerAdapter(
-            (activity as AppCompatActivity),
             listForRecyclerLocation, this
         )
         recyclerLocation = requireView().findViewById(R.id.recycler_location)

@@ -1,17 +1,16 @@
 package com.example.aston_courseproject_rickmorty.repository
 
 import androidx.paging.*
-import com.example.aston_courseproject_rickmorty.model.Character
 import com.example.aston_courseproject_rickmorty.model.CharacterForList
 import com.example.aston_courseproject_rickmorty.model.CharacterPagingSource
-import com.example.aston_courseproject_rickmorty.model.database.CharacterDatabase
+import com.example.aston_courseproject_rickmorty.model.database.ItemsDatabase
 import com.example.aston_courseproject_rickmorty.model.database.CharacterRemoteMediator
 import com.example.aston_courseproject_rickmorty.retrofit.RetrofitServices
 import kotlinx.coroutines.flow.Flow
 
 class CharacterRepository(
     private val mService: RetrofitServices,
-    private val database: CharacterDatabase
+    private val database: ItemsDatabase
 ) {
 
     @ExperimentalPagingApi

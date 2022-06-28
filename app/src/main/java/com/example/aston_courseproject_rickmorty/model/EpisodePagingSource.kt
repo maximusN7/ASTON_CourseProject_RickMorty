@@ -6,20 +6,20 @@ import androidx.paging.PagingState
 import com.example.aston_courseproject_rickmorty.retrofit.Common
 import com.example.aston_courseproject_rickmorty.retrofit.RetrofitServices
 
-class EpisodePagingSource : PagingSource<Int, Episode>() {
+class EpisodePagingSource(private val mService: RetrofitServices) : PagingSource<Int, EpisodeForList>() {
 
-    override fun getRefreshKey(state: PagingState<Int, Episode>): Int? {
+    override fun getRefreshKey(state: PagingState<Int, EpisodeForList>): Int? {
         val anchorPosition = state.anchorPosition ?: return null
         val page = state.closestPageToPosition(anchorPosition) ?: return null
         return page.prevKey?.plus(1) ?: page.nextKey?.minus(1)
     }
 
-    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Episode> {
-        val mService: RetrofitServices = Common.retrofitService
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, EpisodeForList> {
         return try {
-            val page: Int = params.key ?: FIRST_PAGE
+            val page: Int = params.key ?: 1 // ?: First page
             val response = mService.getEpisodePagingList(page)
-            val prevPageNumber: Int? = if (page == FIRST_PAGE) null else page - 1
+            val returnResult = Episode.convertEpisodeForList(response.results)
+            val prevPageNumber: Int? = if (page == 1) null else page - 1
             val nextPageNumber: Int? = if (response.info.next != null) {
                 val uriNext = Uri.parse(response.info.next)
                 val nextPageQuery = uriNext.getQueryParameter("page")
@@ -28,12 +28,9 @@ class EpisodePagingSource : PagingSource<Int, Episode>() {
                 null
             }
 
-            LoadResult.Page(response.results, prevPageNumber, nextPageNumber)
+            LoadResult.Page(returnResult, prevPageNumber, nextPageNumber)
         } catch (e: Exception) {
             LoadResult.Error(e)
         }
-    }
-    companion object {
-        private const val FIRST_PAGE = 1
     }
 }

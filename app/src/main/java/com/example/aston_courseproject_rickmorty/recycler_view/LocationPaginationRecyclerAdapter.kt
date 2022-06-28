@@ -10,9 +10,10 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.aston_courseproject_rickmorty.R
 import com.example.aston_courseproject_rickmorty.model.Location
+import com.example.aston_courseproject_rickmorty.model.LocationForList
 
 class LocationPaginationRecyclerAdapter(private val itemClickListener: LocationViewHolder.ItemClickListener) :
-    PagingDataAdapter<Location, LocationPaginationRecyclerAdapter.LocationViewHolder>(
+    PagingDataAdapter<LocationForList, LocationPaginationRecyclerAdapter.LocationViewHolder>(
         DiffUtilCallback()
     ) {
 
@@ -44,7 +45,7 @@ class LocationPaginationRecyclerAdapter(private val itemClickListener: LocationV
         val txtViewDimension: TextView = itemView.findViewById(R.id.textView_dimension)
         val cellProgressBar: ProgressBar = itemView.findViewById(R.id.cell_progressbar)
 
-        fun bind(listItem: Location?) {
+        fun bind(listItem: LocationForList?) {
             itemView.setOnClickListener {
                 itemClickListener.onItemClick(listItem)
             }
@@ -52,16 +53,16 @@ class LocationPaginationRecyclerAdapter(private val itemClickListener: LocationV
 
         interface ItemClickListener {
 
-            fun onItemClick(location: Location?)
+            fun onItemClick(location: LocationForList?)
         }
     }
 
-    class DiffUtilCallback : DiffUtil.ItemCallback<Location>() {
-        override fun areItemsTheSame(oldItem: Location, newItem: Location): Boolean {
+    class DiffUtilCallback : DiffUtil.ItemCallback<LocationForList>() {
+        override fun areItemsTheSame(oldItem: LocationForList, newItem: LocationForList): Boolean {
             return oldItem.id == newItem.id
         }
 
-        override fun areContentsTheSame(oldItem: Location, newItem: Location): Boolean {
+        override fun areContentsTheSame(oldItem: LocationForList, newItem: LocationForList): Boolean {
             return (oldItem.name == newItem.name
                     && oldItem.type == newItem.type
                     && oldItem.dimension == newItem.dimension)

@@ -46,13 +46,4 @@ class CharacterModel {
         return listOfCharacters
     }
 
-//    val connectivityManager = context.getSystemService(
-//        Context.CONNECTIVITY_SERVICE
-//    ) as ConnectivityManager
-//
-//    init {
-//        connectivityManager.activeNetworkInfo.isConnected
-//    }
-
-
 }

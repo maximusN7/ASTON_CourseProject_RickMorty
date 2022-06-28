@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.aston_courseproject_rickmorty.R
 import com.example.aston_courseproject_rickmorty.model.Location
+import com.example.aston_courseproject_rickmorty.model.LocationForList
 import com.example.aston_courseproject_rickmorty.recycler_view.CharacterLoaderStateAdapter
 import com.example.aston_courseproject_rickmorty.recycler_view.LocationPaginationRecyclerAdapter
 import com.example.aston_courseproject_rickmorty.recycler_view.LocationRecyclerAdapter
@@ -34,10 +35,10 @@ import kotlinx.coroutines.flow.collectLatest
  * create an instance of this fragment.
  */
 @ExperimentalPagingApi
-class LocationFragment : Fragment(), LocationPaginationRecyclerAdapter.LocationViewHolder.ItemClickListener {
+class LocationFragment : Fragment(),
+    LocationPaginationRecyclerAdapter.LocationViewHolder.ItemClickListener {
 
     private lateinit var viewModel: LocationViewModel
-    private var listForRecycler: MutableList<Location> = mutableListOf()
     private lateinit var recyclerLocationList: RecyclerView
     private lateinit var mAdapter: LocationPaginationRecyclerAdapter
 
@@ -78,45 +79,27 @@ class LocationFragment : Fragment(), LocationPaginationRecyclerAdapter.LocationV
             viewModel.openFilterDialog()
         }
 
-        /*viewModel.locationList.observe(viewLifecycleOwner) {
-            listForRecycler.addAll(it)
-            notifyWithDiffUtil()
-        }*/
     }
 
     private fun initRecyclerView() {
-        val mLayoutManager: RecyclerView.LayoutManager = GridLayoutManager(context, 2)
         val sidePadding = 5
         val topPadding = 5
-        /*val mAdapter = LocationRecyclerAdapter(
-            (activity as AppCompatActivity),
-            listForRecycler, this
-        )*/
-        //recyclerLocationList = requireView().findViewById(R.id.recyclerView_locations)
         recyclerLocationList.adapter = mAdapter.withLoadStateFooter(CharacterLoaderStateAdapter())
         recyclerLocationList.apply {
             setHasFixedSize(true)
-            layoutManager = mLayoutManager
+            layoutManager = GridLayoutManager(context, 2)
             addItemDecoration(RecyclerDecorator(sidePadding, topPadding))
-            //adapter = mAdapter
         }
-
-        //notifyWithDiffUtil()
     }
 
-    /*private fun notifyWithDiffUtil() {
-        val locationDiffUtilCallback = LocationDiffUtilCallback(emptyList(), listForRecycler)
-        val locationDiffResult = DiffUtil.calculateDiff(locationDiffUtilCallback)
-        recyclerLocationList.adapter?.let { locationDiffResult.dispatchUpdatesTo(it) }
-    }*/
-
     private fun createViewModelUpdateAdapter() {
+        val appContext = activity?.applicationContext
         viewModel = ViewModelProvider(
             this,
-            LocationViewModelFactory(requireContext(), requireActivity())
+            LocationViewModelFactory(requireContext(), appContext!!, requireActivity())
         )[LocationViewModel::class.java]
         lifecycleScope.launchWhenCreated {
-            viewModel.locationList.collectLatest {
+            viewModel.locations.collectLatest {
                 mAdapter.submitData(it)
             }
         }
@@ -142,7 +125,7 @@ class LocationFragment : Fragment(), LocationPaginationRecyclerAdapter.LocationV
             }
     }
 
-    override fun onItemClick(location: Location?) {
+    override fun onItemClick(location: LocationForList?) {
         viewModel.openFragment(location)
     }
 }

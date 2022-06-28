@@ -13,28 +13,24 @@ import com.example.aston_courseproject_rickmorty.fragments.EpisodeDetailsFragmen
 import com.example.aston_courseproject_rickmorty.fragments.dialogs.CharacterFilterDialog
 import com.example.aston_courseproject_rickmorty.fragments.dialogs.EpisodeFilterDialog
 import com.example.aston_courseproject_rickmorty.model.*
+import com.example.aston_courseproject_rickmorty.model.database.ItemsDatabase
+import com.example.aston_courseproject_rickmorty.repository.EpisodeRepository
+import com.example.aston_courseproject_rickmorty.repository.LocationRepository
 import com.example.aston_courseproject_rickmorty.retrofit.Common
 import com.example.aston_courseproject_rickmorty.retrofit.RetrofitServices
 import kotlinx.coroutines.flow.Flow
 @ExperimentalPagingApi
-class EpisodeViewModel(val mainViewModel: MainViewModel, private val dialogProcessor: EpisodeFilterDialog) : ViewModel() {
+class EpisodeViewModel(val mainViewModel: MainViewModel, private val dialogProcessor: EpisodeFilterDialog, val database: ItemsDatabase) : ViewModel() {
 
-    /*val episodeModel = EpisodeModel()
-    val episodeList = MutableLiveData<MutableList<Episode>>()
+    var retrofitServices: RetrofitServices = Common.retrofitService
+    private val repository = EpisodeRepository(retrofitServices, database)
+    private val dataSource = repository.getEpisodesFromMediator()
 
-    init {
-        Handler(Looper.getMainLooper()).postDelayed(
-            {
-                episodeList.value = episodeModel.getEpisodeList()
-            },
-            1000 // value in milliseconds
-        )
-    }*/
+    val episodes: Flow<PagingData<EpisodeForList>> by lazy {
+        dataSource.cachedIn(viewModelScope)
+    }
 
-    val episodeList: Flow<PagingData<Episode>> = Pager (PagingConfig(pageSize = 20, maxSize = 100),
-        pagingSourceFactory = { EpisodePagingSource() }).flow.cachedIn(viewModelScope)
-
-    fun openFragment(episode: Episode?) {
+    fun openFragment(episode: EpisodeForList?) {
         val fragment: Fragment = EpisodeDetailsFragment.newInstance(episode?.id!!)
         mainViewModel.changeCurrentDetailsFragment(fragment)
     }

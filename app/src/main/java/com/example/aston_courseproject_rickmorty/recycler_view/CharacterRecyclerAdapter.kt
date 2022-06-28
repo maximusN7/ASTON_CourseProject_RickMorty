@@ -1,6 +1,5 @@
 package com.example.aston_courseproject_rickmorty.recycler_view
 
-
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup

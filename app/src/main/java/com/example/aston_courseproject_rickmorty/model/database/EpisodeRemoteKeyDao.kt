@@ -6,14 +6,14 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 
 @Dao
-interface RemoteKeyDao {
+interface EpisodeRemoteKeyDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(remoteKey: List<RemoteKey>)
+    suspend fun insertAll(remoteKey: List<EpisodeRemoteKey>)
 
-    @Query("SELECT * FROM remote_keys WHERE characterId = :id")
-    suspend fun remoteKeysCharacterId(id: String): RemoteKey?
+    @Query("SELECT * FROM remote_keys_episode WHERE episodeId = :id")
+    suspend fun remoteKeysEpisodeId(id: String): EpisodeRemoteKey?
 
-    @Query("DELETE FROM remote_keys")
+    @Query("DELETE FROM remote_keys_episode")
     suspend fun deleteAll()
 }

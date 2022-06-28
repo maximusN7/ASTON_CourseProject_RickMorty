@@ -5,17 +5,17 @@ import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
-import com.example.aston_courseproject_rickmorty.model.Character
-import com.example.aston_courseproject_rickmorty.model.CharacterForList
+import com.example.aston_courseproject_rickmorty.model.Episode
+import com.example.aston_courseproject_rickmorty.model.EpisodeForList
 import com.example.aston_courseproject_rickmorty.retrofit.RetrofitServices
 import retrofit2.HttpException
 import java.io.IOException
 
 @ExperimentalPagingApi
-class CharacterRemoteMediator(
+class EpisodeRemoteMediator(
     private val mServices: RetrofitServices,
     private val db: ItemsDatabase
-) : RemoteMediator<Int, CharacterForList>() {
+) : RemoteMediator<Int, EpisodeForList>() {
 
     override suspend fun initialize(): InitializeAction {
         return InitializeAction.LAUNCH_INITIAL_REFRESH
@@ -23,7 +23,7 @@ class CharacterRemoteMediator(
 
     override suspend fun load(
         loadType: LoadType,
-        state: PagingState<Int, CharacterForList>
+        state: PagingState<Int, EpisodeForList>
     ): MediatorResult {
         val pageKeyData = getKeyPageData(loadType, state)
         val page = when (pageKeyData) {
@@ -36,18 +36,18 @@ class CharacterRemoteMediator(
         }
 
         try {
-            val response = mServices.getCharacterPagingList(page)
+            val response = mServices.getEpisodePagingList(page)
             val isEndOfList = response.info.next == null
             db.withTransaction {
                 if (loadType == LoadType.REFRESH) {
-                    db.getCharacterDao().deleteAll()
-                    db.getCharacterKeysDao().deleteAll()
+                    db.getEpisodeDao().deleteAll()
+                    db.getEpisodeKeysDao().deleteAll()
                 }
                 val prevKey = if (page == 1) null else page - 1
                 val nextKey = if (isEndOfList) null else page + 1
-                val keys = response.results.map { CharacterRemoteKey(it.id.toString(), prevKey = prevKey, nextKey = nextKey) }
-                db.getCharacterKeysDao().insertAll(keys)
-                db.getCharacterDao().insertAll(Character.convertCharacterForList(response.results))
+                val keys = response.results.map { EpisodeRemoteKey(it.id.toString(), prevKey = prevKey, nextKey = nextKey) }
+                db.getEpisodeKeysDao().insertAll(keys)
+                db.getEpisodeDao().insertAll(Episode.convertEpisodeForList(response.results))
             }
             return MediatorResult.Success(endOfPaginationReached = isEndOfList)
         } catch (e: IOException) {
@@ -59,7 +59,7 @@ class CharacterRemoteMediator(
 
     private suspend fun getKeyPageData(
         loadType: LoadType,
-        state: PagingState<Int, CharacterForList>
+        state: PagingState<Int, EpisodeForList>
     ): Any {
         return when (loadType) {
             LoadType.REFRESH -> {
@@ -81,26 +81,26 @@ class CharacterRemoteMediator(
         }
     }
 
-    private suspend fun getRemoteKeyClosestToCurrentPosition(state: PagingState<Int, CharacterForList>): CharacterRemoteKey? {
+    private suspend fun getRemoteKeyClosestToCurrentPosition(state: PagingState<Int, EpisodeForList>): EpisodeRemoteKey? {
         return state.anchorPosition?.let { position ->
             state.closestItemToPosition(position)?.id?.let { repoId ->
-                db.getCharacterKeysDao().remoteKeysCharacterId(repoId.toString())
+                db.getEpisodeKeysDao().remoteKeysEpisodeId(repoId.toString())
             }
         }
     }
 
-    private suspend fun getLastRemoteKey(state: PagingState<Int, CharacterForList>): CharacterRemoteKey? {
+    private suspend fun getLastRemoteKey(state: PagingState<Int, EpisodeForList>): EpisodeRemoteKey? {
         return state.pages
             .lastOrNull { it.data.isNotEmpty() }
             ?.data?.lastOrNull()
-            ?.let { character -> db.getCharacterKeysDao().remoteKeysCharacterId(character.id.toString()) }
+            ?.let { episode -> db.getEpisodeKeysDao().remoteKeysEpisodeId(episode.id.toString()) }
     }
 
-    private suspend fun getFirstRemoteKey(state: PagingState<Int, CharacterForList>): CharacterRemoteKey? {
+    private suspend fun getFirstRemoteKey(state: PagingState<Int, EpisodeForList>): EpisodeRemoteKey? {
         return state.pages
             .firstOrNull { it.data.isNotEmpty() }
             ?.data?.firstOrNull()
-            ?.let { character -> db.getCharacterKeysDao().remoteKeysCharacterId(character.id.toString()) }
+            ?.let { episode -> db.getEpisodeKeysDao().remoteKeysEpisodeId(episode.id.toString()) }
     }
 
 
