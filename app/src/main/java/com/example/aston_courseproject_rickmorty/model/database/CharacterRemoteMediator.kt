@@ -47,7 +47,7 @@ class CharacterRemoteMediator(
                 val nextKey = if (isEndOfList) null else page + 1
                 val keys = response.results.map { CharacterRemoteKey(it.id.toString(), prevKey = prevKey, nextKey = nextKey) }
                 db.getCharacterKeysDao().insertAll(keys)
-                db.getCharacterDao().insertAll(Character.convertCharacterForList(response.results))
+                db.getCharacterDao().insertAll(CharacterForList.convertCharacterForList(response.results))
             }
             return MediatorResult.Success(endOfPaginationReached = isEndOfList)
         } catch (e: IOException) {

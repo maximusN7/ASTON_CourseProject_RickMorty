@@ -47,7 +47,7 @@ private val db: ItemsDatabase
                 val nextKey = if (isEndOfList) null else page + 1
                 val keys = response.results.map { LocationRemoteKey(it.id.toString(), prevKey = prevKey, nextKey = nextKey) }
                 db.getLocationKeysDao().insertAll(keys)
-                db.getLocationDao().insertAll(Location.convertLocationForList(response.results))
+                db.getLocationDao().insertAll(LocationForList.convertLocationForList(response.results))
             }
             return MediatorResult.Success(endOfPaginationReached = isEndOfList)
         } catch (e: IOException) {

@@ -47,7 +47,7 @@ class EpisodeRemoteMediator(
                 val nextKey = if (isEndOfList) null else page + 1
                 val keys = response.results.map { EpisodeRemoteKey(it.id.toString(), prevKey = prevKey, nextKey = nextKey) }
                 db.getEpisodeKeysDao().insertAll(keys)
-                db.getEpisodeDao().insertAll(Episode.convertEpisodeForList(response.results))
+                db.getEpisodeDao().insertAll(EpisodeForList.convertEpisodeForList(response.results))
             }
             return MediatorResult.Success(endOfPaginationReached = isEndOfList)
         } catch (e: IOException) {

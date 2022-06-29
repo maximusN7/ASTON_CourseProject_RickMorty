@@ -17,7 +17,7 @@ class CharacterPagingSource(private val mService: RetrofitServices) : PagingSour
         return try {
             val page: Int = params.key ?: 1 // ?: First page
             val response = mService.getCharacterPagingList(page)
-            val returnResult = Character.convertCharacterForList(response.results)
+            val returnResult = CharacterForList.convertCharacterForList(response.results)
             val prevPageNumber: Int? = if (page == 1) null else page - 1
             val nextPageNumber: Int? = if (response.info.next != null) {
                 val uriNext = Uri.parse(response.info.next)

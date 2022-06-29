@@ -5,19 +5,22 @@ import com.example.aston_courseproject_rickmorty.retrofit.Common
 import com.example.aston_courseproject_rickmorty.retrofit.RetrofitServices
 import retrofit2.Call
 import retrofit2.Callback
+import retrofit2.HttpException
 import retrofit2.Response
+import java.io.IOException
+import java.lang.Exception
 
-class EpisodeDetailsModel(episodeID: Int) {
+class EpisodeDetailsModel(val episodeID: Int) {
 
     private val mService: RetrofitServices = Common.retrofitService
     lateinit var currentEpisode: Episode
     lateinit var characterList: MutableList<Character>
 
-    init {
+    /*init {
         loadOneEpisode(episodeID)
-    }
+    }*/
 
-    private fun loadOneEpisode(id: Int) {
+    /*fun loadOneEpisode(id: Int) {
         mService.getOneEpisode(id).enqueue(object :
             Callback<Episode> {
             override fun onResponse(
@@ -33,9 +36,9 @@ class EpisodeDetailsModel(episodeID: Int) {
             }
 
         })
-    }
+    }*/
 
-    private fun loadSeveralCharacters(urls: Array<String>) {
+    /*private fun loadSeveralCharacters(urls: Array<String>) {
         mService.getSeveralCharacters(separateIdFromUrl(urls)).enqueue(object :
             Callback<MutableList<Character>> {
             override fun onResponse(
@@ -50,17 +53,35 @@ class EpisodeDetailsModel(episodeID: Int) {
             }
 
         })
+    }*/
+
+    /* override suspend fun getOneEpisode(): Episode {
+         val result = mService.getOneEpisode(episodeID).await()
+         return result
+     }*/
+
+    suspend fun getOneEpisode(): ApiResponse<Episode> {
+        return try {
+            val response = mService.getOneEpisode(episodeID)
+
+            ApiResponse.Success(data = response)
+        } catch (e: HttpException) {
+            ApiResponse.Error(exception = e)
+        } catch (e: IOException) {
+            ApiResponse.Error(exception = e)
+        }
     }
 
-    fun getOneEpisode(): Episode {
+    /*suspend fun getOneEpisode(): Episode {
+        val result = loadOneEpisode(episodeID).await()
         return currentEpisode
-    }
+    }*/
 
     fun getSeveralCharacters(): MutableList<Character> {
         return characterList
     }
 
-    fun separateIdFromUrl(urlArray: Array<String>): String{
+    fun separateIdFromUrl(urlArray: Array<String>): String {
         var str = ""
         for (url in urlArray) {
             val baseUrl = "https://rickandmortyapi.com/api/character/"
@@ -69,4 +90,16 @@ class EpisodeDetailsModel(episodeID: Int) {
 
         return str.dropLast(1)
     }
+
+    sealed class ApiResponse<T>(
+        data: T? = null,
+        exception: Exception? = null
+    ) {
+        data class Success<T>(val data: T) : ApiResponse<T>(data, null)
+
+        data class Error<T>(
+            val exception: Exception
+        ) : ApiResponse<T>(null, exception)
+    }
+
 }

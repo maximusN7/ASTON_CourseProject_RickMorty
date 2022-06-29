@@ -2,10 +2,11 @@ package com.example.aston_courseproject_rickmorty.utils
 
 import androidx.recyclerview.widget.DiffUtil
 import com.example.aston_courseproject_rickmorty.model.Location
+import com.example.aston_courseproject_rickmorty.model.LocationForList
 
 class LocationDiffUtilCallback(
-    private val oldList: List<Location>,
-    private val newList: MutableList<Location>
+    private val oldList: List<LocationForList>,
+    private val newList: MutableList<LocationForList>
 ) :
     DiffUtil.Callback() {
     override fun getOldListSize(): Int {
@@ -17,14 +18,14 @@ class LocationDiffUtilCallback(
     }
 
     override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        val oldLocation: Location = oldList[oldItemPosition]
-        val newLocation: Location = newList[newItemPosition]
+        val oldLocation: LocationForList = oldList[oldItemPosition]
+        val newLocation: LocationForList = newList[newItemPosition]
         return oldLocation.id == newLocation.id
     }
 
     override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        val oldLocation: Location = oldList[oldItemPosition]
-        val newLocation: Location = newList[newItemPosition]
+        val oldLocation: LocationForList = oldList[oldItemPosition]
+        val newLocation: LocationForList = newList[newItemPosition]
 
         return (oldLocation.name == newLocation.name
                 && oldLocation.type == newLocation.type

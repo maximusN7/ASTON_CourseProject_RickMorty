@@ -5,18 +5,28 @@ import androidx.room.PrimaryKey
 
 
 data class Character(
-    val id: Int?,
+    val id: Int? = null,
+    val name: String? = null,
+    val status: String? = null,
+    val species: String? = null,
+    val type: String? = null,
+    val gender: String? = null,
+    val origin: LocationForCharacter? = null,
+    val location: LocationForCharacter?  = null,
+    val image: String? = null,
+    val episode: Array<String>?  = null,
+    val url: String? = null,
+    val created: String? = null
+)
+
+@Entity(tableName = "characters")
+data class CharacterForList(
+    @PrimaryKey val id: Int?,
     val name: String?,
     val status: String?,
     val species: String?,
-    val type: String?,
     val gender: String?,
-    val origin: LocationForCharacter,
-    val location: LocationForCharacter,
-    val image: String?,
-    val episode: Array<String?>,
-    val url: String?,
-    val created: String?
+    val image: String?
 ) {
     companion object {
         fun convertCharacterForList(characters: MutableList<Character>): MutableList<CharacterForList> {
@@ -29,16 +39,6 @@ data class Character(
         }
     }
 }
-
-@Entity(tableName = "characters")
-data class CharacterForList(
-    @PrimaryKey val id: Int?,
-    val name: String?,
-    val status: String?,
-    val species: String?,
-    val gender: String?,
-    val image: String?
-)
 
 class LocationForCharacter(val name: String?, val url: String?)
 

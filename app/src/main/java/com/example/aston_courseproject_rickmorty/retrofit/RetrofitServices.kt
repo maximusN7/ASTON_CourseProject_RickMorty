@@ -1,6 +1,7 @@
 package com.example.aston_courseproject_rickmorty.retrofit
 
 import com.example.aston_courseproject_rickmorty.model.*
+import kotlinx.coroutines.Deferred
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -16,10 +17,10 @@ interface RetrofitServices {
     suspend fun getCharacterPagingList(@Query("page") query: Int): AllCharacters
 
     @GET("character/{id}")
-    fun getOneCharacter(@Path("id") id: Int): Call<Character>
+    suspend fun getOneCharacter(@Path("id") id: Int): Character
 
     @GET("character/{ids}")
-    fun getSeveralCharacters(@Path("ids") ids: String): Call<MutableList<Character>>
+    suspend fun getSeveralCharacters(@Path("ids") ids: String): MutableList<Character>
 
     @GET("location")
     fun getLocationList(): Call<AllLocations>
@@ -28,7 +29,7 @@ interface RetrofitServices {
     suspend fun getLocationPagingList(@Query("page") query: Int): AllLocations
 
     @GET("location/{id}")
-    fun getOneLocation(@Path("id") id: Int): Call<Location>
+    suspend fun getOneLocation(@Path("id") id: Int): Location
 
     @GET
     fun getOneLocationByUrl(@Url url: String?): Call<Location>
@@ -40,8 +41,8 @@ interface RetrofitServices {
     suspend fun getEpisodePagingList(@Query("page") query: Int): AllEpisodes
 
     @GET("episode/{id}")
-    fun getOneEpisode(@Path("id") id: Int): Call<Episode>
+    suspend fun getOneEpisode(@Path("id") id: Int): Episode
 
     @GET("episode/{ids}")
-    fun getSeveralEpisodes(@Path("ids") ids: String): Call<MutableList<Episode>>
+    suspend fun getSeveralEpisodes(@Path("ids") ids: String): MutableList<Episode>
 }

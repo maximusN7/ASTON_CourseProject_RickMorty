@@ -14,10 +14,10 @@ class LocationDetailsModel(locationID: Int) {
     lateinit var characterList: MutableList<Character>
 
     init {
-        loadOneLocation(locationID)
+        //loadOneLocation(locationID)
     }
 
-    private fun loadOneLocation(id: Int) {
+    /*private fun loadOneLocation(id: Int) {
         mService.getOneLocation(id).enqueue(object :
             Callback<Location> {
             override fun onResponse(
@@ -33,9 +33,9 @@ class LocationDetailsModel(locationID: Int) {
             }
 
         })
-    }
+    }*/
 
-    private fun loadSeveralCharacters(urls: Array<String>) {
+    /*private fun loadSeveralCharacters(urls: Array<String>) {
         mService.getSeveralCharacters(separateIdFromUrl(urls)).enqueue(object :
             Callback<MutableList<Character>> {
             override fun onResponse(
@@ -50,7 +50,7 @@ class LocationDetailsModel(locationID: Int) {
             }
 
         })
-    }
+    }*/
 
     fun getOneLocation(): Location {
         return currentLocation

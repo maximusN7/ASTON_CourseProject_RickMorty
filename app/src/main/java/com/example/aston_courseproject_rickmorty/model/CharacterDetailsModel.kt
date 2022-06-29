@@ -16,9 +16,9 @@ class CharacterDetailsModel(characterID: Int) {
     lateinit var episodeList: MutableList<Episode>
 
     init {
-        loadOneCharacter(characterID)
+        //loadOneCharacter(characterID)
     }
-
+/*
     private fun loadOneCharacter(id: Int) {
         mService.getOneCharacter(id).enqueue(object :
             Callback<Character> {
@@ -88,7 +88,7 @@ class CharacterDetailsModel(characterID: Int) {
             }
 
         })
-    }
+    }*/
 
     fun getOneCharacter(): Character {
         return currentCharacter
