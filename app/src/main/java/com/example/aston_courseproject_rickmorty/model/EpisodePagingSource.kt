@@ -3,22 +3,22 @@ package com.example.aston_courseproject_rickmorty.model
 import android.net.Uri
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.example.aston_courseproject_rickmorty.retrofit.Common
+import com.example.aston_courseproject_rickmorty.model.dto.EpisodeForListDto
 import com.example.aston_courseproject_rickmorty.retrofit.RetrofitServices
 
-class EpisodePagingSource : PagingSource<Int, Episode>() {
+class EpisodePagingSource(private val mService: RetrofitServices) : PagingSource<Int, EpisodeForListDto>() {
 
-    override fun getRefreshKey(state: PagingState<Int, Episode>): Int? {
+    override fun getRefreshKey(state: PagingState<Int, EpisodeForListDto>): Int? {
         val anchorPosition = state.anchorPosition ?: return null
         val page = state.closestPageToPosition(anchorPosition) ?: return null
         return page.prevKey?.plus(1) ?: page.nextKey?.minus(1)
     }
 
-    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Episode> {
-        val mService: RetrofitServices = Common.retrofitService
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, EpisodeForListDto> {
         return try {
-            val page: Int = params.key ?: FIRST_PAGE
+            val page: Int = params.key ?: 1 // ?: First page
             val response = mService.getEpisodePagingList(page)
+            val returnResult = EpisodeForListDto.episodeToForListDto(response.results)
             val prevPageNumber: Int? = if (page == 1) null else page - 1
             val nextPageNumber: Int? = if (response.info.next != null) {
                 val uriNext = Uri.parse(response.info.next)
@@ -28,12 +28,9 @@ class EpisodePagingSource : PagingSource<Int, Episode>() {
                 null
             }
 
-            LoadResult.Page(response.results, prevPageNumber, nextPageNumber)
+            LoadResult.Page(returnResult, prevPageNumber, nextPageNumber)
         } catch (e: Exception) {
             LoadResult.Error(e)
         }
-    }
-    companion object {
-        private const val FIRST_PAGE = 1
     }
 }

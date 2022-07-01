@@ -3,7 +3,10 @@ package com.example.aston_courseproject_rickmorty
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.paging.ExperimentalPagingApi
+import com.example.aston_courseproject_rickmorty.utils.ResourceProvider
 
+@ExperimentalPagingApi
 class MainViewModelFactory(val context: Context) : ViewModelProvider.Factory {
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

@@ -11,7 +11,7 @@ import androidx.paging.LoadStateAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.aston_courseproject_rickmorty.R
 
-class CharacterLoaderStateAdapter : LoadStateAdapter<CharacterLoaderStateAdapter.ItemViewHolder>() {
+class MyLoaderStateAdapter : LoadStateAdapter<MyLoaderStateAdapter.ItemViewHolder>() {
 
     override fun getStateViewType(loadState: LoadState) = when (loadState) {
         is LoadState.NotLoading -> error("Not supported")

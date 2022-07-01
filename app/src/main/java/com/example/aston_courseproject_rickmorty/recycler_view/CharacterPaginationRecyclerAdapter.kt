@@ -10,14 +10,14 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.aston_courseproject_rickmorty.R
-import com.example.aston_courseproject_rickmorty.model.Character
+import com.example.aston_courseproject_rickmorty.model.dto.CharacterForListDto
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import jp.wasabeef.picasso.transformations.CropCircleTransformation
 import java.lang.Exception
 
 class CharacterPaginationRecyclerAdapter(private val itemClickListener: CharacterViewHolder.ItemClickListener) :
-    PagingDataAdapter<Character, CharacterPaginationRecyclerAdapter.CharacterViewHolder>(
+    PagingDataAdapter<CharacterForListDto, CharacterPaginationRecyclerAdapter.CharacterViewHolder>(
         DiffUtilCallback()
     ) {
 
@@ -63,7 +63,7 @@ class CharacterPaginationRecyclerAdapter(private val itemClickListener: Characte
         val imageProgressBar: ProgressBar = itemView.findViewById(R.id.image_progressbar)
         val cellProgressBar: ProgressBar = itemView.findViewById(R.id.cell_progressbar)
 
-        fun bind(listItem: Character?) {
+        fun bind(listItem: CharacterForListDto?) {
             itemView.setOnClickListener {
                 itemClickListener.onItemClick(listItem)
             }
@@ -71,16 +71,16 @@ class CharacterPaginationRecyclerAdapter(private val itemClickListener: Characte
 
         interface ItemClickListener {
 
-            fun onItemClick(character: Character?)
+            fun onItemClick(character: CharacterForListDto?)
         }
     }
 
-    class DiffUtilCallback : DiffUtil.ItemCallback<Character>() {
-        override fun areItemsTheSame(oldItem: Character, newItem: Character): Boolean {
+    class DiffUtilCallback : DiffUtil.ItemCallback<CharacterForListDto>() {
+        override fun areItemsTheSame(oldItem: CharacterForListDto, newItem: CharacterForListDto): Boolean {
             return oldItem.id == newItem.id
         }
 
-        override fun areContentsTheSame(oldItem: Character, newItem: Character): Boolean {
+        override fun areContentsTheSame(oldItem: CharacterForListDto, newItem: CharacterForListDto): Boolean {
             return (oldItem.name == newItem.name
                     && oldItem.species == newItem.species
                     && oldItem.status == newItem.status
@@ -88,5 +88,4 @@ class CharacterPaginationRecyclerAdapter(private val itemClickListener: Characte
         }
 
     }
-
 }

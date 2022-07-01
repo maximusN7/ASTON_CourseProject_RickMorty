@@ -1,4 +1,4 @@
-package com.example.aston_courseproject_rickmorty
+package com.example.aston_courseproject_rickmorty.utils
 
 import android.content.Context
 

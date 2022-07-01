@@ -10,19 +10,16 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.CombinedLoadStates
+import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.*
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.example.aston_courseproject_rickmorty.MainViewModel
 import com.example.aston_courseproject_rickmorty.R
-import com.example.aston_courseproject_rickmorty.model.Character
-import com.example.aston_courseproject_rickmorty.recycler_view.CharacterLoaderStateAdapter
+import com.example.aston_courseproject_rickmorty.model.dto.CharacterForListDto
+import com.example.aston_courseproject_rickmorty.recycler_view.MyLoaderStateAdapter
 import com.example.aston_courseproject_rickmorty.recycler_view.CharacterPaginationRecyclerAdapter
-import com.example.aston_courseproject_rickmorty.utils.CharacterDiffUtilCallback
 import com.example.aston_courseproject_rickmorty.utils.RecyclerDecorator
-import com.example.aston_courseproject_rickmorty.viewmodel.CharacterDetailsViewModel
 import com.example.aston_courseproject_rickmorty.viewmodel.CharacterViewModel
-import com.example.aston_courseproject_rickmorty.viewmodel.factory.CharacterDetailsViewModelFactory
 import com.example.aston_courseproject_rickmorty.viewmodel.factory.CharacterViewModelFactory
 import kotlinx.coroutines.flow.collectLatest
 
@@ -32,20 +29,13 @@ import kotlinx.coroutines.flow.collectLatest
  * Use the [CharacterFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
+@ExperimentalPagingApi
 class CharacterFragment : Fragment(),
     CharacterPaginationRecyclerAdapter.CharacterViewHolder.ItemClickListener {
 
     private lateinit var viewModel: CharacterViewModel
-    private lateinit var mainViewModel: MainViewModel
-
-    //private var listForRecycler: MutableList<Character> = mutableListOf()
     private lateinit var recyclerCharacterList: RecyclerView
-
-    /*private val mAdapter: CharacterPaginationRecyclerAdapter by lazy(LazyThreadSafetyMode.NONE) {
-        CharacterPaginationRecyclerAdapter(requireContext(), this)
-    }*/
     private lateinit var mAdapter: CharacterPaginationRecyclerAdapter
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -83,37 +73,26 @@ class CharacterFragment : Fragment(),
         filterButton.setOnClickListener {
             viewModel.openFilterDialog()
         }
-
-        //viewModel.characterList.observe(viewLifecycleOwner) {
-        //listForRecycler.addAll(it)
-        //notifyWithDiffUtil()
-        //}
-
     }
 
     private fun initRecyclerView() {
-        val sidePadding = 5
-        val topPadding = 5
-        //recyclerCharacterList = requireView().findViewById(R.id.recyclerView_characters)
         recyclerCharacterList.adapter =
-            mAdapter.withLoadStateFooter(footer = CharacterLoaderStateAdapter())
+            mAdapter.withLoadStateFooter(footer = MyLoaderStateAdapter())
         recyclerCharacterList.apply {
             setHasFixedSize(true)
             layoutManager = GridLayoutManager(context, 2)
-            addItemDecoration(RecyclerDecorator(sidePadding, topPadding))
-            //adapter = mAdapter
+            addItemDecoration(RecyclerDecorator())
         }
-
-        //notifyWithDiffUtil()
     }
 
     private fun createViewModelUpdateAdapter() {
+        val appContext = activity?.applicationContext
         viewModel = ViewModelProvider(
             this,
-            CharacterViewModelFactory(requireContext(), requireActivity())
+            CharacterViewModelFactory(requireContext(), appContext!!, requireActivity())
         )[CharacterViewModel::class.java]
         lifecycleScope.launchWhenCreated {
-            viewModel.characterList.collectLatest {
+            viewModel.characters.collectLatest {
                 mAdapter.submitData(it)
             }
         }
@@ -124,12 +103,6 @@ class CharacterFragment : Fragment(),
             pbView?.visibility = if (state.refresh == LoadState.Loading) View.VISIBLE else View.GONE
         }
     }
-
-    /*private fun notifyWithDiffUtil() {
-        val characterDiffUtilCallback = CharacterDiffUtilCallback(emptyList(), listForRecycler)
-        val characterDiffResult = DiffUtil.calculateDiff(characterDiffUtilCallback)
-        recyclerCharacterList.adapter?.let { characterDiffResult.dispatchUpdatesTo(it) }
-    }*/
 
     companion object {
         /**
@@ -145,7 +118,7 @@ class CharacterFragment : Fragment(),
             }
     }
 
-    override fun onItemClick(character: Character?) {
+    override fun onItemClick(character: CharacterForListDto?) {
         viewModel.openFragment(character)
     }
 }
