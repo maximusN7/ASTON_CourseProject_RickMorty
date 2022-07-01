@@ -7,8 +7,8 @@ import androidx.paging.*
 import com.example.aston_courseproject_rickmorty.MainViewModel
 import com.example.aston_courseproject_rickmorty.fragments.CharacterDetailsFragment
 import com.example.aston_courseproject_rickmorty.fragments.dialogs.CharacterFilterDialog
-import com.example.aston_courseproject_rickmorty.model.CharacterForList
 import com.example.aston_courseproject_rickmorty.model.database.ItemsDatabase
+import com.example.aston_courseproject_rickmorty.model.dto.CharacterForListDto
 import com.example.aston_courseproject_rickmorty.repository.CharacterRepository
 import com.example.aston_courseproject_rickmorty.retrofit.Common
 import com.example.aston_courseproject_rickmorty.retrofit.RetrofitServices
@@ -21,11 +21,11 @@ class CharacterViewModel(val mainViewModel: MainViewModel, private val dialogPro
     private val repository = CharacterRepository(retrofitServices, database)
     private val dataSource = repository.getCharactersFromMediator()
 
-    val characters: Flow<PagingData<CharacterForList>> by lazy {
+    val characters: Flow<PagingData<CharacterForListDto>> by lazy {
         dataSource.cachedIn(viewModelScope)
     }
 
-    fun openFragment(character: CharacterForList?) {
+    fun openFragment(character: CharacterForListDto?) {
         val fragment: Fragment = CharacterDetailsFragment.newInstance(character?.id!!)
         mainViewModel.changeCurrentDetailsFragment(fragment)
     }

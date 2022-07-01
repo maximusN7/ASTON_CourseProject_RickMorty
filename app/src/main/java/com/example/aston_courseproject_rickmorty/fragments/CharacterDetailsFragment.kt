@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -19,10 +18,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.aston_courseproject_rickmorty.R
-import com.example.aston_courseproject_rickmorty.model.Character
-import com.example.aston_courseproject_rickmorty.model.Episode
-import com.example.aston_courseproject_rickmorty.model.Location
-import com.example.aston_courseproject_rickmorty.model.LocationForList
+import com.example.aston_courseproject_rickmorty.model.dto.CharacterDto
+import com.example.aston_courseproject_rickmorty.model.dto.EpisodeForListDto
+import com.example.aston_courseproject_rickmorty.model.dto.LocationForListDto
 import com.example.aston_courseproject_rickmorty.recycler_view.EpisodeRecyclerAdapter
 import com.example.aston_courseproject_rickmorty.recycler_view.LocationRecyclerAdapter
 import com.example.aston_courseproject_rickmorty.retrofit.Status
@@ -52,9 +50,9 @@ class CharacterDetailsFragment : Fragment(),
     private var characterId: Int? = null
 
     private lateinit var viewModel: CharacterDetailsViewModel
-    private var listForRecycler: MutableList<Episode> = mutableListOf()
-    private var listForRecyclerOrigin: MutableList<LocationForList> = mutableListOf(LocationForList())
-    private var listForRecyclerLocation: MutableList<LocationForList> = mutableListOf(LocationForList())
+    private var listForRecycler: MutableList<EpisodeForListDto> = mutableListOf()
+    private var listForRecyclerOrigin: MutableList<LocationForListDto> = mutableListOf(LocationForListDto())
+    private var listForRecyclerLocation: MutableList<LocationForListDto> = mutableListOf(LocationForListDto())
     private lateinit var recyclerEpisodesList: RecyclerView
     private lateinit var recyclerLocation: RecyclerView
     private lateinit var recyclerOrigin: RecyclerView
@@ -82,33 +80,6 @@ class CharacterDetailsFragment : Fragment(),
         initLocationRecyclerView()
 
         initView()
-
-        /*viewModel.currentCharacter.observe(viewLifecycleOwner) {
-            detailsLayout.visibility = View.VISIBLE
-            pbView.visibility = View.GONE
-            if (it.origin?.name == "unknown") {
-                listForRecyclerOrigin.clear()
-                listForRecyclerOrigin.add(Location(-1, "unknown", "", "", emptyArray(), "", ""))
-            }
-            updateView(it)
-        }
-        viewModel.currentLocation.observe(viewLifecycleOwner) {
-            listForRecyclerLocation.clear()
-            listForRecyclerLocation.add(it)
-            notifyWithDiffUtil(recyclerLocation)
-        }
-        viewModel.currentOrigin.observe(viewLifecycleOwner) {
-            if (listForRecyclerOrigin.size == 0) {
-                listForRecyclerOrigin.clear()
-                listForRecyclerOrigin.add(it)
-                notifyWithDiffUtil(recyclerOrigin)
-            }
-        }
-        viewModel.episodeList.observe(viewLifecycleOwner) {
-            listForRecycler.clear()
-            listForRecycler.addAll(it)
-            notifyWithDiffUtil(recyclerEpisodesList)
-        }*/
 
         val swipeRefreshLayout = view.findViewById<SwipeRefreshLayout>(R.id.swipeRefreshLayout)
         swipeRefreshLayout.setOnRefreshListener {
@@ -237,7 +208,7 @@ class CharacterDetailsFragment : Fragment(),
         }
     }
 
-    private fun updateView(currentCharacter: Character) {
+    private fun updateView(currentCharacter: CharacterDto) {
         val imageView = view?.findViewById<ImageView>(R.id.imageView_avatar)
         val textViewName = view?.findViewById<TextView>(R.id.textView_name)
         val textViewStatus = view?.findViewById<TextView>(R.id.textView_status)
@@ -265,8 +236,6 @@ class CharacterDetailsFragment : Fragment(),
     }
 
     private fun initEpisodesRecyclerView() {
-        val sidePadding = 5
-        val topPadding = 5
         val mAdapter = EpisodeRecyclerAdapter(
             listForRecycler, this
         )
@@ -274,14 +243,12 @@ class CharacterDetailsFragment : Fragment(),
         recyclerEpisodesList.apply {
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(context)
-            addItemDecoration(RecyclerDecorator(sidePadding, topPadding))
+            addItemDecoration(RecyclerDecorator())
             adapter = mAdapter
         }
     }
 
     private fun initOriginRecyclerView() {
-        val sidePadding = 5
-        val topPadding = 5
         val mAdapter = LocationRecyclerAdapter(
             listForRecyclerOrigin, this
         )
@@ -289,14 +256,12 @@ class CharacterDetailsFragment : Fragment(),
         recyclerOrigin.apply {
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(context)
-            addItemDecoration(RecyclerDecorator(sidePadding, topPadding))
+            addItemDecoration(RecyclerDecorator())
             adapter = mAdapter
         }
     }
 
     private fun initLocationRecyclerView() {
-        val sidePadding = 5
-        val topPadding = 5
         val mAdapter = LocationRecyclerAdapter(
             listForRecyclerLocation, this
         )
@@ -304,22 +269,22 @@ class CharacterDetailsFragment : Fragment(),
         recyclerLocation.apply {
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(context)
-            addItemDecoration(RecyclerDecorator(sidePadding, topPadding))
+            addItemDecoration(RecyclerDecorator())
             adapter = mAdapter
         }
     }
 
-    private fun notifyEpisodesWithDiffUtil(oldEpisodes: MutableList<Episode>) {
+    private fun notifyEpisodesWithDiffUtil(oldEpisodes: MutableList<EpisodeForListDto>) {
         val episodeDiffUtilCallback = EpisodeDiffUtilCallback(oldEpisodes, listForRecycler)
         val episodeDiffResult = DiffUtil.calculateDiff(episodeDiffUtilCallback)
         recyclerEpisodesList.adapter?.let { episodeDiffResult.dispatchUpdatesTo(it) }
     }
-    private fun notifyLocationWithDiffUtil(oldLocations: MutableList<LocationForList>) {
+    private fun notifyLocationWithDiffUtil(oldLocations: MutableList<LocationForListDto>) {
         val locationDiffUtilCallback = LocationDiffUtilCallback(oldLocations, listForRecyclerLocation)
         val locationDiffResult = DiffUtil.calculateDiff(locationDiffUtilCallback)
         recyclerLocation.adapter?.let { locationDiffResult.dispatchUpdatesTo(it) }
     }
-    private fun notifyOriginWithDiffUtil(oldLocations: MutableList<LocationForList>) {
+    private fun notifyOriginWithDiffUtil(oldLocations: MutableList<LocationForListDto>) {
         val originDiffUtilCallback = LocationDiffUtilCallback(oldLocations, listForRecyclerOrigin)
         val originDiffResult = DiffUtil.calculateDiff(originDiffUtilCallback)
         recyclerOrigin.adapter?.let { originDiffResult.dispatchUpdatesTo(it) }
@@ -342,11 +307,11 @@ class CharacterDetailsFragment : Fragment(),
             }
     }
 
-    override fun onItemClick(episode: Episode?) {
+    override fun onItemClick(episode: EpisodeForListDto?) {
         viewModel.openFragment(episode)
     }
 
-    override fun onItemClick(location: LocationForList?) {
+    override fun onItemClick(location: LocationForListDto?) {
         viewModel.openFragment(location)
     }
 }

@@ -9,11 +9,10 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.aston_courseproject_rickmorty.R
-import com.example.aston_courseproject_rickmorty.model.Location
-import com.example.aston_courseproject_rickmorty.model.LocationForList
+import com.example.aston_courseproject_rickmorty.model.dto.LocationForListDto
 
 class LocationPaginationRecyclerAdapter(private val itemClickListener: LocationViewHolder.ItemClickListener) :
-    PagingDataAdapter<LocationForList, LocationPaginationRecyclerAdapter.LocationViewHolder>(
+    PagingDataAdapter<LocationForListDto, LocationPaginationRecyclerAdapter.LocationViewHolder>(
         DiffUtilCallback()
     ) {
 
@@ -45,7 +44,7 @@ class LocationPaginationRecyclerAdapter(private val itemClickListener: LocationV
         val txtViewDimension: TextView = itemView.findViewById(R.id.textView_dimension)
         val cellProgressBar: ProgressBar = itemView.findViewById(R.id.cell_progressbar)
 
-        fun bind(listItem: LocationForList?) {
+        fun bind(listItem: LocationForListDto?) {
             itemView.setOnClickListener {
                 itemClickListener.onItemClick(listItem)
             }
@@ -53,16 +52,16 @@ class LocationPaginationRecyclerAdapter(private val itemClickListener: LocationV
 
         interface ItemClickListener {
 
-            fun onItemClick(location: LocationForList?)
+            fun onItemClick(location: LocationForListDto?)
         }
     }
 
-    class DiffUtilCallback : DiffUtil.ItemCallback<LocationForList>() {
-        override fun areItemsTheSame(oldItem: LocationForList, newItem: LocationForList): Boolean {
+    class DiffUtilCallback : DiffUtil.ItemCallback<LocationForListDto>() {
+        override fun areItemsTheSame(oldItem: LocationForListDto, newItem: LocationForListDto): Boolean {
             return oldItem.id == newItem.id
         }
 
-        override fun areContentsTheSame(oldItem: LocationForList, newItem: LocationForList): Boolean {
+        override fun areContentsTheSame(oldItem: LocationForListDto, newItem: LocationForListDto): Boolean {
             return (oldItem.name == newItem.name
                     && oldItem.type == newItem.type
                     && oldItem.dimension == newItem.dimension)

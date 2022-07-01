@@ -9,11 +9,10 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.aston_courseproject_rickmorty.R
-import com.example.aston_courseproject_rickmorty.model.Episode
-import com.example.aston_courseproject_rickmorty.model.EpisodeForList
+import com.example.aston_courseproject_rickmorty.model.dto.EpisodeForListDto
 
 class EpisodePaginationRecyclerAdapter(private val itemClickListener: EpisodeViewHolder.ItemClickListener) :
-    PagingDataAdapter<EpisodeForList, EpisodePaginationRecyclerAdapter.EpisodeViewHolder>(
+    PagingDataAdapter<EpisodeForListDto, EpisodePaginationRecyclerAdapter.EpisodeViewHolder>(
         DiffUtilCallback()
     ) {
 
@@ -45,7 +44,7 @@ class EpisodePaginationRecyclerAdapter(private val itemClickListener: EpisodeVie
         val txtViewAirDate: TextView = itemView.findViewById(R.id.textView_airdate)
         val cellProgressBar: ProgressBar = itemView.findViewById(R.id.cell_progressbar)
 
-        fun bind(listItem: EpisodeForList?) {
+        fun bind(listItem: EpisodeForListDto?) {
             itemView.setOnClickListener {
                 itemClickListener.onItemClick(listItem)
             }
@@ -53,16 +52,16 @@ class EpisodePaginationRecyclerAdapter(private val itemClickListener: EpisodeVie
 
         interface ItemClickListener {
 
-            fun onItemClick(episode: EpisodeForList?)
+            fun onItemClick(episode: EpisodeForListDto?)
         }
     }
 
-    class DiffUtilCallback : DiffUtil.ItemCallback<EpisodeForList>() {
-        override fun areItemsTheSame(oldItem: EpisodeForList, newItem: EpisodeForList): Boolean {
+    class DiffUtilCallback : DiffUtil.ItemCallback<EpisodeForListDto>() {
+        override fun areItemsTheSame(oldItem: EpisodeForListDto, newItem: EpisodeForListDto): Boolean {
             return oldItem.id == newItem.id
         }
 
-        override fun areContentsTheSame(oldItem: EpisodeForList, newItem: EpisodeForList): Boolean {
+        override fun areContentsTheSame(oldItem: EpisodeForListDto, newItem: EpisodeForListDto): Boolean {
             return (oldItem.name == newItem.name
                     && oldItem.episode == newItem.episode
                     && oldItem.air_date == newItem.air_date)

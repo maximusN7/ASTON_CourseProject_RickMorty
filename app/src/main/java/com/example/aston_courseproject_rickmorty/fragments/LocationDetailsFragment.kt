@@ -16,10 +16,9 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.example.aston_courseproject_rickmorty.MainViewModel
 import com.example.aston_courseproject_rickmorty.R
-import com.example.aston_courseproject_rickmorty.model.Character
-import com.example.aston_courseproject_rickmorty.model.Location
+import com.example.aston_courseproject_rickmorty.model.dto.CharacterForListDto
+import com.example.aston_courseproject_rickmorty.model.dto.LocationDto
 import com.example.aston_courseproject_rickmorty.recycler_view.CharacterRecyclerAdapter
 import com.example.aston_courseproject_rickmorty.retrofit.Status
 import com.example.aston_courseproject_rickmorty.utils.CharacterDiffUtilCallback
@@ -42,7 +41,7 @@ class LocationDetailsFragment : Fragment(), CharacterRecyclerAdapter.CharacterVi
     private var locationId: Int? = null
 
     private lateinit var viewModel: LocationDetailsViewModel
-    private var listForRecycler: MutableList<Character> = mutableListOf()
+    private var listForRecycler: MutableList<CharacterForListDto> = mutableListOf()
     private lateinit var recyclerCharacterList: RecyclerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -136,7 +135,7 @@ class LocationDetailsFragment : Fragment(), CharacterRecyclerAdapter.CharacterVi
         }
     }
 
-    private fun updateView(currentLocation: Location) {
+    private fun updateView(currentLocation: LocationDto) {
         val textViewName = view?.findViewById<TextView>(R.id.textView_name)
         val textViewType = view?.findViewById<TextView>(R.id.textView_type)
         val textViewDimension = view?.findViewById<TextView>(R.id.textView_dimension)
@@ -147,8 +146,6 @@ class LocationDetailsFragment : Fragment(), CharacterRecyclerAdapter.CharacterVi
     }
 
     private fun initRecyclerView() {
-        val sidePadding = 5
-        val topPadding = 5
         val mAdapter = CharacterRecyclerAdapter(
             listForRecycler, this
         )
@@ -156,12 +153,12 @@ class LocationDetailsFragment : Fragment(), CharacterRecyclerAdapter.CharacterVi
         recyclerCharacterList.apply {
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(context)
-            addItemDecoration(RecyclerDecorator(sidePadding, topPadding))
+            addItemDecoration(RecyclerDecorator())
             adapter = mAdapter
         }
     }
 
-    private fun notifyWithDiffUtil(oldCharacters: MutableList<Character>) {
+    private fun notifyWithDiffUtil(oldCharacters: MutableList<CharacterForListDto>) {
         val characterDiffUtilCallback = CharacterDiffUtilCallback(oldCharacters, listForRecycler)
         val characterDiffResult = DiffUtil.calculateDiff(characterDiffUtilCallback)
         recyclerCharacterList.adapter?.let { characterDiffResult.dispatchUpdatesTo(it) }
@@ -184,7 +181,7 @@ class LocationDetailsFragment : Fragment(), CharacterRecyclerAdapter.CharacterVi
             }
     }
 
-    override fun onItemClick(character: Character?) {
+    override fun onItemClick(character: CharacterForListDto?) {
         viewModel.openFragment(character)
     }
 }

@@ -1,6 +1,5 @@
 package com.example.aston_courseproject_rickmorty.retrofit
 
-import com.example.aston_courseproject_rickmorty.model.Episode
 
 data class ApiState<out T>(val status: Status, val data: T?, val message: String?) {
 

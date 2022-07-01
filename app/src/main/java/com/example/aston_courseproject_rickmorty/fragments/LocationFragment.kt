@@ -12,17 +12,13 @@ import androidx.lifecycle.lifecycleScope
 import androidx.paging.CombinedLoadStates
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadState
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.aston_courseproject_rickmorty.R
-import com.example.aston_courseproject_rickmorty.model.Location
-import com.example.aston_courseproject_rickmorty.model.LocationForList
-import com.example.aston_courseproject_rickmorty.recycler_view.CharacterLoaderStateAdapter
+import com.example.aston_courseproject_rickmorty.model.dto.LocationForListDto
+import com.example.aston_courseproject_rickmorty.recycler_view.MyLoaderStateAdapter
 import com.example.aston_courseproject_rickmorty.recycler_view.LocationPaginationRecyclerAdapter
-import com.example.aston_courseproject_rickmorty.recycler_view.LocationRecyclerAdapter
-import com.example.aston_courseproject_rickmorty.utils.LocationDiffUtilCallback
 import com.example.aston_courseproject_rickmorty.utils.RecyclerDecorator
 import com.example.aston_courseproject_rickmorty.viewmodel.LocationViewModel
 import com.example.aston_courseproject_rickmorty.viewmodel.factory.LocationViewModelFactory
@@ -82,13 +78,11 @@ class LocationFragment : Fragment(),
     }
 
     private fun initRecyclerView() {
-        val sidePadding = 5
-        val topPadding = 5
-        recyclerLocationList.adapter = mAdapter.withLoadStateFooter(CharacterLoaderStateAdapter())
+        recyclerLocationList.adapter = mAdapter.withLoadStateFooter(MyLoaderStateAdapter())
         recyclerLocationList.apply {
             setHasFixedSize(true)
             layoutManager = GridLayoutManager(context, 2)
-            addItemDecoration(RecyclerDecorator(sidePadding, topPadding))
+            addItemDecoration(RecyclerDecorator())
         }
     }
 
@@ -125,7 +119,7 @@ class LocationFragment : Fragment(),
             }
     }
 
-    override fun onItemClick(location: LocationForList?) {
+    override fun onItemClick(location: LocationForListDto?) {
         viewModel.openFragment(location)
     }
 }

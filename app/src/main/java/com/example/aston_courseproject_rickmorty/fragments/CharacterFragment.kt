@@ -14,17 +14,12 @@ import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.*
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.example.aston_courseproject_rickmorty.MainViewModel
 import com.example.aston_courseproject_rickmorty.R
-import com.example.aston_courseproject_rickmorty.model.Character
-import com.example.aston_courseproject_rickmorty.model.CharacterForList
-import com.example.aston_courseproject_rickmorty.recycler_view.CharacterLoaderStateAdapter
+import com.example.aston_courseproject_rickmorty.model.dto.CharacterForListDto
+import com.example.aston_courseproject_rickmorty.recycler_view.MyLoaderStateAdapter
 import com.example.aston_courseproject_rickmorty.recycler_view.CharacterPaginationRecyclerAdapter
-import com.example.aston_courseproject_rickmorty.utils.CharacterDiffUtilCallback
 import com.example.aston_courseproject_rickmorty.utils.RecyclerDecorator
-import com.example.aston_courseproject_rickmorty.viewmodel.CharacterDetailsViewModel
 import com.example.aston_courseproject_rickmorty.viewmodel.CharacterViewModel
-import com.example.aston_courseproject_rickmorty.viewmodel.factory.CharacterDetailsViewModelFactory
 import com.example.aston_courseproject_rickmorty.viewmodel.factory.CharacterViewModelFactory
 import kotlinx.coroutines.flow.collectLatest
 
@@ -81,14 +76,12 @@ class CharacterFragment : Fragment(),
     }
 
     private fun initRecyclerView() {
-        val sidePadding = 5
-        val topPadding = 5
         recyclerCharacterList.adapter =
-            mAdapter.withLoadStateFooter(footer = CharacterLoaderStateAdapter())
+            mAdapter.withLoadStateFooter(footer = MyLoaderStateAdapter())
         recyclerCharacterList.apply {
             setHasFixedSize(true)
             layoutManager = GridLayoutManager(context, 2)
-            addItemDecoration(RecyclerDecorator(sidePadding, topPadding))
+            addItemDecoration(RecyclerDecorator())
         }
     }
 
@@ -125,7 +118,7 @@ class CharacterFragment : Fragment(),
             }
     }
 
-    override fun onItemClick(character: CharacterForList?) {
+    override fun onItemClick(character: CharacterForListDto?) {
         viewModel.openFragment(character)
     }
 }

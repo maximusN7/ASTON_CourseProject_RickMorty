@@ -7,9 +7,9 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.aston_courseproject_rickmorty.R
-import com.example.aston_courseproject_rickmorty.model.LocationForList
+import com.example.aston_courseproject_rickmorty.model.dto.LocationForListDto
 
-class LocationRecyclerAdapter(private val locationList: MutableList<LocationForList>, val itemClickListener: LocationViewHolder.ItemClickListener) :
+class LocationRecyclerAdapter(private val locationList: MutableList<LocationForListDto>, val itemClickListener: LocationViewHolder.ItemClickListener) :
     RecyclerView.Adapter<LocationRecyclerAdapter.LocationViewHolder>() {
 
 
@@ -43,7 +43,7 @@ class LocationRecyclerAdapter(private val locationList: MutableList<LocationForL
         val txtViewDimension: TextView = itemView.findViewById(R.id.textView_dimension)
         val cellProgressBar: ProgressBar = itemView.findViewById(R.id.cell_progressbar)
 
-        fun bind(listItem: LocationForList?) {
+        fun bind(listItem: LocationForListDto?) {
             itemView.setOnClickListener {
                 itemClickListener.onItemClick(listItem)
             }
@@ -51,7 +51,7 @@ class LocationRecyclerAdapter(private val locationList: MutableList<LocationForL
 
         interface ItemClickListener {
 
-            fun onItemClick(location: LocationForList?)
+            fun onItemClick(location: LocationForListDto?)
         }
     }
 }

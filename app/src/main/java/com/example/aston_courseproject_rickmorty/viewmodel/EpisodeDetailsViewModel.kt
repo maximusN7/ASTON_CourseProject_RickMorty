@@ -1,26 +1,25 @@
 package com.example.aston_courseproject_rickmorty.viewmodel
 
-import android.os.Handler
-import android.os.Looper
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.ExperimentalPagingApi
-import androidx.paging.PagingData
-import androidx.paging.cachedIn
 import com.example.aston_courseproject_rickmorty.MainViewModel
 import com.example.aston_courseproject_rickmorty.fragments.CharacterDetailsFragment
-import com.example.aston_courseproject_rickmorty.fragments.EpisodeDetailsFragment
 import com.example.aston_courseproject_rickmorty.model.*
+import com.example.aston_courseproject_rickmorty.model.database.CharacterDb
+import com.example.aston_courseproject_rickmorty.model.database.CharacterEpisodeJoin
 import com.example.aston_courseproject_rickmorty.model.database.ItemsDatabase
+import com.example.aston_courseproject_rickmorty.model.dto.CharacterForListDto
+import com.example.aston_courseproject_rickmorty.model.dto.EpisodeDto
 import com.example.aston_courseproject_rickmorty.repository.EpisodeDetailsRepository
-import com.example.aston_courseproject_rickmorty.repository.EpisodeRepository
 import com.example.aston_courseproject_rickmorty.retrofit.ApiState
 import com.example.aston_courseproject_rickmorty.retrofit.Common
 import com.example.aston_courseproject_rickmorty.retrofit.RetrofitServices
 import com.example.aston_courseproject_rickmorty.retrofit.Status
-import kotlinx.coroutines.Dispatchers
+import com.example.aston_courseproject_rickmorty.utils.Converters
+import com.example.aston_courseproject_rickmorty.utils.InternetConnectionChecker
+import com.example.aston_courseproject_rickmorty.utils.Separators
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
@@ -30,17 +29,16 @@ import kotlinx.coroutines.launch
 class EpisodeDetailsViewModel(
     episodeID: Int,
     val mainViewModel: MainViewModel,
-    val database: ItemsDatabase
+    val database: ItemsDatabase,
+    internetChecker: InternetConnectionChecker
 ) : ViewModel() {
-    val episodeModel = EpisodeDetailsModel(episodeID)
-    val currentEpisode = MutableLiveData<Episode?>()
-    val characterList = MutableLiveData<MutableList<Character>>()
     var retrofitServices: RetrofitServices = Common.retrofitService
     private val repository = EpisodeDetailsRepository(retrofitServices, database)
-    //private val dataSource = repository.getEpisodeFromNetwork()
 
-    val episode = MutableStateFlow(ApiState(Status.LOADING, Episode(), ""))
-    val characters = MutableStateFlow(ApiState(Status.LOADING, mutableListOf<Character>(), ""))
+    val episode = MutableStateFlow(ApiState(Status.LOADING, EpisodeDto(), ""))
+    val characters =
+        MutableStateFlow(ApiState(Status.LOADING, mutableListOf<CharacterForListDto>(), ""))
+    private val network: Boolean = internetChecker.isOnline()
 
     init {
         getEpisode(episodeID)
@@ -49,20 +47,25 @@ class EpisodeDetailsViewModel(
     private fun getEpisode(episodeID: Int) {
         episode.value = ApiState.loading()
         viewModelScope.launch {
-            repository.getEpisode(episodeID)
+            val gottenEpisode: Flow<ApiState<EpisodeDto>> = if (network) {
+                repository.getEpisode(episodeID)
+            } else {
+                repository.getEpisodeDb(episodeID)
+            }
+            gottenEpisode
                 .catch {
                     episode.value = ApiState.error(it.message.toString())
                 }
                 .collect {
                     episode.value = ApiState.success(it.data)
-                    val charactersId = separateIdFromUrl(episode.value.data?.characters)
-                    when {
-                        charactersId != "" -> getCharacters(charactersId)
-                        charactersId.contains(",") -> {
-                            getCharacters(charactersId)
-                        }
-                        else -> characters.value = ApiState.success(mutableListOf())
+                    if (network) {
+                        val charactersId = Separators.separateIdFromUrlCharacter(episode.value.data?.characters)
+                        getCharacters(charactersId)
+                    } else {
+                        val episodeId = episode.value.data?.id
+                        getCharactersDb(episodeId!!)
                     }
+
                 }
         }
     }
@@ -75,23 +78,34 @@ class EpisodeDetailsViewModel(
                 characters.value = ApiState.error(it.message.toString())
             }
             .collect {
-                characters.value = ApiState.success(it.data)
+                saveInDb(it.data!!)
+                characters.value =
+                    ApiState.success(CharacterForListDto.characterToForListDto(it.data))
             }
     }
 
-    private fun separateIdFromUrl(urlArray: Array<String>?): String {
-        var str = ""
-        if (urlArray == null) return ""
-        for (url in urlArray) {
-            val baseUrl = "https://rickandmortyapi.com/api/character/"
-            str += "${url.substring(baseUrl.length)},"
-        }
-
-        return str.dropLast(1)
+    private suspend fun getCharactersDb(episodeID: Int) {
+        repository.getCharacterListDb(episodeID)
+            .catch {
+                characters.value = ApiState.error(it.message.toString())
+            }
+            .collect {
+                characters.value =
+                    ApiState.success(CharacterForListDto.characterToForListDto(it.data!!))
+            }
     }
 
-    fun openFragment(character: Character?) {
-        val fragment: Fragment = CharacterDetailsFragment.newInstance(character?.id!!)
-        mainViewModel.changeCurrentDetailsFragment(fragment)
+
+    private suspend fun saveInDb(characterList: MutableList<Character>) {
+        database.getCharacterDao().insertAll(CharacterDb.characterToDb(characterList))
+        val listOfCharacterToEpisodes = Converters.convertToCEJoin(characterList)
+        database.getCharacterEpisodeJoinDao().insertAll(listOfCharacterToEpisodes)
+    }
+
+    fun openFragment(character: CharacterForListDto?) {
+        if (character?.name != "") {
+            val fragment: Fragment = CharacterDetailsFragment.newInstance(character?.id!!)
+            mainViewModel.changeCurrentDetailsFragment(fragment)
+        }
     }
 }

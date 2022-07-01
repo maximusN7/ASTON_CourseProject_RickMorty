@@ -12,18 +12,13 @@ import androidx.lifecycle.lifecycleScope
 import androidx.paging.CombinedLoadStates
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadState
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.aston_courseproject_rickmorty.R
-import com.example.aston_courseproject_rickmorty.model.Episode
-import com.example.aston_courseproject_rickmorty.model.EpisodeForList
-import com.example.aston_courseproject_rickmorty.recycler_view.CharacterLoaderStateAdapter
-import com.example.aston_courseproject_rickmorty.recycler_view.CharacterPaginationRecyclerAdapter
+import com.example.aston_courseproject_rickmorty.model.dto.EpisodeForListDto
+import com.example.aston_courseproject_rickmorty.recycler_view.MyLoaderStateAdapter
 import com.example.aston_courseproject_rickmorty.recycler_view.EpisodePaginationRecyclerAdapter
-import com.example.aston_courseproject_rickmorty.recycler_view.EpisodeRecyclerAdapter
-import com.example.aston_courseproject_rickmorty.utils.EpisodeDiffUtilCallback
 import com.example.aston_courseproject_rickmorty.utils.RecyclerDecorator
 import com.example.aston_courseproject_rickmorty.viewmodel.EpisodeViewModel
 import com.example.aston_courseproject_rickmorty.viewmodel.factory.EpisodeViewModelFactory
@@ -82,13 +77,11 @@ class EpisodeFragment : Fragment(),
     }
 
     private fun initRecyclerView() {
-        val sidePadding = 5
-        val topPadding = 5
-        recyclerEpisodeList.adapter = mAdapter.withLoadStateFooter(CharacterLoaderStateAdapter())
+        recyclerEpisodeList.adapter = mAdapter.withLoadStateFooter(MyLoaderStateAdapter())
         recyclerEpisodeList.apply {
             setHasFixedSize(true)
             layoutManager = GridLayoutManager(context, 2)
-            addItemDecoration(RecyclerDecorator(sidePadding, topPadding))
+            addItemDecoration(RecyclerDecorator())
         }
     }
 
@@ -131,7 +124,7 @@ class EpisodeFragment : Fragment(),
             }
     }
 
-    override fun onItemClick(episode: EpisodeForList?) {
+    override fun onItemClick(episode: EpisodeForListDto?) {
         viewModel.openFragment(episode)
     }
 }

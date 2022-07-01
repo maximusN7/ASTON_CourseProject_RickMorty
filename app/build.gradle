@@ -72,7 +72,6 @@ dependencies {
     implementation "androidx.room:room-runtime:2.4.2"
     implementation "androidx.room:room-ktx:2.4.2"
     implementation "androidx.room:room-paging:2.4.2"
-    //annotationProcessor "android.arch.persistence.room:compiler:1.1.1"
     kapt "androidx.room:room-compiler:2.4.2"
 
     testImplementation 'junit:junit:4.13.2'

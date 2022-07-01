@@ -1,8 +1,5 @@
 package com.example.aston_courseproject_rickmorty.model
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-
 
 data class Character(
     val id: Int? = null,
@@ -19,28 +16,7 @@ data class Character(
     val created: String? = null
 )
 
-@Entity(tableName = "characters")
-data class CharacterForList(
-    @PrimaryKey val id: Int?,
-    val name: String?,
-    val status: String?,
-    val species: String?,
-    val gender: String?,
-    val image: String?
-) {
-    companion object {
-        fun convertCharacterForList(characters: MutableList<Character>): MutableList<CharacterForList> {
-            val newMutableList = mutableListOf<CharacterForList>()
-            for (character in characters) {
-                newMutableList.add(CharacterForList(character.id, character.name, character.status, character.species,
-                    character.gender, character.image))
-            }
-            return newMutableList
-        }
-    }
-}
-
-class LocationForCharacter(val name: String?, val url: String?)
+data class LocationForCharacter(val name: String?, val url: String?)
 
 class AllCharacters(val info: Info, val results: MutableList<Character>)
 

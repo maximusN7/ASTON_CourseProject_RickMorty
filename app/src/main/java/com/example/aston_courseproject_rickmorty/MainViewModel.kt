@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.paging.ExperimentalPagingApi
 import com.example.aston_courseproject_rickmorty.fragments.*
+import com.example.aston_courseproject_rickmorty.utils.ResourceProvider
 
 @ExperimentalPagingApi
 class MainViewModel(private val mResourceProvider: ResourceProvider) : ViewModel() {

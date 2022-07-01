@@ -17,15 +17,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.aston_courseproject_rickmorty.R
-import com.example.aston_courseproject_rickmorty.model.Character
-import com.example.aston_courseproject_rickmorty.model.Episode
+import com.example.aston_courseproject_rickmorty.model.dto.CharacterForListDto
+import com.example.aston_courseproject_rickmorty.model.dto.EpisodeDto
 import com.example.aston_courseproject_rickmorty.recycler_view.CharacterRecyclerAdapter
 import com.example.aston_courseproject_rickmorty.retrofit.Status
 import com.example.aston_courseproject_rickmorty.utils.CharacterDiffUtilCallback
 import com.example.aston_courseproject_rickmorty.utils.RecyclerDecorator
 import com.example.aston_courseproject_rickmorty.viewmodel.EpisodeDetailsViewModel
 import com.example.aston_courseproject_rickmorty.viewmodel.factory.EpisodeDetailsViewModelFactory
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 
@@ -42,7 +41,7 @@ class EpisodeDetailsFragment : Fragment(), CharacterRecyclerAdapter.CharacterVie
     private var episodeId: Int? = null
 
     private lateinit var viewModel: EpisodeDetailsViewModel
-    private var listForRecycler: MutableList<Character> = mutableListOf()
+    private var listForRecycler: MutableList<CharacterForListDto> = mutableListOf()
     private lateinit var recyclerCharacterList: RecyclerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -137,7 +136,7 @@ class EpisodeDetailsFragment : Fragment(), CharacterRecyclerAdapter.CharacterVie
 
     }
 
-    private fun updateView(currentEpisode: Episode) {
+    private fun updateView(currentEpisode: EpisodeDto) {
         val textViewName = view?.findViewById<TextView>(R.id.textView_name)
         val textViewAirDate = view?.findViewById<TextView>(R.id.textView_airdate)
         val textViewEpisode = view?.findViewById<TextView>(R.id.textView_episode)
@@ -148,8 +147,6 @@ class EpisodeDetailsFragment : Fragment(), CharacterRecyclerAdapter.CharacterVie
     }
 
     private fun initRecyclerView() {
-        val sidePadding = 5
-        val topPadding = 5
         val mAdapter = CharacterRecyclerAdapter(
             listForRecycler, this
         )
@@ -157,12 +154,12 @@ class EpisodeDetailsFragment : Fragment(), CharacterRecyclerAdapter.CharacterVie
         recyclerCharacterList.apply {
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(context)
-            addItemDecoration(RecyclerDecorator(sidePadding, topPadding))
+            addItemDecoration(RecyclerDecorator())
             adapter = mAdapter
         }
     }
 
-    private fun notifyWithDiffUtil(oldCharacters: MutableList<Character>) {
+    private fun notifyWithDiffUtil(oldCharacters: MutableList<CharacterForListDto>) {
         val characterDiffUtilCallback = CharacterDiffUtilCallback(oldCharacters, listForRecycler)
         val characterDiffResult = DiffUtil.calculateDiff(characterDiffUtilCallback)
         recyclerCharacterList.adapter?.let { characterDiffResult.dispatchUpdatesTo(it) }
@@ -185,7 +182,7 @@ class EpisodeDetailsFragment : Fragment(), CharacterRecyclerAdapter.CharacterVie
             }
     }
 
-    override fun onItemClick(character: Character?) {
+    override fun onItemClick(character: CharacterForListDto?) {
         viewModel.openFragment(character)
     }
 }

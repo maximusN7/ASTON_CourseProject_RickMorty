@@ -8,13 +8,13 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.aston_courseproject_rickmorty.R
-import com.example.aston_courseproject_rickmorty.model.Character
+import com.example.aston_courseproject_rickmorty.model.dto.CharacterForListDto
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import jp.wasabeef.picasso.transformations.CropCircleTransformation
 import java.lang.Exception
 
-class CharacterRecyclerAdapter(private val characterList: MutableList<Character>, val itemClickListener: CharacterViewHolder.ItemClickListener) :
+class CharacterRecyclerAdapter(private val characterList: MutableList<CharacterForListDto>, val itemClickListener: CharacterViewHolder.ItemClickListener) :
     RecyclerView.Adapter<CharacterRecyclerAdapter.CharacterViewHolder>() {
 
 
@@ -62,7 +62,7 @@ class CharacterRecyclerAdapter(private val characterList: MutableList<Character>
         val imageProgressBar: ProgressBar = itemView.findViewById(R.id.image_progressbar)
         val cellProgressBar: ProgressBar = itemView.findViewById(R.id.cell_progressbar)
 
-        fun bind(listItem: Character?) {
+        fun bind(listItem: CharacterForListDto?) {
             itemView.setOnClickListener {
                 itemClickListener.onItemClick(listItem)
             }
@@ -70,7 +70,7 @@ class CharacterRecyclerAdapter(private val characterList: MutableList<Character>
 
         interface ItemClickListener {
 
-            fun onItemClick(character: Character?)
+            fun onItemClick(character: CharacterForListDto?)
         }
     }
 

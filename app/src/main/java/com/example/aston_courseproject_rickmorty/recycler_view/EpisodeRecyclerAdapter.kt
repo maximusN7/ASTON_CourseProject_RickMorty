@@ -7,9 +7,9 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.aston_courseproject_rickmorty.R
-import com.example.aston_courseproject_rickmorty.model.Episode
+import com.example.aston_courseproject_rickmorty.model.dto.EpisodeForListDto
 
-class EpisodeRecyclerAdapter(private val episodeList: MutableList<Episode>, val itemClickListener: EpisodeViewHolder.ItemClickListener) :
+class EpisodeRecyclerAdapter(private val episodeList: MutableList<EpisodeForListDto>, val itemClickListener: EpisodeViewHolder.ItemClickListener) :
     RecyclerView.Adapter<EpisodeRecyclerAdapter.EpisodeViewHolder>() {
 
 
@@ -43,7 +43,7 @@ class EpisodeRecyclerAdapter(private val episodeList: MutableList<Episode>, val 
         val txtViewAirDate: TextView = itemView.findViewById(R.id.textView_airdate)
         val cellProgressBar: ProgressBar = itemView.findViewById(R.id.cell_progressbar)
 
-        fun bind(listItem: Episode?) {
+        fun bind(listItem: EpisodeForListDto?) {
             itemView.setOnClickListener {
                 itemClickListener.onItemClick(listItem)
             }
@@ -51,7 +51,7 @@ class EpisodeRecyclerAdapter(private val episodeList: MutableList<Episode>, val 
 
         interface ItemClickListener {
 
-            fun onItemClick(episode: Episode?)
+            fun onItemClick(episode: EpisodeForListDto?)
         }
     }
 }

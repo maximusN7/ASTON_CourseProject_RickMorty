@@ -1,8 +1,9 @@
 package com.example.aston_courseproject_rickmorty.repository
 
 import com.example.aston_courseproject_rickmorty.model.Character
-import com.example.aston_courseproject_rickmorty.model.Location
+import com.example.aston_courseproject_rickmorty.model.database.CharacterForListDb
 import com.example.aston_courseproject_rickmorty.model.database.ItemsDatabase
+import com.example.aston_courseproject_rickmorty.model.dto.LocationDto
 import com.example.aston_courseproject_rickmorty.retrofit.ApiState
 import com.example.aston_courseproject_rickmorty.retrofit.RetrofitServices
 import kotlinx.coroutines.Dispatchers
@@ -15,9 +16,9 @@ class LocationDetailsRepository(
     private val database: ItemsDatabase
 ) {
 
-    suspend fun getLocation(locationId: Int): Flow<ApiState<Location>> {
+    suspend fun getLocation(locationId: Int): Flow<ApiState<LocationDto>> {
         return flow {
-            val location = mService.getOneLocation(locationId)
+            val location = LocationDto.locationToDto(mService.getOneLocation(locationId))
             emit(ApiState.success(location))
         }.flowOn(Dispatchers.IO)
     }
@@ -29,4 +30,21 @@ class LocationDetailsRepository(
         }.flowOn(Dispatchers.IO)
     }
 
+    suspend fun getLocationDb(locationId: Int): Flow<ApiState<LocationDto>> {
+        return flow {
+            val location = LocationDto.locationToDto(database.getLocationDao().getOneById(locationId), database)
+                emit(ApiState.success(location))
+        }.flowOn(Dispatchers.IO)
+    }
+
+    suspend fun getCharacterListDb(locationId: Int): Flow<ApiState<MutableList<CharacterForListDb>>> {
+        return flow {
+            val charactersArray = database.getLocationCharacterJoinDao().getCharactersIdForLocation(locationId)
+            val characters = mutableListOf<CharacterForListDb>()
+            for (i in charactersArray.indices) {
+                characters.add(database.getCharacterDao().getOneForListById(charactersArray[i]))
+            }
+            emit(ApiState.success(characters))
+        }.flowOn(Dispatchers.IO)
+    }
 }

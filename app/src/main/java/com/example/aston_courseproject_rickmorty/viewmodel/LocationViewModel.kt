@@ -9,6 +9,7 @@ import com.example.aston_courseproject_rickmorty.fragments.LocationDetailsFragme
 import com.example.aston_courseproject_rickmorty.fragments.dialogs.LocationFilterDialog
 import com.example.aston_courseproject_rickmorty.model.*
 import com.example.aston_courseproject_rickmorty.model.database.ItemsDatabase
+import com.example.aston_courseproject_rickmorty.model.dto.LocationForListDto
 import com.example.aston_courseproject_rickmorty.repository.LocationRepository
 import com.example.aston_courseproject_rickmorty.retrofit.Common
 import com.example.aston_courseproject_rickmorty.retrofit.RetrofitServices
@@ -21,11 +22,11 @@ class LocationViewModel(val mainViewModel: MainViewModel, private val dialogProc
     private val repository = LocationRepository(retrofitServices, database)
     private val dataSource = repository.getLocationsFromMediator()
 
-    val locations: Flow<PagingData<LocationForList>> by lazy {
+    val locations: Flow<PagingData<LocationForListDto>> by lazy {
         dataSource.cachedIn(viewModelScope)
     }
 
-    fun openFragment(location: LocationForList?) {
+    fun openFragment(location: LocationForListDto?) {
         val fragment: Fragment = LocationDetailsFragment.newInstance(location?.id!!)
         mainViewModel.changeCurrentDetailsFragment(fragment)
     }
