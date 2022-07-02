@@ -5,22 +5,20 @@ import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
-import com.example.aston_courseproject_rickmorty.model.Character
 import com.example.aston_courseproject_rickmorty.model.database.CharacterDb
-import com.example.aston_courseproject_rickmorty.model.database.CharacterEpisodeJoin
 import com.example.aston_courseproject_rickmorty.model.database.CharacterRemoteKey
 import com.example.aston_courseproject_rickmorty.model.database.ItemsDatabase
 import com.example.aston_courseproject_rickmorty.model.dto.CharacterForListDto
 import com.example.aston_courseproject_rickmorty.retrofit.RetrofitServices
 import com.example.aston_courseproject_rickmorty.utils.Converters
-import com.example.aston_courseproject_rickmorty.utils.Separators
 import retrofit2.HttpException
 import java.io.IOException
 
 @ExperimentalPagingApi
 class CharacterRemoteMediator(
     private val mServices: RetrofitServices,
-    private val db: ItemsDatabase
+    private val db: ItemsDatabase,
+    private val filterQueryList: MutableList<String>
 ) : RemoteMediator<Int, CharacterForListDto>() {
 
     override suspend fun initialize(): InitializeAction {
@@ -42,10 +40,11 @@ class CharacterRemoteMediator(
         }
 
         try {
-            val response = mServices.getCharacterPagingList(page)
+            val response = mServices.getSeveralCharactersFilter(page,filterQueryList[0], filterQueryList[1], filterQueryList[2], filterQueryList[3], filterQueryList[4])
             val isEndOfList = response.info.next == null
+            val queryList = filterQueryList[0] + filterQueryList[1] + filterQueryList[2] + filterQueryList[3] + filterQueryList[4]
             db.withTransaction {
-                if (loadType == LoadType.REFRESH) {
+                if (loadType == LoadType.REFRESH && queryList == "") {
                     db.getCharacterEpisodeJoinDao().deleteAll()
                     db.getCharacterDao().deleteAll()
                     db.getCharacterKeysDao().deleteAll()

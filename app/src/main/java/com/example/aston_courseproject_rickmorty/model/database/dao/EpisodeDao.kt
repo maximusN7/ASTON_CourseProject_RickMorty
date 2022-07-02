@@ -26,4 +26,7 @@ interface EpisodeDao {
 
     @Query("DELETE FROM episodes_full_info")
     suspend fun deleteAll()
+
+    @Query("SELECT id, name, air_date, episode FROM episodes_full_info WHERE (:name = '' OR name LIKE '%' || :name || '%') AND (:episode = '' OR episode LIKE '%' || :episode || '%')")
+    fun getSeveralForFilter(name: String, episode: String): PagingSource<Int, EpisodeForListDto>
 }
