@@ -1,26 +1,25 @@
 package com.example.aston_courseproject_rickmorty.model.mediator
 
+import android.util.Log
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
-import com.example.aston_courseproject_rickmorty.model.Episode
-import com.example.aston_courseproject_rickmorty.model.database.EpisodeCharacterJoin
 import com.example.aston_courseproject_rickmorty.model.database.EpisodeDb
 import com.example.aston_courseproject_rickmorty.model.database.EpisodeRemoteKey
 import com.example.aston_courseproject_rickmorty.model.database.ItemsDatabase
 import com.example.aston_courseproject_rickmorty.model.dto.EpisodeForListDto
 import com.example.aston_courseproject_rickmorty.retrofit.RetrofitServices
 import com.example.aston_courseproject_rickmorty.utils.Converters
-import com.example.aston_courseproject_rickmorty.utils.Separators
 import retrofit2.HttpException
 import java.io.IOException
 
 @ExperimentalPagingApi
 class EpisodeRemoteMediator(
     private val mServices: RetrofitServices,
-    private val db: ItemsDatabase
+    private val db: ItemsDatabase,
+    private val filterQueryList: MutableList<String>
 ) : RemoteMediator<Int, EpisodeForListDto>() {
 
     override suspend fun initialize(): InitializeAction {
@@ -42,10 +41,12 @@ class EpisodeRemoteMediator(
         }
 
         try {
-            val response = mServices.getEpisodePagingList(page)
+            val response =
+                mServices.getSeveralEpisodesFilter(page, filterQueryList[0], filterQueryList[1])
             val isEndOfList = response.info.next == null
+            val queryList = filterQueryList[0] + filterQueryList[1]
             db.withTransaction {
-                if (loadType == LoadType.REFRESH) {
+                if (loadType == LoadType.REFRESH && queryList == "") {
                     db.getEpisodeCharacterJoinDao().deleteAll()
                     db.getEpisodeDao().deleteAll()
                     db.getEpisodeKeysDao().deleteAll()
@@ -66,8 +67,10 @@ class EpisodeRemoteMediator(
             }
             return MediatorResult.Success(endOfPaginationReached = isEndOfList)
         } catch (e: IOException) {
+            Log.e("AAA", e.toString())
             return MediatorResult.Error(e)
         } catch (e: HttpException) {
+            Log.e("AAA", e.toString())
             return MediatorResult.Error(e)
         }
     }

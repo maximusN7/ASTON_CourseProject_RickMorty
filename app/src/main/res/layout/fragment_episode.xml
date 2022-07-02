@@ -16,22 +16,27 @@
             android:layout_height="match_parent"
             android:padding="10dp">
 
-            <SearchView
-                android:id="@+id/searchView"
-                android:layout_width="wrap_content"
+            <EditText
+                android:id="@+id/editTextName"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:queryHint="@string/recycler_epiName"
+                android:hint="@string/recycler_epiName"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/button_filter"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:autofillHints="name"
+                android:imeOptions="actionDone"
+                android:inputType="text" />
 
             <Button
                 android:id="@+id/button_filter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/recycler_filter"
-                app:layout_constraintEnd_toStartOf="@+id/searchView"
+                app:layout_constraintEnd_toStartOf="@+id/editTextName"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintHorizontal_chainStyle="spread_inside"
                 app:layout_constraintStart_toStartOf="parent"

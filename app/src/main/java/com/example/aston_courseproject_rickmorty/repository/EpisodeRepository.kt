@@ -1,10 +1,6 @@
 package com.example.aston_courseproject_rickmorty.repository
 
-import androidx.paging.ExperimentalPagingApi
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
-import androidx.paging.PagingData
-import com.example.aston_courseproject_rickmorty.model.EpisodePagingSource
+import androidx.paging.*
 import com.example.aston_courseproject_rickmorty.model.mediator.EpisodeRemoteMediator
 import com.example.aston_courseproject_rickmorty.model.database.ItemsDatabase
 import com.example.aston_courseproject_rickmorty.model.dto.EpisodeForListDto
@@ -17,21 +13,17 @@ class EpisodeRepository(
 ) {
 
     @ExperimentalPagingApi
-    fun getEpisodesFromNetwork(): Flow<PagingData<EpisodeForListDto>> {
+    fun getEpisodesFromMediator(
+        name: String,
+        episode: String
+    ): Flow<PagingData<EpisodeForListDto>> {
         return Pager(PagingConfig(pageSize = 20, maxSize = 60),
-            pagingSourceFactory = { EpisodePagingSource(mService) }).flow
-    }
-
-    @ExperimentalPagingApi
-    fun getEpisodesFromDb(): Flow<PagingData<EpisodeForListDto>> {
-        return Pager(PagingConfig(pageSize = 20, maxSize = 60),
-            pagingSourceFactory = { database.getEpisodeDao().getAll() }).flow
-    }
-
-    @ExperimentalPagingApi
-    fun getEpisodesFromMediator(): Flow<PagingData<EpisodeForListDto>> {
-        return Pager(PagingConfig(pageSize = 20, maxSize = 60),
-            remoteMediator = EpisodeRemoteMediator(mService, database),
-            pagingSourceFactory = { database.getEpisodeDao().getAll() }).flow
+            remoteMediator = EpisodeRemoteMediator(
+                mService, database,
+                mutableListOf(name, episode)
+            ),
+            pagingSourceFactory = {
+                database.getEpisodeDao().getSeveralForFilter(name, episode)
+            }).flow
     }
 }

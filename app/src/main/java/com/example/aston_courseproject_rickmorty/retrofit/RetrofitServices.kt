@@ -17,12 +17,30 @@ interface RetrofitServices {
     @GET("character/{ids}")
     suspend fun getSeveralCharacters(@Path("ids") ids: String): MutableList<Character>
 
+    @GET("character")
+    suspend fun getSeveralCharactersFilter(
+        @Query("page") queryPage: Int,
+        @Query("name") queryName: String,
+        @Query("status") queryStatus: String,
+        @Query("species") querySpecies: String,
+        @Query("type") queryType: String,
+        @Query("gender") queryGender: String
+    ): AllCharacters
+
 
     @GET("location")
     suspend fun getLocationPagingList(@Query("page") query: Int): AllLocations
 
     @GET("location/{id}")
     suspend fun getOneLocation(@Path("id") id: Int): Location
+
+    @GET("location")
+    suspend fun getSeveralLocationsFilter(
+        @Query("page") queryPage: Int,
+        @Query("name") queryName: String,
+        @Query("type") queryType: String,
+        @Query("dimension") queryDimension: String
+    ): AllLocations
 
 
     @GET("episode")
@@ -33,4 +51,11 @@ interface RetrofitServices {
 
     @GET("episode/{ids}")
     suspend fun getSeveralEpisodes(@Path("ids") ids: String): MutableList<Episode>
+
+    @GET("episode")
+    suspend fun getSeveralEpisodesFilter(
+        @Query("page") queryPage: Int,
+        @Query("name") queryName: String,
+        @Query("episode") queryEpisode: String
+    ): AllEpisodes
 }

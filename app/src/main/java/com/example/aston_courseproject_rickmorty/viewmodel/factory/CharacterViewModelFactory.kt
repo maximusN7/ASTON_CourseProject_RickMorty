@@ -8,16 +8,17 @@ import androidx.paging.ExperimentalPagingApi
 import com.example.aston_courseproject_rickmorty.MainViewModel
 import com.example.aston_courseproject_rickmorty.MainViewModelFactory
 import com.example.aston_courseproject_rickmorty.fragments.dialogs.CharacterFilterDialog
+import com.example.aston_courseproject_rickmorty.fragments.dialogs.Filter
 import com.example.aston_courseproject_rickmorty.model.database.ItemsDatabase
 import com.example.aston_courseproject_rickmorty.viewmodel.CharacterViewModel
 
 @ExperimentalPagingApi
-class CharacterViewModelFactory(context: Context, appContext: Context, owner: FragmentActivity) : ViewModelProvider.Factory {
+class CharacterViewModelFactory(context: Context, appContext: Context, owner: FragmentActivity, dialogApplyListener: CharacterFilterDialog.ApplyClickListener, private val filterList: MutableList<Filter>) : ViewModelProvider.Factory {
     private var mainViewModel: MainViewModel = ViewModelProvider(owner, MainViewModelFactory(context))[MainViewModel::class.java]
-    private var dialogProcessor = CharacterFilterDialog(context)
+    private var dialogProcessor = CharacterFilterDialog(context, dialogApplyListener)
     private var database = ItemsDatabase.getDatabase(appContext)
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return CharacterViewModel(mainViewModel, dialogProcessor, database) as T
+        return CharacterViewModel(mainViewModel, dialogProcessor, database, filterList) as T
     }
 }

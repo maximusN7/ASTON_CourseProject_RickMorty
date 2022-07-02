@@ -5,22 +5,20 @@ import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
-import com.example.aston_courseproject_rickmorty.model.Location
 import com.example.aston_courseproject_rickmorty.model.database.ItemsDatabase
-import com.example.aston_courseproject_rickmorty.model.database.LocationCharacterJoin
 import com.example.aston_courseproject_rickmorty.model.database.LocationDb
 import com.example.aston_courseproject_rickmorty.model.database.LocationRemoteKey
 import com.example.aston_courseproject_rickmorty.model.dto.LocationForListDto
 import com.example.aston_courseproject_rickmorty.retrofit.RetrofitServices
 import com.example.aston_courseproject_rickmorty.utils.Converters
-import com.example.aston_courseproject_rickmorty.utils.Separators
 import retrofit2.HttpException
 import java.io.IOException
 
 @ExperimentalPagingApi
 class LocationRemoteMediator(
     private val mServices: RetrofitServices,
-    private val db: ItemsDatabase
+    private val db: ItemsDatabase,
+    private val filterQueryList: MutableList<String>
 ) : RemoteMediator<Int, LocationForListDto>() {
 
     override suspend fun initialize(): InitializeAction {
@@ -42,10 +40,11 @@ class LocationRemoteMediator(
         }
 
         try {
-            val response = mServices.getLocationPagingList(page)
+            val response = mServices.getSeveralLocationsFilter(page,filterQueryList[0], filterQueryList[1], filterQueryList[2])
             val isEndOfList = response.info.next == null
+            val queryList = filterQueryList[0] + filterQueryList[1] + filterQueryList[2]
             db.withTransaction {
-                if (loadType == LoadType.REFRESH) {
+                if (loadType == LoadType.REFRESH && queryList == "") {
                     db.getLocationCharacterJoinDao().deleteAll()
                     db.getLocationDao().deleteAll()
                     db.getLocationKeysDao().deleteAll()
@@ -108,17 +107,13 @@ class LocationRemoteMediator(
         return state.pages
             .lastOrNull { it.data.isNotEmpty() }
             ?.data?.lastOrNull()
-            ?.let { location ->
-                db.getLocationKeysDao().remoteKeysLocationId(location.id.toString())
-            }
+            ?.let { location -> db.getLocationKeysDao().remoteKeysLocationId(location.id.toString()) }
     }
 
     private suspend fun getFirstRemoteKey(state: PagingState<Int, LocationForListDto>): LocationRemoteKey? {
         return state.pages
             .firstOrNull { it.data.isNotEmpty() }
             ?.data?.firstOrNull()
-            ?.let { location ->
-                db.getLocationKeysDao().remoteKeysLocationId(location.id.toString())
-            }
+            ?.let { location -> db.getLocationKeysDao().remoteKeysLocationId(location.id.toString())}
     }
 }

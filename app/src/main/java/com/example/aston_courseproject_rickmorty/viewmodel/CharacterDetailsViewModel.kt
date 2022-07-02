@@ -161,8 +161,8 @@ class CharacterDetailsViewModel(
     }
 
     fun openFragment(location: LocationForListDto?) {
-        if (location?.name != "unknown" && location?.name != "") {
-            val fragment: Fragment = LocationDetailsFragment.newInstance(location?.id!!)
+        if (location?.name != "unknown" && location?.name != "" && location?.id != null) {
+            val fragment: Fragment = LocationDetailsFragment.newInstance(location.id)
             mainViewModel.changeCurrentDetailsFragment(fragment)
         }
     }

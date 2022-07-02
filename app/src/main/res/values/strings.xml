@@ -50,17 +50,17 @@
     <string name="filter_character_type">filter by type</string>
     <string name="filter_character_gender">filter by gender</string>
 
-    <string name="filter_character_status_alive">alive</string>
-    <string name="filter_character_status_dead">dead</string>
-    <string name="filter_character_status_unknown">unknown</string>
+    <string name="filter_character_status_alive">Alive</string>
+    <string name="filter_character_status_dead">Dead</string>
+    <string name="filter_character_status_unknown">Unknown</string>
 
     <string name="filter_character_species_edit">type in species</string>
     <string name="filter_character_type_edit">type in type</string>
 
-    <string name="filter_character_gender_female">female</string>
-    <string name="filter_character_gender_male">male</string>
-    <string name="filter_character_gender_genderless">genderless</string>
-    <string name="filter_character_gender_unknown">unknown</string>
+    <string name="filter_character_gender_female">Female</string>
+    <string name="filter_character_gender_male">Male</string>
+    <string name="filter_character_gender_genderless">Genderless</string>
+    <string name="filter_character_gender_unknown">Unknown</string>
 
 
     <string name="filter_location">Location Filters</string>
