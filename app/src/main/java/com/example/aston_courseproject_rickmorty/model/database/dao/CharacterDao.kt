@@ -17,7 +17,7 @@ interface CharacterDao {
     suspend fun insertAll(characters: List<CharacterDb>)
 
     @Query("SELECT id, name, status, species, gender, image FROM characters_full_info")
-    fun getAll(): PagingSource<Int, CharacterForListDto>
+    fun getAll(): List<CharacterForListDto>
 
     @Query("SELECT * FROM characters_full_info WHERE id = :characterId")
     suspend fun getOneById(characterId: Int): CharacterDb
@@ -30,4 +30,7 @@ interface CharacterDao {
 
     @Query("SELECT id, name, status, species, gender, image FROM characters_full_info WHERE (:name = '' OR name LIKE '%' || :name || '%') AND (:status = '' OR status = :status) AND (:species = '' OR species LIKE '%' || :species || '%') AND (:type = '' OR type LIKE '%' || :type || '%') AND (:gender = '' OR gender = :gender)")
     fun getSeveralForFilter(name: String, status: String, species: String, type: String, gender: String): PagingSource<Int, CharacterForListDto>
+
+    @Query("SELECT id, name, status, species, gender, image FROM characters_full_info WHERE (:name = '' OR name LIKE '%' || :name || '%') AND (:status = '' OR status = :status) AND (:species = '' OR species LIKE '%' || :species || '%') AND (:type = '' OR type LIKE '%' || :type || '%') AND (:gender = '' OR gender = :gender)")
+    fun getSeveralForFilterCheck(name: String, status: String, species: String, type: String, gender: String): List<CharacterForListDto>
 }

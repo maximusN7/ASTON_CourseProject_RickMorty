@@ -4,6 +4,7 @@ import android.app.Dialog
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ProgressBar
+import android.widget.TextView
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.CombinedLoadStates
@@ -97,7 +99,7 @@ class LocationFragment : Fragment(),
                 s: CharSequence, start: Int,
                 before: Int, count: Int
             ) {
-                if (s.toString() != "") {
+                if (s.isNotEmpty()) {
                     filterList[0].stringToFilter = s.toString()
                     filterList[0].isApplied = true
                 } else {
@@ -138,6 +140,26 @@ class LocationFragment : Fragment(),
                 if (state.refresh != LoadState.Loading) View.VISIBLE else View.GONE
             val pbView = view?.findViewById<ProgressBar>(R.id.progress)
             pbView?.visibility = if (state.refresh == LoadState.Loading) View.VISIBLE else View.GONE
+            val errorText = view?.findViewById<TextView>(R.id.errorText)
+            val errorTextTitle = view?.findViewById<TextView>(R.id.errorTextTitle)
+            when (state.refresh.toString()) {
+                "Error(endOfPaginationReached=false, error=java.io.IOException: Wrong Query)" -> {
+                    errorText?.visibility = View.VISIBLE
+                    errorTextTitle?.visibility = View.VISIBLE
+                    errorTextTitle?.text = getString(R.string.error_empty_list_location_title)
+                    errorText?.text = getString(R.string.error_empty_list_location)
+                }
+                "Error(endOfPaginationReached=false, error=java.io.IOException: Empty Database)" -> {
+                    errorText?.visibility = View.VISIBLE
+                    errorTextTitle?.visibility = View.VISIBLE
+                    errorTextTitle?.text = getString(R.string.error_empty_database_title)
+                    errorText?.text = getString(R.string.error_empty_database)
+                }
+                else -> {
+                    errorText?.visibility = View.GONE
+                    errorTextTitle?.visibility = View.GONE
+                }
+            }
         }
 
         viewModel.typeFilter.observe(viewLifecycleOwner) {

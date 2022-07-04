@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ASTON_CourseProject_RickMorty</string>
+    <string name="app_name">ASTON Rick &amp; Morty. Course Project</string>
 
     <string name="menu_episode">Episodes</string>
     <string name="menu_character">Characters</string>
@@ -77,4 +77,13 @@
     <string name="filter_episode_episode">filter by episode code</string>
 
     <string name="filter_episode_episode_edit">type in code</string>
+
+    <string name="error_empty_list_character_title">No characters are found</string>
+    <string name="error_empty_list_character">Try another filters or search query</string>
+    <string name="error_empty_list_location_title">No locations are found</string>
+    <string name="error_empty_list_location">Try another filters or search query</string>
+    <string name="error_empty_list_episode_title">No episodes are found</string>
+    <string name="error_empty_list_episode">Try another filters or search query</string>
+    <string name="error_empty_database_title">Oops!</string>
+    <string name="error_empty_database">There is no data for Offline mode. Try to refresh page after connection resume</string>
 </resources>

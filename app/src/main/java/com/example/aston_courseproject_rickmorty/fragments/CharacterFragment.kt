@@ -4,12 +4,14 @@ import android.app.Dialog
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ProgressBar
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -27,7 +29,13 @@ import com.example.aston_courseproject_rickmorty.recycler_view.CharacterPaginati
 import com.example.aston_courseproject_rickmorty.utils.RecyclerDecorator
 import com.example.aston_courseproject_rickmorty.viewmodel.CharacterViewModel
 import com.example.aston_courseproject_rickmorty.viewmodel.factory.CharacterViewModelFactory
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.newSingleThreadContext
+import kotlinx.coroutines.runBlocking
+import retrofit2.HttpException
+import retrofit2.Response
 
 
 /**
@@ -90,13 +98,14 @@ class CharacterFragment : Fragment(),
                 s: CharSequence, start: Int,
                 count: Int, after: Int
             ) {
+                editTextName.isCursorVisible = true
             }
 
             override fun onTextChanged(
                 s: CharSequence, start: Int,
                 before: Int, count: Int
             ) {
-                if (s.toString() != "") {
+                if (s.isNotEmpty()) {
                     filterList[0].stringToFilter = s.toString()
                     filterList[0].isApplied = true
                 } else {
@@ -124,7 +133,13 @@ class CharacterFragment : Fragment(),
         val appContext = activity?.applicationContext
         viewModel = ViewModelProvider(
             this,
-            CharacterViewModelFactory(requireContext(), appContext!!, requireActivity(), this, filterList)
+            CharacterViewModelFactory(
+                requireContext(),
+                appContext!!,
+                requireActivity(),
+                this,
+                filterList
+            )
         )[CharacterViewModel::class.java]
         lifecycleScope.launchWhenCreated {
             viewModel.characters.collectLatest {
@@ -136,6 +151,26 @@ class CharacterFragment : Fragment(),
                 if (state.refresh != LoadState.Loading) View.VISIBLE else View.GONE
             val pbView = view?.findViewById<ProgressBar>(R.id.progress)
             pbView?.visibility = if (state.refresh == LoadState.Loading) View.VISIBLE else View.GONE
+            val errorText = view?.findViewById<TextView>(R.id.errorText)
+            val errorTextTitle = view?.findViewById<TextView>(R.id.errorTextTitle)
+            when (state.refresh.toString()) {
+                "Error(endOfPaginationReached=false, error=java.io.IOException: Wrong Query)" -> {
+                    errorText?.visibility = View.VISIBLE
+                    errorTextTitle?.visibility = View.VISIBLE
+                    errorTextTitle?.text = getString(R.string.error_empty_list_character_title)
+                    errorText?.text = getString(R.string.error_empty_list_character)
+                }
+                "Error(endOfPaginationReached=false, error=java.io.IOException: Empty Database)" -> {
+                    errorText?.visibility = View.VISIBLE
+                    errorTextTitle?.visibility = View.VISIBLE
+                    errorTextTitle?.text = getString(R.string.error_empty_database_title)
+                    errorText?.text = getString(R.string.error_empty_database)
+                }
+                else -> {
+                    errorText?.visibility = View.GONE
+                    errorTextTitle?.visibility = View.GONE
+                }
+            }
         }
 
         viewModel.statusFilter.observe(viewLifecycleOwner) {
@@ -199,6 +234,8 @@ class CharacterFragment : Fragment(),
     }
 
     override fun onApplyClick(dialog: Dialog) {
+        val editTextSearch = view?.findViewById<EditText>(R.id.editTextName)
+        editTextSearch?.isCursorVisible = false
         viewModel.onApplyClick(dialog)
     }
 }

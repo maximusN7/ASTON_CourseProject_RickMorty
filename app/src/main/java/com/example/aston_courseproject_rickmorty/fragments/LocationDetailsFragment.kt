@@ -26,6 +26,7 @@ import com.example.aston_courseproject_rickmorty.utils.RecyclerDecorator
 import com.example.aston_courseproject_rickmorty.viewmodel.LocationDetailsViewModel
 import com.example.aston_courseproject_rickmorty.viewmodel.factory.LocationDetailsViewModelFactory
 import kotlinx.coroutines.launch
+import org.w3c.dom.Text
 
 
 private const val ARG_LOCATION_ID = "locationId"
@@ -121,6 +122,15 @@ class LocationDetailsFragment : Fragment(), CharacterRecyclerAdapter.CharacterVi
                         pbViewRecycler?.visibility = View.GONE
                         it.data?.let { characters ->
                             val oldList = listForRecycler.map { character -> character.copy() }
+                            val errorTextTitle = view?.findViewById<TextView>(R.id.errorTextTitle)
+                            val errorText = view?.findViewById<TextView>(R.id.errorText)
+                            if (characters.isEmpty()) {
+                                errorTextTitle?.visibility = View.VISIBLE
+                                errorText?.visibility = View.VISIBLE
+                            } else {
+                                errorTextTitle?.visibility = View.GONE
+                                errorText?.visibility = View.GONE
+                            }
                             listForRecycler.clear()
                             listForRecycler.addAll(characters)
                             notifyWithDiffUtil(oldList.toMutableList())

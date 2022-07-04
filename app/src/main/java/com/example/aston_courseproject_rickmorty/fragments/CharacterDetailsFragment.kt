@@ -194,6 +194,15 @@ class CharacterDetailsFragment : Fragment(),
                         pbViewRecycler?.visibility = View.GONE
                         it.data?.let { episodes ->
                             val oldList = listForRecycler.map { episode -> episode.copy() }
+                            val errorTextTitle = view?.findViewById<TextView>(R.id.errorTextTitle)
+                            val errorText = view?.findViewById<TextView>(R.id.errorText)
+                            if (episodes.isEmpty()) {
+                                errorTextTitle?.visibility = View.VISIBLE
+                                errorText?.visibility = View.VISIBLE
+                            } else {
+                                errorTextTitle?.visibility = View.GONE
+                                errorText?.visibility = View.GONE
+                            }
                             listForRecycler.clear()
                             listForRecycler.addAll(episodes)
                             notifyEpisodesWithDiffUtil(oldList.toMutableList())
