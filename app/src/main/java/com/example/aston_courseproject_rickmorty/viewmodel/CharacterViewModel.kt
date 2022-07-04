@@ -1,7 +1,6 @@
 package com.example.aston_courseproject_rickmorty.viewmodel
 
 import android.app.Dialog
-import android.util.Log
 import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.RadioButton

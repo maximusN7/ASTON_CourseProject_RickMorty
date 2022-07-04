@@ -95,7 +95,7 @@ class EpisodeFragment : Fragment(),
                 s: CharSequence, start: Int,
                 before: Int, count: Int
             ) {
-                if (s.toString() != "") {
+                if (s.isNotEmpty()) {
                     filterList[0].stringToFilter = s.toString()
                     filterList[0].isApplied = true
                 } else {
@@ -141,6 +141,26 @@ class EpisodeFragment : Fragment(),
                 if (state.refresh != LoadState.Loading) View.VISIBLE else View.GONE
             val pbView = view?.findViewById<ProgressBar>(R.id.progress)
             pbView?.visibility = if (state.refresh == LoadState.Loading) View.VISIBLE else View.GONE
+            val errorText = view?.findViewById<TextView>(R.id.errorText)
+            val errorTextTitle = view?.findViewById<TextView>(R.id.errorTextTitle)
+            when (state.refresh.toString()) {
+                "Error(endOfPaginationReached=false, error=java.io.IOException: Wrong Query)" -> {
+                    errorText?.visibility = View.VISIBLE
+                    errorTextTitle?.visibility = View.VISIBLE
+                    errorTextTitle?.text = getString(R.string.error_empty_list_episode_title)
+                    errorText?.text = getString(R.string.error_empty_list_episode)
+                }
+                "Error(endOfPaginationReached=false, error=java.io.IOException: Empty Database)" -> {
+                    errorText?.visibility = View.VISIBLE
+                    errorTextTitle?.visibility = View.VISIBLE
+                    errorTextTitle?.text = getString(R.string.error_empty_database_title)
+                    errorText?.text = getString(R.string.error_empty_database)
+                }
+                else -> {
+                    errorText?.visibility = View.GONE
+                    errorTextTitle?.visibility = View.GONE
+                }
+            }
         }
 
         viewModel.episodeCodeFilter.observe(viewLifecycleOwner) {

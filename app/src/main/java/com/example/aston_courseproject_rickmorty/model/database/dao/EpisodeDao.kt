@@ -16,7 +16,7 @@ interface EpisodeDao {
     suspend fun insertAll(episodes: List<EpisodeDb>)
 
     @Query("SELECT id, name, air_date, episode FROM episodes_full_info")
-    fun getAll(): PagingSource<Int, EpisodeForListDto>
+    fun getAll(): List<EpisodeForListDto>
 
     @Query("SELECT * FROM episodes_full_info WHERE id = :episodeId")
     fun getOneById(episodeId: Int): EpisodeDb
@@ -29,4 +29,7 @@ interface EpisodeDao {
 
     @Query("SELECT id, name, air_date, episode FROM episodes_full_info WHERE (:name = '' OR name LIKE '%' || :name || '%') AND (:episode = '' OR episode LIKE '%' || :episode || '%')")
     fun getSeveralForFilter(name: String, episode: String): PagingSource<Int, EpisodeForListDto>
+
+    @Query("SELECT id, name, air_date, episode FROM episodes_full_info WHERE (:name = '' OR name LIKE '%' || :name || '%') AND (:episode = '' OR episode LIKE '%' || :episode || '%')")
+    fun getSeveralForFilterCheck(name: String, episode: String): List<EpisodeForListDto>
 }

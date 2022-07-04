@@ -1,6 +1,5 @@
 package com.example.aston_courseproject_rickmorty.model.mediator
 
-import android.util.Log
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
 import androidx.paging.PagingState
@@ -12,6 +11,7 @@ import com.example.aston_courseproject_rickmorty.model.database.ItemsDatabase
 import com.example.aston_courseproject_rickmorty.model.dto.EpisodeForListDto
 import com.example.aston_courseproject_rickmorty.retrofit.RetrofitServices
 import com.example.aston_courseproject_rickmorty.utils.Converters
+import kotlinx.coroutines.delay
 import retrofit2.HttpException
 import java.io.IOException
 
@@ -40,7 +40,21 @@ class EpisodeRemoteMediator(
             }
         }
 
+        var isEmptyDb = false
+        var isEmptyQuery = false
+        Thread {
+            val listEmpty = db.getEpisodeDao().getAll()
+            if (listEmpty.isEmpty()) {
+                isEmptyDb = true
+            }
+            val listQuery = db.getEpisodeDao().getSeveralForFilterCheck(filterQueryList[0], filterQueryList[1])
+            if (listQuery.isEmpty()) {
+                isEmptyQuery = true
+            }
+        }.start()
+
         try {
+            delay(100)
             val response =
                 mServices.getSeveralEpisodesFilter(page, filterQueryList[0], filterQueryList[1])
             val isEndOfList = response.info.next == null
@@ -67,10 +81,20 @@ class EpisodeRemoteMediator(
             }
             return MediatorResult.Success(endOfPaginationReached = isEndOfList)
         } catch (e: IOException) {
-            Log.e("AAA", e.toString())
+            if (isEmptyDb) {
+                val error = IOException("Empty Database")
+                return MediatorResult.Error(error)
+            }
+            if (isEmptyQuery) {
+                val error = IOException("Wrong Query")
+                return MediatorResult.Error(error)
+            }
             return MediatorResult.Error(e)
         } catch (e: HttpException) {
-            Log.e("AAA", e.toString())
+            if (isEmptyQuery) {
+                val error = IOException("Wrong Query")
+                return MediatorResult.Error(error)
+            }
             return MediatorResult.Error(e)
         }
     }

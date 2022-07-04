@@ -11,6 +11,7 @@ import com.example.aston_courseproject_rickmorty.model.database.LocationRemoteKe
 import com.example.aston_courseproject_rickmorty.model.dto.LocationForListDto
 import com.example.aston_courseproject_rickmorty.retrofit.RetrofitServices
 import com.example.aston_courseproject_rickmorty.utils.Converters
+import kotlinx.coroutines.delay
 import retrofit2.HttpException
 import java.io.IOException
 
@@ -39,7 +40,21 @@ class LocationRemoteMediator(
             }
         }
 
+        var isEmptyDb = false
+        var isEmptyQuery = false
+        Thread {
+            val listEmpty = db.getLocationDao().getAll()
+            if (listEmpty.isEmpty()) {
+                isEmptyDb = true
+            }
+            val listQuery = db.getLocationDao().getSeveralForFilterCheck(filterQueryList[0], filterQueryList[1], filterQueryList[2])
+            if (listQuery.isEmpty()) {
+                isEmptyQuery = true
+            }
+        }.start()
+
         try {
+            delay(100)
             val response = mServices.getSeveralLocationsFilter(page,filterQueryList[0], filterQueryList[1], filterQueryList[2])
             val isEndOfList = response.info.next == null
             val queryList = filterQueryList[0] + filterQueryList[1] + filterQueryList[2]
@@ -65,8 +80,20 @@ class LocationRemoteMediator(
             }
             return MediatorResult.Success(endOfPaginationReached = isEndOfList)
         } catch (e: IOException) {
+            if (isEmptyDb) {
+                val error = IOException("Empty Database")
+                return MediatorResult.Error(error)
+            }
+            if (isEmptyQuery) {
+                val error = IOException("Wrong Query")
+                return MediatorResult.Error(error)
+            }
             return MediatorResult.Error(e)
         } catch (e: HttpException) {
+            if (isEmptyQuery) {
+                val error = IOException("Wrong Query")
+                return MediatorResult.Error(error)
+            }
             return MediatorResult.Error(e)
         }
     }

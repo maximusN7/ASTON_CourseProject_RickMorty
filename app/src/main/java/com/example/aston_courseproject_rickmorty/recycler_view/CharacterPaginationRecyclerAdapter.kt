@@ -30,7 +30,6 @@ class CharacterPaginationRecyclerAdapter(private val itemClickListener: Characte
     override fun onBindViewHolder(holder: CharacterViewHolder, position: Int) {
         val listItem = getItem(position)
         holder.bind(listItem)
-
         Picasso.get()
             .load(listItem?.image)
             .transform(CropCircleTransformation())

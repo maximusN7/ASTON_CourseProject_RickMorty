@@ -16,7 +16,7 @@ interface LocationDao {
     suspend fun insertAll(locations: List<LocationDb>)
 
     @Query("SELECT id, name, type, dimension FROM locations_full_info")
-    fun getAll(): PagingSource<Int, LocationForListDto>
+    fun getAll(): List<LocationForListDto>
 
     @Query("SELECT * FROM locations_full_info WHERE id = :locationId")
     fun getOneById(locationId: Int): LocationDb
@@ -29,4 +29,7 @@ interface LocationDao {
 
     @Query("SELECT id, name, type, dimension FROM locations_full_info WHERE (:name = '' OR name LIKE '%' || :name || '%') AND (:type = '' OR type LIKE '%' || :type || '%') AND (:dimension = '' OR dimension LIKE '%' || :dimension || '%')")
     fun getSeveralForFilter(name: String, type: String, dimension: String): PagingSource<Int, LocationForListDto>
+
+    @Query("SELECT id, name, type, dimension FROM locations_full_info WHERE (:name = '' OR name LIKE '%' || :name || '%') AND (:type = '' OR type LIKE '%' || :type || '%') AND (:dimension = '' OR dimension LIKE '%' || :dimension || '%')")
+    fun getSeveralForFilterCheck(name: String, type: String, dimension: String): List<LocationForListDto>
 }
