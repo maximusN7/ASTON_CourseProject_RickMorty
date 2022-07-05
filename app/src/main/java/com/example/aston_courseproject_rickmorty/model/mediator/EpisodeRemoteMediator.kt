@@ -5,12 +5,11 @@ import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
-import com.example.aston_courseproject_rickmorty.model.database.EpisodeDb
 import com.example.aston_courseproject_rickmorty.model.database.EpisodeRemoteKey
 import com.example.aston_courseproject_rickmorty.model.database.ItemsDatabase
 import com.example.aston_courseproject_rickmorty.model.dto.EpisodeForListDto
 import com.example.aston_courseproject_rickmorty.retrofit.RetrofitServices
-import com.example.aston_courseproject_rickmorty.utils.Converters
+import com.example.aston_courseproject_rickmorty.utils.mapper.EpisodeCharacterJoinMapper
 import com.example.aston_courseproject_rickmorty.utils.mapper.EpisodeToDMapper
 import kotlinx.coroutines.delay
 import retrofit2.HttpException
@@ -77,7 +76,7 @@ class EpisodeRemoteMediator(
                 }
                 db.getEpisodeKeysDao().insertAll(keys)
                 db.getEpisodeDao().insertAll(EpisodeToDMapper().transform(response.results))
-                val listOfCharacterToEpisodes = Converters.convertToECJoin(response.results)
+                val listOfCharacterToEpisodes = EpisodeCharacterJoinMapper().transform(response.results)
                 db.getEpisodeCharacterJoinDao().insertAll(listOfCharacterToEpisodes)
             }
             return MediatorResult.Success(endOfPaginationReached = isEndOfList)

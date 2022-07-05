@@ -1,8 +1,5 @@
 package com.example.aston_courseproject_rickmorty.model.dto
 
-import com.example.aston_courseproject_rickmorty.model.Character
-import com.example.aston_courseproject_rickmorty.model.database.CharacterDb
-import com.example.aston_courseproject_rickmorty.model.database.CharacterForListDb
 
 data class CharacterDto(
     val id: Int? = null,
@@ -26,62 +23,4 @@ data class CharacterForListDto(
     val species: String?,
     val gender: String?,
     val image: String?
-) {
-    companion object {
-        fun characterToForListDto(character: Character): CharacterForListDto {
-            return CharacterForListDto(
-                id = character.id,
-                name = character.name,
-                status = character.status,
-                species = character.species,
-                gender = character.gender,
-                image = character.image
-            )
-        }
-        fun characterToForListDto(character: CharacterDb): CharacterForListDto {
-            return CharacterForListDto(
-                id = character.id,
-                name = character.name,
-                status = character.status,
-                species = character.species,
-                gender = character.gender,
-                image = character.image
-            )
-        }
-        fun characterToForListDto(characters: List<Character>, network: Boolean = true): MutableList<CharacterForListDto> {
-            val newMutableList = mutableListOf<CharacterForListDto>()
-            for (character in characters) {
-                newMutableList.add(characterToForListDto(character))
-            }
-            return newMutableList
-        }
-        fun characterToForListDto(characters: List<CharacterDb>): MutableList<CharacterForListDto> {
-            val newMutableList = mutableListOf<CharacterForListDto>()
-            for (character in characters) {
-                newMutableList.add(characterToForListDto(character))
-            }
-            return newMutableList
-        }
-
-        fun characterToForListDto(character: CharacterForListDb): CharacterForListDto {
-            return CharacterForListDto(
-                id = character.id,
-                name = character.name,
-                status = character.status,
-                species = character.species,
-                gender = character.gender,
-                image = character.image
-            )
-        }
-
-        fun characterToForListDto(characters: List<CharacterForListDb>, db: Int = 1): MutableList<CharacterForListDto> {
-            val newMutableList = mutableListOf<CharacterForListDto>()
-            for (character in characters) {
-                if (character != null) {
-                    newMutableList.add(characterToForListDto(character))
-                }
-            }
-            return newMutableList
-        }
-    }
-}
+)

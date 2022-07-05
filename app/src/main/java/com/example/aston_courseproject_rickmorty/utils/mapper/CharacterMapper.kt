@@ -95,7 +95,3 @@ class LocationForCharacterMapper : Mapper<LocationForCharacter?, LocationForChar
         return LocationForCharacterDto(data?.name, id)
     }
 }
-
-interface Mapper<SRC, DTO> {
-    fun transform(data: SRC): DTO
-}

@@ -26,7 +26,6 @@ import com.example.aston_courseproject_rickmorty.utils.RecyclerDecorator
 import com.example.aston_courseproject_rickmorty.viewmodel.LocationDetailsViewModel
 import com.example.aston_courseproject_rickmorty.viewmodel.factory.LocationDetailsViewModelFactory
 import kotlinx.coroutines.launch
-import org.w3c.dom.Text
 
 
 private const val ARG_LOCATION_ID = "locationId"

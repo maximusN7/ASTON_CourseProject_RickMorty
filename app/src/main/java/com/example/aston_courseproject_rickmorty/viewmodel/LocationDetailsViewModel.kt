@@ -1,6 +1,5 @@
 package com.example.aston_courseproject_rickmorty.viewmodel
 
-import android.util.Log
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -8,7 +7,6 @@ import androidx.paging.ExperimentalPagingApi
 import com.example.aston_courseproject_rickmorty.MainViewModel
 import com.example.aston_courseproject_rickmorty.fragments.CharacterDetailsFragment
 import com.example.aston_courseproject_rickmorty.model.Character
-import com.example.aston_courseproject_rickmorty.model.database.CharacterDb
 import com.example.aston_courseproject_rickmorty.model.database.ItemsDatabase
 import com.example.aston_courseproject_rickmorty.model.dto.CharacterForListDto
 import com.example.aston_courseproject_rickmorty.model.dto.LocationDto
@@ -17,9 +15,10 @@ import com.example.aston_courseproject_rickmorty.retrofit.ApiState
 import com.example.aston_courseproject_rickmorty.retrofit.Common
 import com.example.aston_courseproject_rickmorty.retrofit.RetrofitServices
 import com.example.aston_courseproject_rickmorty.retrofit.Status
-import com.example.aston_courseproject_rickmorty.utils.Converters
 import com.example.aston_courseproject_rickmorty.utils.InternetConnectionChecker
-import com.example.aston_courseproject_rickmorty.utils.Separators
+import com.example.aston_courseproject_rickmorty.utils.mapper.CharacterEpisodeJoinMapper
+import com.example.aston_courseproject_rickmorty.utils.mapper.CharacterForListDbMapper
+import com.example.aston_courseproject_rickmorty.utils.mapper.CharacterForListMapper
 import com.example.aston_courseproject_rickmorty.utils.mapper.CharacterToDbMapper
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -63,8 +62,8 @@ class LocationDetailsViewModel(
                         val charactersId = location.value.data?.residents ?: ""
                         getCharacters(charactersId)
                     } else {
-                        val episodeId = location.value.data?.id
-                        getCharactersDb(episodeId!!)
+                        val locationId = location.value.data?.id ?: 0
+                        getCharactersDb(locationId)
                     }
                 }
         }
@@ -80,7 +79,7 @@ class LocationDetailsViewModel(
             .collect {
                 saveInDb(it.data!!)
                 characters.value =
-                    ApiState.success(CharacterForListDto.characterToForListDto(it.data))
+                    ApiState.success(CharacterForListMapper().transform(it.data))
             }
     }
 
@@ -91,13 +90,13 @@ class LocationDetailsViewModel(
             }
             .collect {
                 characters.value =
-                    ApiState.success(CharacterForListDto.characterToForListDto(it.data!!))
+                    ApiState.success(CharacterForListDbMapper().transform(it.data!!))
             }
     }
 
     private suspend fun saveInDb(characterList: MutableList<Character>) {
         database.getCharacterDao().insertAll(CharacterToDbMapper().transform(characterList))
-        val listOfCharacterToEpisodes = Converters.convertToCEJoin(characterList)
+        val listOfCharacterToEpisodes = CharacterEpisodeJoinMapper().transform(characterList)
         database.getCharacterEpisodeJoinDao().insertAll(listOfCharacterToEpisodes)
     }
 

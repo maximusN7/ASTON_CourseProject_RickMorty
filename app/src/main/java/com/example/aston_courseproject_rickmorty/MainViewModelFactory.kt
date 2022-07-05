@@ -8,9 +8,9 @@ import com.example.aston_courseproject_rickmorty.utils.ResourceProvider
 
 @ExperimentalPagingApi
 class MainViewModelFactory(val context: Context) : ViewModelProvider.Factory {
+    private val mResourceProvider = ResourceProvider(context)
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        val mResourceProvider = ResourceProvider(context)
         return MainViewModel(mResourceProvider) as T
     }
 }

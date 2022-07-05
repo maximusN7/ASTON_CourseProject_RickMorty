@@ -10,7 +10,7 @@ import com.example.aston_courseproject_rickmorty.model.database.LocationDb
 import com.example.aston_courseproject_rickmorty.model.database.LocationRemoteKey
 import com.example.aston_courseproject_rickmorty.model.dto.LocationForListDto
 import com.example.aston_courseproject_rickmorty.retrofit.RetrofitServices
-import com.example.aston_courseproject_rickmorty.utils.Converters
+import com.example.aston_courseproject_rickmorty.utils.mapper.LocationCharacterJoinMapper
 import kotlinx.coroutines.delay
 import retrofit2.HttpException
 import java.io.IOException
@@ -75,7 +75,7 @@ class LocationRemoteMediator(
                 }
                 db.getLocationKeysDao().insertAll(keys)
                 db.getLocationDao().insertAll(LocationDb.locationToDb(response.results))
-                val listOfCharacterToEpisodes = Converters.convertToLCJoin(response.results)
+                val listOfCharacterToEpisodes = LocationCharacterJoinMapper().transform(response.results)
                 db.getLocationCharacterJoinDao().insertAll(listOfCharacterToEpisodes)
             }
             return MediatorResult.Success(endOfPaginationReached = isEndOfList)

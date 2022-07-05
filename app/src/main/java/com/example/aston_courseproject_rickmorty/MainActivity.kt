@@ -2,6 +2,7 @@ package com.example.aston_courseproject_rickmorty
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
@@ -14,15 +15,14 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 @ExperimentalPagingApi
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var viewModel: MainViewModel
+    lateinit var viewModel: MainViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.Theme_ASTON_CourseProject_RickMorty)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        viewModel =
-            ViewModelProvider(this, MainViewModelFactory(this))[MainViewModel::class.java]
+        viewModel = ViewModelProvider(this, MainViewModelFactory(this))[MainViewModel::class.java]
 
         viewModel.titleString.observe(this) {
             title = it
@@ -37,7 +37,6 @@ class MainActivity : AppCompatActivity() {
                 supportFragmentManager.beginTransaction().remove(fragment).commit()
             }
             supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
-
             supportFragmentManager.beginTransaction().apply {
                 replace(R.id.fragmentContainerView, it, "current_main_fragment")
                 commit()
@@ -48,6 +47,7 @@ class MainActivity : AppCompatActivity() {
             val fTrans = supportFragmentManager.beginTransaction()
             supportFragmentManager.findFragmentByTag("current_main_fragment")
                 ?.let { fTrans.hide(it) }
+
             fTrans.apply {
                 replace(R.id.fragmentContainerView, it, "current_main_fragment")
                 addToBackStack(null)

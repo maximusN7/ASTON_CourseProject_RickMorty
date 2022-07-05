@@ -39,7 +39,7 @@ abstract class ItemsDatabase : RoomDatabase() {
                     instance = Room.databaseBuilder(
                         appContext,
                         ItemsDatabase::class.java,
-                        "DataForLists"
+                        "DataForLists20"
                     ).build()
                 }
             }
