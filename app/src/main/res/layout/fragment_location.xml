@@ -18,9 +18,10 @@
 
             <EditText
                 android:id="@+id/editTextName"
+                style="@style/EditTextDialog"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:hint="@string/recycler_locName"
+                android:hint="@string/filter_location_name"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/button_filter"
@@ -33,6 +34,7 @@
 
             <Button
                 android:id="@+id/button_filter"
+                style="@style/FilterButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/recycler_filter"

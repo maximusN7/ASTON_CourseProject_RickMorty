@@ -73,12 +73,14 @@ class CharacterFragment : Fragment(),
         mAdapter = CharacterPaginationRecyclerAdapter(this)
 
         createViewModelUpdateAdapter()
+        filterList = mutableListOf(Filter(), Filter(), Filter(), Filter(), Filter())
 
         initRecyclerView()
 
         val editTextName = view.findViewById<EditText>(R.id.editTextName)
         val swipeRefreshLayout = view.findViewById<SwipeRefreshLayout>(R.id.swipeRefreshLayout)
         swipeRefreshLayout.setOnRefreshListener {
+            this.viewModelStore.clear()
 
             createViewModelUpdateAdapter()
 
@@ -113,9 +115,14 @@ class CharacterFragment : Fragment(),
                     filterList[0].isApplied = false
                 }
 
+                clearView()
                 createViewModelUpdateAdapter()
             }
         })
+    }
+
+    fun clearView() {
+        this.viewModelStore.clear()
     }
 
     private fun initRecyclerView() {
@@ -128,8 +135,6 @@ class CharacterFragment : Fragment(),
     }
 
     private fun createViewModelUpdateAdapter() {
-        this.viewModelStore.clear()
-
         val appContext = activity?.applicationContext
         viewModel = ViewModelProvider(
             this,
@@ -177,41 +182,45 @@ class CharacterFragment : Fragment(),
             if (it.stringToFilter != "" && it.isApplied) {
                 filterList[1].stringToFilter = it.stringToFilter
                 filterList[1].isApplied = it.isApplied
-                createViewModelUpdateAdapter()
             } else {
                 filterList[1].stringToFilter = ""
                 filterList[1].isApplied = false
             }
+            this.viewModelStore.clear()
+            createViewModelUpdateAdapter()
         }
         viewModel.speciesFilter.observe(viewLifecycleOwner) {
             if (it.stringToFilter != "" && it.isApplied) {
                 filterList[2].stringToFilter = it.stringToFilter
                 filterList[2].isApplied = it.isApplied
-                createViewModelUpdateAdapter()
             } else {
                 filterList[2].stringToFilter = ""
                 filterList[2].isApplied = false
             }
+            this.viewModelStore.clear()
+            createViewModelUpdateAdapter()
         }
         viewModel.typeFilter.observe(viewLifecycleOwner) {
             if (it.stringToFilter != "" && it.isApplied) {
                 filterList[3].stringToFilter = it.stringToFilter
                 filterList[3].isApplied = it.isApplied
-                createViewModelUpdateAdapter()
             } else {
                 filterList[3].stringToFilter = ""
                 filterList[3].isApplied = false
             }
+            this.viewModelStore.clear()
+            createViewModelUpdateAdapter()
         }
         viewModel.genderFilter.observe(viewLifecycleOwner) {
             if (it.stringToFilter != "" && it.isApplied) {
                 filterList[4].stringToFilter = it.stringToFilter
                 filterList[4].isApplied = it.isApplied
-                createViewModelUpdateAdapter()
             } else {
                 filterList[4].stringToFilter = ""
                 filterList[4].isApplied = false
             }
+            this.viewModelStore.clear()
+            createViewModelUpdateAdapter()
         }
     }
 

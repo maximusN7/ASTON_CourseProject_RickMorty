@@ -2,10 +2,12 @@ package com.example.aston_courseproject_rickmorty.fragments.dialogs
 
 import android.app.Dialog
 import android.content.Context
+import android.view.View
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
 import com.example.aston_courseproject_rickmorty.R
+
 
 class EpisodeFilterDialog(val context: Context, private val applyClickListener: ApplyClickListener) {
 
@@ -19,6 +21,17 @@ class EpisodeFilterDialog(val context: Context, private val applyClickListener: 
         val buttonApply = filterDialog.findViewById<Button>(R.id.buttonApply)
         buttonApply.setOnClickListener {
             applyClickListener.onApplyClick(filterDialog)
+        }
+        val checkEpisodeCode = filterDialog.findViewById<CheckBox>(R.id.checkBoxEpisodeCode)
+        val editEpisodeCode = filterDialog.findViewById<EditText>(R.id.editTextEpisodeCode)
+        editEpisodeCode.visibility = View.INVISIBLE
+
+        checkEpisodeCode.setOnCheckedChangeListener { buttonView, _ ->
+            if (buttonView.isChecked) {
+                editEpisodeCode.visibility = View.VISIBLE
+            } else {
+                editEpisodeCode.visibility = View.INVISIBLE
+            }
         }
     }
 

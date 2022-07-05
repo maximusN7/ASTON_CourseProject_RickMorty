@@ -46,8 +46,9 @@ class MainActivity : AppCompatActivity() {
 
         viewModel.currentDetailsFragment.observe(this) {
             val fTrans = supportFragmentManager.beginTransaction()
-            supportFragmentManager.findFragmentByTag("current_main_fragment")?.let { fTrans.hide(it) }
-            fTrans.apply{
+            supportFragmentManager.findFragmentByTag("current_main_fragment")
+                ?.let { fTrans.hide(it) }
+            fTrans.apply {
                 replace(R.id.fragmentContainerView, it, "current_main_fragment")
                 addToBackStack(null)
                 commit()

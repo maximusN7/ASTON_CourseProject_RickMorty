@@ -8,19 +8,19 @@
     <string name="menu_details_character">Character details</string>
     <string name="menu_details_location">Locations details</string>
 
-    <string name="details_name">Name:</string>
-    <string name="details_status">Status:</string>
-    <string name="details_species">Species:</string>
-    <string name="details_type">Type:</string>
-    <string name="details_gender">Gender:</string>
-    <string name="details_origin">Origin location:</string>
-    <string name="details_location">Last known location:</string>
-    <string name="details_episodes">Appeared in episodes:</string>
-    <string name="details_dimension">Dimension:</string>
-    <string name="details_resident">Residents:</string>
-    <string name="details_airdate">Air date:</string>
-    <string name="details_episode">Episode code:</string>
-    <string name="details_characters">Characters:</string>
+    <string name="details_name"><u>Name:</u></string>
+    <string name="details_status"><u>Status:</u></string>
+    <string name="details_species"><u>Species:</u></string>
+    <string name="details_type"><u>Type:</u></string>
+    <string name="details_gender"><u>Gender:</u></string>
+    <string name="details_origin"><u>Origin location:</u></string>
+    <string name="details_location"><u>Last known location:</u></string>
+    <string name="details_episodes"><u>Appeared in episodes:</u></string>
+    <string name="details_dimension"><u>Dimension:</u></string>
+    <string name="details_resident"><u>Residents:</u></string>
+    <string name="details_airdate"><u>Air date:</u></string>
+    <string name="details_episode"><u>Episode code:</u></string>
+    <string name="details_characters"><u>Characters:</u></string>
 
     <string name="recycler_locName">Location name</string>
     <string name="recycler_locType">Location type</string>
@@ -45,17 +45,17 @@
 
     <string name="filter_character">Character Filters</string>
     <string name="filter_character_name">enter characters name</string>
-    <string name="filter_character_status">filter by status</string>
-    <string name="filter_character_species">filter by species</string>
-    <string name="filter_character_type">filter by type</string>
-    <string name="filter_character_gender">filter by gender</string>
+    <string name="filter_character_status">enable filter by status</string>
+    <string name="filter_character_species">enable filter by species</string>
+    <string name="filter_character_type">enable filter by type</string>
+    <string name="filter_character_gender">enable filter by gender</string>
 
     <string name="filter_character_status_alive">Alive</string>
     <string name="filter_character_status_dead">Dead</string>
     <string name="filter_character_status_unknown">Unknown</string>
 
-    <string name="filter_character_species_edit">type in species</string>
-    <string name="filter_character_type_edit">type in type</string>
+    <string name="filter_character_species_edit">enter species</string>
+    <string name="filter_character_type_edit">enter type</string>
 
     <string name="filter_character_gender_female">Female</string>
     <string name="filter_character_gender_male">Male</string>
@@ -65,18 +65,20 @@
 
     <string name="filter_location">Location Filters</string>
     <string name="filter_location_name">enter locations name</string>
-    <string name="filter_location_type">filter by type</string>
-    <string name="filter_location_dimension">filter by dimension</string>
+    <string name="filter_location_type">enable filter by type</string>
+    <string name="filter_location_dimension">enable filter by dimension</string>
 
-    <string name="filter_location_type_edit">type in type</string>
-    <string name="filter_location_dimension_edit">type in dimension</string>
+    <string name="filter_location_type_edit">enter type</string>
+    <string name="filter_location_dimension_edit">enter dimension</string>
 
 
     <string name="filter_episode">Episode Filters</string>
     <string name="filter_episode_name">enter episodes name</string>
-    <string name="filter_episode_episode">filter by episode code</string>
+    <string name="filter_episode_episode">enable filter by episode code</string>
 
-    <string name="filter_episode_episode_edit">type in code</string>
+    <string name="filter_episode_episode_edit">enter code</string>
+
+    <string name="filter_enable">firstly enable filter</string>
 
     <string name="error_empty_list_character_title">No characters are found</string>
     <string name="error_empty_list_character">Try another filters or search query</string>

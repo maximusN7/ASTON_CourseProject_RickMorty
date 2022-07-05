@@ -74,6 +74,7 @@ class LocationFragment : Fragment(),
         val editTextName = view.findViewById<EditText>(R.id.editTextName)
         val swipeRefreshLayout = view.findViewById<SwipeRefreshLayout>(R.id.swipeRefreshLayout)
         swipeRefreshLayout.setOnRefreshListener {
+            this.viewModelStore.clear()
 
             createViewModelUpdateAdapter()
 
@@ -106,11 +107,15 @@ class LocationFragment : Fragment(),
                     filterList[0].stringToFilter = ""
                     filterList[0].isApplied = false
                 }
-
+                clearView()
                 createViewModelUpdateAdapter()
             }
         })
 
+    }
+
+    fun clearView() {
+        this.viewModelStore.clear()
     }
 
     private fun initRecyclerView() {
@@ -123,8 +128,6 @@ class LocationFragment : Fragment(),
     }
 
     private fun createViewModelUpdateAdapter() {
-        this.viewModelStore.clear()
-
         val appContext = activity?.applicationContext
         viewModel = ViewModelProvider(
             this,
@@ -166,21 +169,23 @@ class LocationFragment : Fragment(),
             if (it.stringToFilter != "" && it.isApplied) {
                 filterList[1].stringToFilter = it.stringToFilter
                 filterList[1].isApplied = it.isApplied
-                createViewModelUpdateAdapter()
             } else {
                 filterList[1].stringToFilter = ""
                 filterList[1].isApplied = false
             }
+            this.viewModelStore.clear()
+            createViewModelUpdateAdapter()
         }
         viewModel.dimensionFilter.observe(viewLifecycleOwner) {
             if (it.stringToFilter != "" && it.isApplied) {
                 filterList[2].stringToFilter = it.stringToFilter
                 filterList[2].isApplied = it.isApplied
-                createViewModelUpdateAdapter()
             } else {
                 filterList[2].stringToFilter = ""
                 filterList[2].isApplied = false
             }
+            this.viewModelStore.clear()
+            createViewModelUpdateAdapter()
         }
     }
 
