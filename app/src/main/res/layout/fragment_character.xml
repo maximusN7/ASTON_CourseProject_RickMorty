@@ -18,12 +18,13 @@
 
             <EditText
                 android:id="@+id/editTextName"
+                style="@style/EditTextDialog"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:autofillHints="name"
                 android:focusable="true"
                 android:focusableInTouchMode="true"
-                android:hint="@string/recycler_charName"
+                android:hint="@string/filter_character_name"
                 android:imeOptions="actionDone"
                 android:inputType="text"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -33,6 +34,7 @@
 
             <Button
                 android:id="@+id/button_filter"
+                style="@style/FilterButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/recycler_filter"
@@ -55,7 +57,6 @@
 
             <ProgressBar
                 android:id="@+id/progress"
-                style="?android:indeterminateProgressStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:visibility="gone"
@@ -68,9 +69,9 @@
                 android:id="@+id/errorTextTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:gravity="center"
                 android:text="@string/error_empty_list_character_title"
                 android:theme="@style/TextVIewErrorTitle"
-                android:gravity="center"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -81,9 +82,9 @@
                 android:id="@+id/errorText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:gravity="center"
                 android:text="@string/error_empty_list_character"
                 android:theme="@style/TextVIewError"
-                android:gravity="center"
                 android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

@@ -70,6 +70,7 @@ class EpisodeFragment : Fragment(),
         val editTextName = view.findViewById<EditText>(R.id.editTextName)
         val swipeRefreshLayout = view.findViewById<SwipeRefreshLayout>(R.id.swipeRefreshLayout)
         swipeRefreshLayout.setOnRefreshListener {
+            this.viewModelStore.clear()
 
             createViewModelUpdateAdapter()
 
@@ -102,10 +103,14 @@ class EpisodeFragment : Fragment(),
                     filterList[0].stringToFilter = ""
                     filterList[0].isApplied = false
                 }
-
+                clearView()
                 createViewModelUpdateAdapter()
             }
         })
+    }
+
+    fun clearView() {
+        this.viewModelStore.clear()
     }
 
     private fun initRecyclerView() {
@@ -118,8 +123,6 @@ class EpisodeFragment : Fragment(),
     }
 
     private fun createViewModelUpdateAdapter() {
-        this.viewModelStore.clear()
-
         val appContext = activity?.applicationContext
         viewModel = ViewModelProvider(
             this,
@@ -167,12 +170,12 @@ class EpisodeFragment : Fragment(),
             if (it.stringToFilter != "" && it.isApplied) {
                 filterList[1].stringToFilter = it.stringToFilter
                 filterList[1].isApplied = it.isApplied
-                createViewModelUpdateAdapter()
             } else {
                 filterList[1].stringToFilter = ""
                 filterList[1].isApplied = false
             }
-
+            this.viewModelStore.clear()
+            createViewModelUpdateAdapter()
         }
     }
 

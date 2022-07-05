@@ -1,6 +1,7 @@
 package com.example.aston_courseproject_rickmorty.viewmodel
 
 import android.app.Dialog
+import android.util.Log
 import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.RadioButton
@@ -74,7 +75,9 @@ class CharacterViewModel(
             }
             else -> {
                 val selectedRadioButton = dialog.findViewById<RadioButton>(checkedRadioButtonId)
-                statusFilter.value = Filter(checkStatus.isChecked, selectedRadioButton.text.toString())
+                var status = selectedRadioButton.text.toString()
+                if (status == "Unknown") status = status.lowercase()
+                statusFilter.value = Filter(checkStatus.isChecked, status)
             }
         }
         when(val checkedRadioButtonId = radioGroupGender.checkedRadioButtonId) {
@@ -83,7 +86,9 @@ class CharacterViewModel(
             }
             else -> {
                 val selectedRadioButton = dialog.findViewById<RadioButton>(checkedRadioButtonId)
-                genderFilter.value = Filter(checkGender.isChecked, selectedRadioButton.text.toString())
+                var gender = selectedRadioButton.text.toString()
+                if (gender == "Unknown") gender = gender.lowercase()
+                genderFilter.value = Filter(checkGender.isChecked, gender)
             }
         }
         speciesFilter.value = Filter(checkSpecies.isChecked, editSpecies.text.toString())
