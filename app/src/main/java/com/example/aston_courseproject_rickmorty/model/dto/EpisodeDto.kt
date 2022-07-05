@@ -10,37 +10,8 @@ data class EpisodeDto(
     val name: String? = null,
     val air_date: String? = null,
     val episode: String? = null,
-    val characters: Array<String>? = null
-) {
-    companion object {
-        fun episodeToDto(episode: Episode): EpisodeDto {
-            return EpisodeDto(
-                id = episode.id,
-                name = episode.name,
-                air_date = episode.air_date,
-                episode = episode.episode,
-                characters = episode.characters
-            )
-        }
-        fun episodeToDto(episode: EpisodeDb, database: ItemsDatabase): EpisodeDto {
-            val array: Array<Int> =
-                database.getEpisodeCharacterJoinDao().getCharactersIdForEpisode(episode.id!!)
-            val listForObj: MutableList<String> = mutableListOf()
-            val url = "https://rickandmortyapi.com/api/character/"
-            for (i in array) {
-                listForObj.add("${url}$i")
-            }
-            val arrayForObj = listForObj.toTypedArray()
-            return EpisodeDto(
-                id = episode.id,
-                name = episode.name,
-                air_date = episode.air_date,
-                episode = episode.episode,
-                characters = arrayForObj
-            )
-        }
-    }
-}
+    val characters: String? = null
+)
 
 data class EpisodeForListDto(
     val id: Int? = null,

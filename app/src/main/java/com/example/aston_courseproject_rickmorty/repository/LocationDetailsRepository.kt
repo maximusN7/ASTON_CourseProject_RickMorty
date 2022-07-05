@@ -6,6 +6,8 @@ import com.example.aston_courseproject_rickmorty.model.database.ItemsDatabase
 import com.example.aston_courseproject_rickmorty.model.dto.LocationDto
 import com.example.aston_courseproject_rickmorty.retrofit.ApiState
 import com.example.aston_courseproject_rickmorty.retrofit.RetrofitServices
+import com.example.aston_courseproject_rickmorty.utils.mapper.LocationDbMapper
+import com.example.aston_courseproject_rickmorty.utils.mapper.LocationMapper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -18,7 +20,7 @@ class LocationDetailsRepository(
 
     suspend fun getLocation(locationId: Int): Flow<ApiState<LocationDto>> {
         return flow {
-            val location = LocationDto.locationToDto(mService.getOneLocation(locationId))
+            val location = LocationMapper().transform(mService.getOneLocation(locationId))
             emit(ApiState.success(location))
         }.flowOn(Dispatchers.IO)
     }
@@ -32,7 +34,8 @@ class LocationDetailsRepository(
 
     suspend fun getLocationDb(locationId: Int): Flow<ApiState<LocationDto>> {
         return flow {
-            val location = LocationDto.locationToDto(database.getLocationDao().getOneById(locationId), database)
+            val array: Array<Int> = database.getLocationCharacterJoinDao().getCharactersIdForLocation(locationId)
+            val location = LocationDbMapper(array).transform(database.getLocationDao().getOneById(locationId))
                 emit(ApiState.success(location))
         }.flowOn(Dispatchers.IO)
     }

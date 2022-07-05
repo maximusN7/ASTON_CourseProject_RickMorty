@@ -24,9 +24,8 @@ import kotlinx.coroutines.flow.Flow
 @ExperimentalPagingApi
 class LocationViewModel(
     val mainViewModel: MainViewModel,
-    private val dialogProcessor: LocationFilterDialog,
     val database: ItemsDatabase,
-    private val filterList: MutableList<Filter>
+    filterList: MutableList<Filter>
 ) : ViewModel() {
 
     var retrofitServices: RetrofitServices = Common.retrofitService
@@ -46,10 +45,6 @@ class LocationViewModel(
     fun openFragment(location: LocationForListDto?) {
         val fragment: Fragment = LocationDetailsFragment.newInstance(location?.id!!)
         mainViewModel.changeCurrentDetailsFragment(fragment)
-    }
-
-    fun openFilterDialog() {
-        dialogProcessor.showDialog(filterList[1], filterList[2])
     }
 
     fun onApplyClick(dialog: Dialog) {

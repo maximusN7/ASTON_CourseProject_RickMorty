@@ -20,6 +20,7 @@ import com.example.aston_courseproject_rickmorty.retrofit.Status
 import com.example.aston_courseproject_rickmorty.utils.Converters
 import com.example.aston_courseproject_rickmorty.utils.InternetConnectionChecker
 import com.example.aston_courseproject_rickmorty.utils.Separators
+import com.example.aston_courseproject_rickmorty.utils.mapper.CharacterToDbMapper
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
@@ -59,19 +60,12 @@ class LocationDetailsViewModel(
                 .collect {
                     location.value = ApiState.success(it.data)
                     if (network) {
-                        val charactersId = Separators.separateIdFromUrlCharacter(location.value.data?.residents)
+                        val charactersId = location.value.data?.residents ?: ""
                         getCharacters(charactersId)
                     } else {
                         val episodeId = location.value.data?.id
                         getCharactersDb(episodeId!!)
                     }
-                    /*when {
-                        charactersId != "" -> getCharacters(charactersId)
-                        charactersId.contains(",") -> {
-                            getCharacters(charactersId)
-                        }
-                        else -> characters.value = ApiState.success(mutableListOf())
-                    }*/
                 }
         }
     }
@@ -102,7 +96,7 @@ class LocationDetailsViewModel(
     }
 
     private suspend fun saveInDb(characterList: MutableList<Character>) {
-        database.getCharacterDao().insertAll(CharacterDb.characterToDb(characterList))
+        database.getCharacterDao().insertAll(CharacterToDbMapper().transform(characterList))
         val listOfCharacterToEpisodes = Converters.convertToCEJoin(characterList)
         database.getCharacterEpisodeJoinDao().insertAll(listOfCharacterToEpisodes)
     }

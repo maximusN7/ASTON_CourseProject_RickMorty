@@ -8,6 +8,9 @@ import com.example.aston_courseproject_rickmorty.model.database.LocationForListD
 import com.example.aston_courseproject_rickmorty.model.dto.CharacterDto
 import com.example.aston_courseproject_rickmorty.retrofit.ApiState
 import com.example.aston_courseproject_rickmorty.retrofit.RetrofitServices
+import com.example.aston_courseproject_rickmorty.utils.mapper.CharacterDbMapper
+import com.example.aston_courseproject_rickmorty.utils.mapper.CharacterMapper
+import com.example.aston_courseproject_rickmorty.utils.mapper.LocationForCharacterMapper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -20,14 +23,15 @@ class CharacterDetailsRepository(
 
     suspend fun getCharacter(characterId: Int): Flow<ApiState<CharacterDto>> {
         return flow {
-            val character = CharacterDto.characterToDto(mService.getOneCharacter(characterId))
+            val character = CharacterMapper(LocationForCharacterMapper()).transform(mService.getOneCharacter(characterId))
             emit(ApiState.success(character))
         }.flowOn(Dispatchers.IO)
     }
 
     suspend fun getCharacterDb(characterId: Int): Flow<ApiState<CharacterDto>> {
         return flow {
-            val character = CharacterDto.characterToDto(database.getCharacterDao().getOneById(characterId), database)
+            val array: Array<Int> = database.getCharacterEpisodeJoinDao().getEpisodesIdForCharacter(characterId)
+            val character = CharacterDbMapper(LocationForCharacterMapper(), array).transform(database.getCharacterDao().getOneById(characterId))
             emit(ApiState.success(character))
         }.flowOn(Dispatchers.IO)
     }

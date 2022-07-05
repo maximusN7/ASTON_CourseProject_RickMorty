@@ -10,38 +10,8 @@ data class LocationDto(
     val name: String? = null,
     val type: String? = null,
     val dimension: String? = null,
-    val residents: Array<String>? = null
-) {
-    companion object {
-        fun locationToDto(location: Location): LocationDto {
-            return LocationDto(
-                id = location.id,
-                name = location.name,
-                type = location.type,
-                dimension = location.dimension,
-                residents = location.residents
-            )
-        }
-        fun locationToDto(location: LocationDb, database: ItemsDatabase): LocationDto {
-            val array: Array<Int> =
-                database.getLocationCharacterJoinDao().getCharactersIdForLocation(location.id!!)
-            val listForObj: MutableList<String> = mutableListOf()
-            val url = "https://rickandmortyapi.com/api/character/"
-            for (i in array) {
-                listForObj.add("${url}$i")
-            }
-            val arrayForObj = listForObj.toTypedArray()
-            return LocationDto(
-                id = location.id,
-                name = location.name,
-                type = location.type,
-                dimension = location.dimension,
-                residents = arrayForObj
-            )
-        }
-    }
-
-}
+    val residents: String? = null
+)
 
 data class LocationForListDto(
     val id: Int? = null,

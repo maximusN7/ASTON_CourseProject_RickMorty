@@ -11,4 +11,4 @@ data class Episode(
     val created: String? = null
 )
 
-class AllEpisodes(val info: Info, val results: MutableList<Episode>)
+data class AllEpisodes(val info: Info, val results: MutableList<Episode>)

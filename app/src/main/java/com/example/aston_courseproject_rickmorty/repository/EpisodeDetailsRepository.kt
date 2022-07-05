@@ -6,6 +6,8 @@ import com.example.aston_courseproject_rickmorty.model.database.ItemsDatabase
 import com.example.aston_courseproject_rickmorty.model.dto.EpisodeDto
 import com.example.aston_courseproject_rickmorty.retrofit.ApiState
 import com.example.aston_courseproject_rickmorty.retrofit.RetrofitServices
+import com.example.aston_courseproject_rickmorty.utils.mapper.EpisodeDbMapper
+import com.example.aston_courseproject_rickmorty.utils.mapper.EpisodeMapper
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -18,7 +20,7 @@ class EpisodeDetailsRepository(
 
     suspend fun getEpisode(episodeId: Int): Flow<ApiState<EpisodeDto>> {
         return flow {
-            val episode = EpisodeDto.episodeToDto(mService.getOneEpisode(episodeId))
+            val episode = EpisodeMapper().transform(mService.getOneEpisode(episodeId))
             emit(ApiState.success(episode))
         }.flowOn(Dispatchers.IO)
     }
@@ -32,7 +34,8 @@ class EpisodeDetailsRepository(
 
     suspend fun getEpisodeDb(episodeId: Int): Flow<ApiState<EpisodeDto>> {
         return flow {
-            val episode = EpisodeDto.episodeToDto(database.getEpisodeDao().getOneById(episodeId), database)
+            val array: Array<Int> = database.getEpisodeCharacterJoinDao().getCharactersIdForEpisode(episodeId)
+            val episode = EpisodeDbMapper(array).transform(database.getEpisodeDao().getOneById(episodeId))
             emit(ApiState.success(episode))
         }.flowOn(Dispatchers.IO)
     }

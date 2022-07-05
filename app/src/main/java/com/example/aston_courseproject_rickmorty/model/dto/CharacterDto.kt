@@ -1,12 +1,8 @@
 package com.example.aston_courseproject_rickmorty.model.dto
 
-import android.util.Log
 import com.example.aston_courseproject_rickmorty.model.Character
-import com.example.aston_courseproject_rickmorty.model.LocationForCharacter
 import com.example.aston_courseproject_rickmorty.model.database.CharacterDb
 import com.example.aston_courseproject_rickmorty.model.database.CharacterForListDb
-import com.example.aston_courseproject_rickmorty.model.database.EpisodeForListDb
-import com.example.aston_courseproject_rickmorty.model.database.ItemsDatabase
 
 data class CharacterDto(
     val id: Int? = null,
@@ -15,50 +11,13 @@ data class CharacterDto(
     val species: String? = null,
     val type: String? = null,
     val gender: String? = null,
-    val origin: LocationForCharacter? = null,
-    val location: LocationForCharacter?  = null,
+    val origin: LocationForCharacterDto? = null,
+    val location: LocationForCharacterDto?  = null,
     val image: String? = null,
-    val episode: Array<String>?  = null
-) {
-    companion object {
-        fun characterToDto(character: Character): CharacterDto {
-            return CharacterDto(
-                id = character.id,
-                name = character.name,
-                status = character.status,
-                species = character.species,
-                type = character.type,
-                gender = character.gender,
-                origin = character.origin,
-                location = character.location,
-                image = character.image,
-                episode = character.episode
-            )
-        }
-        fun characterToDto(character: CharacterDb, database: ItemsDatabase): CharacterDto {
-            val array: Array<Int> =
-                database.getCharacterEpisodeJoinDao().getEpisodesIdForCharacter(character.id!!)
-            val listForObj: MutableList<String> = mutableListOf()
-            val url = "https://rickandmortyapi.com/api/episode/"
-            for (i in array) {
-                listForObj.add("${url}$i")
-            }
-            val arrayForObj = listForObj.toTypedArray()
-            return CharacterDto(
-                id = character.id,
-                name = character.name,
-                status = character.status,
-                species = character.species,
-                type = character.type,
-                gender = character.gender,
-                origin = LocationForCharacter(character.origin_name, character.origin_url),
-                location = LocationForCharacter(character.location_name, character.location_url),
-                image = character.image,
-                episode = arrayForObj
-            )
-        }
-    }
-}
+    val episode: String?  = null
+)
+
+data class LocationForCharacterDto(val name: String?, val locationId: Int?)
 
 data class CharacterForListDto(
     val id: Int?,

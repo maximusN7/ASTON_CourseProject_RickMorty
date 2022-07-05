@@ -11,7 +11,6 @@ import androidx.paging.*
 import com.example.aston_courseproject_rickmorty.MainViewModel
 import com.example.aston_courseproject_rickmorty.R
 import com.example.aston_courseproject_rickmorty.fragments.EpisodeDetailsFragment
-import com.example.aston_courseproject_rickmorty.fragments.dialogs.EpisodeFilterDialog
 import com.example.aston_courseproject_rickmorty.fragments.dialogs.Filter
 import com.example.aston_courseproject_rickmorty.model.database.ItemsDatabase
 import com.example.aston_courseproject_rickmorty.model.dto.EpisodeForListDto
@@ -23,9 +22,8 @@ import kotlinx.coroutines.flow.Flow
 @ExperimentalPagingApi
 class EpisodeViewModel(
     val mainViewModel: MainViewModel,
-    private val dialogProcessor: EpisodeFilterDialog,
     val database: ItemsDatabase,
-    private val filterList: MutableList<Filter>
+    filterList: MutableList<Filter>
 ) : ViewModel() {
 
     var retrofitServices: RetrofitServices = Common.retrofitService
@@ -43,10 +41,6 @@ class EpisodeViewModel(
     fun openFragment(episode: EpisodeForListDto?) {
         val fragment: Fragment = EpisodeDetailsFragment.newInstance(episode?.id!!)
         mainViewModel.changeCurrentDetailsFragment(fragment)
-    }
-
-    fun openFilterDialog() {
-        dialogProcessor.showDialog(filterList[1])
     }
 
     fun onApplyClick(dialog: Dialog) {

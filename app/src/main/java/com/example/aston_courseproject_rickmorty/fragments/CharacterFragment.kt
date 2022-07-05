@@ -4,7 +4,6 @@ import android.app.Dialog
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -29,13 +28,7 @@ import com.example.aston_courseproject_rickmorty.recycler_view.CharacterPaginati
 import com.example.aston_courseproject_rickmorty.utils.RecyclerDecorator
 import com.example.aston_courseproject_rickmorty.viewmodel.CharacterViewModel
 import com.example.aston_courseproject_rickmorty.viewmodel.factory.CharacterViewModelFactory
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.newSingleThreadContext
-import kotlinx.coroutines.runBlocking
-import retrofit2.HttpException
-import retrofit2.Response
 
 
 /**
@@ -91,7 +84,8 @@ class CharacterFragment : Fragment(),
 
         val filterButton = view.findViewById<Button>(R.id.button_filter)
         filterButton.setOnClickListener {
-            viewModel.openFilterDialog()
+            val dialogProcessor = CharacterFilterDialog(requireContext(), this)
+            dialogProcessor.showDialog(filterList[1], filterList[2], filterList[3], filterList[4])
         }
 
         editTextName.addTextChangedListener(object : TextWatcher {
@@ -142,7 +136,6 @@ class CharacterFragment : Fragment(),
                 requireContext(),
                 appContext!!,
                 requireActivity(),
-                this,
                 filterList
             )
         )[CharacterViewModel::class.java]

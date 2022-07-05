@@ -20,6 +20,7 @@ import com.example.aston_courseproject_rickmorty.retrofit.Status
 import com.example.aston_courseproject_rickmorty.utils.Converters
 import com.example.aston_courseproject_rickmorty.utils.InternetConnectionChecker
 import com.example.aston_courseproject_rickmorty.utils.Separators
+import com.example.aston_courseproject_rickmorty.utils.mapper.CharacterToDbMapper
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
@@ -59,7 +60,7 @@ class EpisodeDetailsViewModel(
                 .collect {
                     episode.value = ApiState.success(it.data)
                     if (network) {
-                        val charactersId = Separators.separateIdFromUrlCharacter(episode.value.data?.characters)
+                        val charactersId = episode.value.data?.characters ?: ""
                         getCharacters(charactersId)
                     } else {
                         val episodeId = episode.value.data?.id
@@ -97,7 +98,7 @@ class EpisodeDetailsViewModel(
 
 
     private suspend fun saveInDb(characterList: MutableList<Character>) {
-        database.getCharacterDao().insertAll(CharacterDb.characterToDb(characterList))
+        database.getCharacterDao().insertAll(CharacterToDbMapper().transform(characterList))
         val listOfCharacterToEpisodes = Converters.convertToCEJoin(characterList)
         database.getCharacterEpisodeJoinDao().insertAll(listOfCharacterToEpisodes)
     }

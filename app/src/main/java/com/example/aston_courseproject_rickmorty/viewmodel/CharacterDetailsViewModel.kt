@@ -23,6 +23,7 @@ import com.example.aston_courseproject_rickmorty.retrofit.Status
 import com.example.aston_courseproject_rickmorty.utils.Converters
 import com.example.aston_courseproject_rickmorty.utils.InternetConnectionChecker
 import com.example.aston_courseproject_rickmorty.utils.Separators
+import com.example.aston_courseproject_rickmorty.utils.mapper.EpisodeToDMapper
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
@@ -36,7 +37,6 @@ class CharacterDetailsViewModel(
 ) : ViewModel() {
     var retrofitServices: RetrofitServices = Common.retrofitService
     private val repository = CharacterDetailsRepository(retrofitServices, database)
-    //private val dataSource = repository.getEpisodeFromNetwork()
 
     val character = MutableStateFlow(ApiState(Status.LOADING, CharacterDto(), ""))
     val origin = MutableStateFlow(ApiState(Status.LOADING, LocationForListDto(), ""))
@@ -63,14 +63,14 @@ class CharacterDetailsViewModel(
                 .collect {
                     character.value = ApiState.success(it.data)
                     if (network) {
-                        val episodesId = Separators.separateIdFromUrlEpisode(character.value.data?.episode)
+                        val episodesId = character.value.data?.episode ?: ""
                         getEpisodes(episodesId)
                     } else {
-                        val characterId = character.value.data?.id
-                        getEpisodesDb(characterId!!)
+                        val characterId = character.value.data?.id ?: 0
+                        getEpisodesDb(characterId)
                     }
                     if (character.value.data?.location?.name != "unknown") {
-                        val locationId = Separators.separateIdFromUrlLocation(character.value.data?.location?.url)
+                        val locationId = character.value.data?.location?.locationId ?: 0
                         if (network) {
                             getLocation(locationId, location)
                         } else {
@@ -80,7 +80,7 @@ class CharacterDetailsViewModel(
                         location.value = ApiState.success(LocationForListDto(id = -1, name = "unknown", type = "", dimension = ""))
                     }
                     if (character.value.data?.origin?.name != "unknown") {
-                        val originId = Separators.separateIdFromUrlLocation(character.value.data?.origin?.url)
+                        val originId = character.value.data?.origin?.locationId ?: 0
                         if (network) {
                             getLocation(originId, origin)
                         } else {
@@ -142,7 +142,7 @@ class CharacterDetailsViewModel(
     }
 
     private suspend fun saveEpisodesInDb(episodesList: MutableList<Episode>) {
-        database.getEpisodeDao().insertAll(EpisodeDb.episodeToDb(episodesList))
+        database.getEpisodeDao().insertAll(EpisodeToDMapper().transform(episodesList))
         val listOfCharacterToEpisodes = Converters.convertToECJoin(episodesList)
         database.getEpisodeCharacterJoinDao().insertAll(listOfCharacterToEpisodes)
     }

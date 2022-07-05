@@ -81,7 +81,8 @@ class EpisodeFragment : Fragment(),
 
         val filterButton = view.findViewById<Button>(R.id.button_filter)
         filterButton.setOnClickListener {
-            viewModel.openFilterDialog()
+            val dialogProcessor = EpisodeFilterDialog(requireContext(), this)
+            dialogProcessor.showDialog(filterList[1])
         }
 
         editTextName.addTextChangedListener(object : TextWatcher {
@@ -130,7 +131,6 @@ class EpisodeFragment : Fragment(),
                 requireContext(),
                 appContext!!,
                 requireActivity(),
-                this,
                 filterList
             )
         )[EpisodeViewModel::class.java]

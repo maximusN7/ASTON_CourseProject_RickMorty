@@ -1,7 +1,6 @@
 package com.example.aston_courseproject_rickmorty.viewmodel
 
 import android.app.Dialog
-import android.util.Log
 import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.RadioButton
@@ -14,7 +13,6 @@ import androidx.paging.*
 import com.example.aston_courseproject_rickmorty.MainViewModel
 import com.example.aston_courseproject_rickmorty.R
 import com.example.aston_courseproject_rickmorty.fragments.CharacterDetailsFragment
-import com.example.aston_courseproject_rickmorty.fragments.dialogs.CharacterFilterDialog
 import com.example.aston_courseproject_rickmorty.fragments.dialogs.Filter
 import com.example.aston_courseproject_rickmorty.model.database.ItemsDatabase
 import com.example.aston_courseproject_rickmorty.model.dto.CharacterForListDto
@@ -26,9 +24,8 @@ import kotlinx.coroutines.flow.Flow
 @ExperimentalPagingApi
 class CharacterViewModel(
     val mainViewModel: MainViewModel,
-    private val dialogProcessor: CharacterFilterDialog,
     val database: ItemsDatabase,
-    private val filterList: MutableList<Filter>
+    filterList: MutableList<Filter>
 ) : ViewModel() {
 
     var retrofitServices: RetrofitServices = Common.retrofitService
@@ -52,10 +49,6 @@ class CharacterViewModel(
     fun openFragment(character: CharacterForListDto?) {
         val fragment: Fragment = CharacterDetailsFragment.newInstance(character?.id!!)
         mainViewModel.changeCurrentDetailsFragment(fragment)
-    }
-
-    fun openFilterDialog() {
-        dialogProcessor.showDialog(filterList[1], filterList[2], filterList[3], filterList[4])
     }
 
     fun onApplyClick(dialog: Dialog) {

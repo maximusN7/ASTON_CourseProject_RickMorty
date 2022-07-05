@@ -4,7 +4,6 @@ import android.app.Dialog
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -85,7 +84,8 @@ class LocationFragment : Fragment(),
 
         val filterButton = view.findViewById<Button>(R.id.button_filter)
         filterButton.setOnClickListener {
-            viewModel.openFilterDialog()
+            val dialogProcessor = LocationFilterDialog(requireContext(), this)
+            dialogProcessor.showDialog(filterList[1], filterList[2])
         }
 
         editTextName.addTextChangedListener(object : TextWatcher {
@@ -131,7 +131,7 @@ class LocationFragment : Fragment(),
         val appContext = activity?.applicationContext
         viewModel = ViewModelProvider(
             this,
-            LocationViewModelFactory(requireContext(), appContext!!, requireActivity(), this, filterList)
+            LocationViewModelFactory(requireContext(), appContext!!, requireActivity(), filterList)
         )[LocationViewModel::class.java]
         lifecycleScope.launchWhenCreated {
             viewModel.locations.collectLatest {
