@@ -4,11 +4,11 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.paging.ExperimentalPagingApi
-import com.example.aston_courseproject_rickmorty.fragments.*
 import com.example.aston_courseproject_rickmorty.utils.ResourceProvider
+import com.example.aston_courseproject_rickmorty.view.fragments.*
 
 @ExperimentalPagingApi
-class MainViewModel(private val mResourceProvider: ResourceProvider) : ViewModel() {
+class MainViewModel(val mResourceProvider: ResourceProvider) : ViewModel() {
 
     val titleString = MutableLiveData<String>()
     val showToolbar = MutableLiveData<Boolean>()

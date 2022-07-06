@@ -11,4 +11,4 @@ data class Location(
     val created: String? = null
 )
 
-class AllLocations(val info: Info, val results: MutableList<Location>)
+data class AllLocations(val info: Info, val results: MutableList<Location>)

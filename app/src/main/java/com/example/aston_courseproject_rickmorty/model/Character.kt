@@ -18,6 +18,6 @@ data class Character(
 
 data class LocationForCharacter(val name: String?, val url: String?)
 
-class AllCharacters(val info: Info, val results: MutableList<Character>)
+data class AllCharacters(val info: Info, val results: MutableList<Character>)
 
-class Info(val count: Int, val pages: Int, val next: String?, val prev: String?)
+data class Info(val count: Int, val pages: Int, val next: String?, val prev: String?)

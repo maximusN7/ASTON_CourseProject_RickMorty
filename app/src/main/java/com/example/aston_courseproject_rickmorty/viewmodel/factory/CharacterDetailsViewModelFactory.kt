@@ -1,22 +1,21 @@
 package com.example.aston_courseproject_rickmorty.viewmodel.factory
 
-import android.content.Context
-import androidx.fragment.app.FragmentActivity
+
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.paging.ExperimentalPagingApi
-import com.example.aston_courseproject_rickmorty.MainViewModel
-import com.example.aston_courseproject_rickmorty.MainViewModelFactory
-import com.example.aston_courseproject_rickmorty.model.database.ItemsDatabase
+import com.example.aston_courseproject_rickmorty.model.repository.CharacterDetailsRepository
 import com.example.aston_courseproject_rickmorty.utils.InternetConnectionChecker
 import com.example.aston_courseproject_rickmorty.viewmodel.CharacterDetailsViewModel
+
 @ExperimentalPagingApi
-class CharacterDetailsViewModelFactory(private val characterID: Int, appContext: Context, context: Context, owner: FragmentActivity) : ViewModelProvider.Factory {
-    private var mainViewModel: MainViewModel = ViewModelProvider(owner, MainViewModelFactory(context))[MainViewModel::class.java]
-    private var database = ItemsDatabase.getDatabase(appContext)
-    private var internetChecker = InternetConnectionChecker(appContext)
+class CharacterDetailsViewModelFactory(
+    private val characterID: Int,
+    val repository: CharacterDetailsRepository,
+    private val internetChecker: InternetConnectionChecker
+) : ViewModelProvider.Factory {
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return CharacterDetailsViewModel(characterID, mainViewModel, database, internetChecker) as T
+        return CharacterDetailsViewModel(characterID, repository, internetChecker) as T
     }
 }

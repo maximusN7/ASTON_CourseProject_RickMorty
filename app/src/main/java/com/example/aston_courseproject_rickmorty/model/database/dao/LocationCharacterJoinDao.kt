@@ -12,7 +12,7 @@ interface LocationCharacterJoinDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(locationCharacterJoin: MutableList<LocationCharacterJoin>)
 
-    @Query("SELECT id FROM locations_full_info INNER JOIN location_character_join ON locations_full_info.id=location_character_join.characterId WHERE location_character_join.locationId=:locationId")
+    @Query("SELECT id FROM characters_full_info INNER JOIN location_character_join ON characters_full_info.id=location_character_join.characterId WHERE location_character_join.locationId=:locationId")
     fun getCharactersIdForLocation(locationId: Int): Array<Int>
 
     @Query("DELETE FROM location_character_join")

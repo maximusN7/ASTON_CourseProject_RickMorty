@@ -1,17 +1,16 @@
 package com.example.aston_courseproject_rickmorty.model.mediator
 
-import android.util.Log
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
-import com.example.aston_courseproject_rickmorty.model.database.CharacterDb
 import com.example.aston_courseproject_rickmorty.model.database.CharacterRemoteKey
 import com.example.aston_courseproject_rickmorty.model.database.ItemsDatabase
 import com.example.aston_courseproject_rickmorty.model.dto.CharacterForListDto
-import com.example.aston_courseproject_rickmorty.retrofit.RetrofitServices
-import com.example.aston_courseproject_rickmorty.utils.Converters
+import com.example.aston_courseproject_rickmorty.model.retrofit.RetrofitServices
+import com.example.aston_courseproject_rickmorty.utils.mapper.CharacterEpisodeJoinMapper
+import com.example.aston_courseproject_rickmorty.utils.mapper.CharacterToDbMapper
 import kotlinx.coroutines.delay
 import retrofit2.HttpException
 import java.io.IOException
@@ -76,8 +75,8 @@ class CharacterRemoteMediator(
                     )
                 }
                 db.getCharacterKeysDao().insertAll(keys)
-                db.getCharacterDao().insertAll(CharacterDb.characterToDb(response.results))
-                val listOfCharacterToEpisodes = Converters.convertToCEJoin(response.results)
+                db.getCharacterDao().insertAll(CharacterToDbMapper().transform(response.results))
+                val listOfCharacterToEpisodes = CharacterEpisodeJoinMapper().transform(response.results)
                 db.getCharacterEpisodeJoinDao().insertAll(listOfCharacterToEpisodes)
             }
             return MediatorResult.Success(endOfPaginationReached = isEndOfList)

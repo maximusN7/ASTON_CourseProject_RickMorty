@@ -6,23 +6,27 @@ import android.view.MenuItem
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
 import androidx.paging.ExperimentalPagingApi
-import com.example.aston_courseproject_rickmorty.fragments.CharacterFragment
-import com.example.aston_courseproject_rickmorty.fragments.EpisodeFragment
-import com.example.aston_courseproject_rickmorty.fragments.LocationFragment
+import com.example.aston_courseproject_rickmorty.view.fragments.CharacterFragment
+import com.example.aston_courseproject_rickmorty.view.fragments.EpisodeFragment
+import com.example.aston_courseproject_rickmorty.view.fragments.LocationFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import javax.inject.Inject
 
 @ExperimentalPagingApi
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var viewModel: MainViewModel
+    @Inject
+    lateinit var vmFactory: MainViewModelFactory
+    lateinit var viewModel: MainViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.Theme_ASTON_CourseProject_RickMorty)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        viewModel =
-            ViewModelProvider(this, MainViewModelFactory(this))[MainViewModel::class.java]
+        (applicationContext as App).appComponent.inject(this)
+
+        viewModel = ViewModelProvider(this, vmFactory)[MainViewModel::class.java]
 
         viewModel.titleString.observe(this) {
             title = it
@@ -37,7 +41,6 @@ class MainActivity : AppCompatActivity() {
                 supportFragmentManager.beginTransaction().remove(fragment).commit()
             }
             supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
-
             supportFragmentManager.beginTransaction().apply {
                 replace(R.id.fragmentContainerView, it, "current_main_fragment")
                 commit()
@@ -48,6 +51,7 @@ class MainActivity : AppCompatActivity() {
             val fTrans = supportFragmentManager.beginTransaction()
             supportFragmentManager.findFragmentByTag("current_main_fragment")
                 ?.let { fTrans.hide(it) }
+
             fTrans.apply {
                 replace(R.id.fragmentContainerView, it, "current_main_fragment")
                 addToBackStack(null)
