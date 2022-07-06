@@ -13,17 +13,14 @@ class EpisodeRepository(
 ) {
 
     @ExperimentalPagingApi
-    fun getEpisodesFromMediator(
-        name: String,
-        episode: String
-    ): Flow<PagingData<EpisodeForListDto>> {
+    fun getEpisodesFromMediator(queryData: MutableList<String>): Flow<PagingData<EpisodeForListDto>> {
         return Pager(PagingConfig(pageSize = 20, maxSize = 60),
             remoteMediator = EpisodeRemoteMediator(
                 mService, database,
-                mutableListOf(name, episode)
+                queryData
             ),
             pagingSourceFactory = {
-                database.getEpisodeDao().getSeveralForFilter(name, episode)
+                database.getEpisodeDao().getSeveralForFilter(queryData[0], queryData[1])
             }).flow
     }
 }

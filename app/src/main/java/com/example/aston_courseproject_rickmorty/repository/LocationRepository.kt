@@ -16,19 +16,12 @@ class LocationRepository(
 ) {
 
     @ExperimentalPagingApi
-    fun getLocationsFromMediator(
-        name: String,
-        type: String,
-        dimension: String
-    ): Flow<PagingData<LocationForListDto>> {
+    fun getLocationsFromMediator(queryData: MutableList<String>): Flow<PagingData<LocationForListDto>> {
         return Pager(PagingConfig(pageSize = 20, maxSize = 60),
-            remoteMediator = LocationRemoteMediator(
-                mService,
-                database,
-                mutableListOf(name, type, dimension)
-            ),
+            remoteMediator = LocationRemoteMediator(mService, database, queryData),
             pagingSourceFactory = {
-                database.getLocationDao().getSeveralForFilter(name, type, dimension)
+                database.getLocationDao()
+                    .getSeveralForFilter(queryData[0], queryData[1], queryData[2])
             }).flow
     }
 }

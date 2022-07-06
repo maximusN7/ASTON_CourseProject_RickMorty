@@ -1,25 +1,17 @@
 package com.example.aston_courseproject_rickmorty.viewmodel
 
-import androidx.fragment.app.Fragment
+
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.ExperimentalPagingApi
-import com.example.aston_courseproject_rickmorty.MainViewModel
-import com.example.aston_courseproject_rickmorty.fragments.CharacterDetailsFragment
-import com.example.aston_courseproject_rickmorty.model.Character
-import com.example.aston_courseproject_rickmorty.model.database.ItemsDatabase
 import com.example.aston_courseproject_rickmorty.model.dto.CharacterForListDto
 import com.example.aston_courseproject_rickmorty.model.dto.LocationDto
 import com.example.aston_courseproject_rickmorty.repository.LocationDetailsRepository
 import com.example.aston_courseproject_rickmorty.retrofit.ApiState
-import com.example.aston_courseproject_rickmorty.retrofit.Common
-import com.example.aston_courseproject_rickmorty.retrofit.RetrofitServices
 import com.example.aston_courseproject_rickmorty.retrofit.Status
 import com.example.aston_courseproject_rickmorty.utils.InternetConnectionChecker
-import com.example.aston_courseproject_rickmorty.utils.mapper.CharacterEpisodeJoinMapper
 import com.example.aston_courseproject_rickmorty.utils.mapper.CharacterForListDbMapper
 import com.example.aston_courseproject_rickmorty.utils.mapper.CharacterForListMapper
-import com.example.aston_courseproject_rickmorty.utils.mapper.CharacterToDbMapper
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
@@ -28,12 +20,9 @@ import kotlinx.coroutines.launch
 @ExperimentalPagingApi
 class LocationDetailsViewModel(
     locationID: Int,
-    val mainViewModel: MainViewModel,
-    val database: ItemsDatabase,
+    val repository: LocationDetailsRepository,
     internetChecker: InternetConnectionChecker
 ) : ViewModel() {
-    var retrofitServices: RetrofitServices = Common.retrofitService
-    private val repository = LocationDetailsRepository(retrofitServices, database)
 
     val location = MutableStateFlow(ApiState(Status.LOADING, LocationDto(), ""))
     val characters =
@@ -77,7 +66,7 @@ class LocationDetailsViewModel(
                 characters.value = ApiState.error(it.message.toString())
             }
             .collect {
-                saveInDb(it.data!!)
+                repository.saveInDb(it.data!!)
                 characters.value =
                     ApiState.success(CharacterForListMapper().transform(it.data))
             }
@@ -92,18 +81,5 @@ class LocationDetailsViewModel(
                 characters.value =
                     ApiState.success(CharacterForListDbMapper().transform(it.data!!))
             }
-    }
-
-    private suspend fun saveInDb(characterList: MutableList<Character>) {
-        database.getCharacterDao().insertAll(CharacterToDbMapper().transform(characterList))
-        val listOfCharacterToEpisodes = CharacterEpisodeJoinMapper().transform(characterList)
-        database.getCharacterEpisodeJoinDao().insertAll(listOfCharacterToEpisodes)
-    }
-
-    fun openFragment(character: CharacterForListDto?) {
-        if (character?.name != "") {
-            val fragment: Fragment = CharacterDetailsFragment.newInstance(character?.id!!)
-            mainViewModel.changeCurrentDetailsFragment(fragment)
-        }
     }
 }

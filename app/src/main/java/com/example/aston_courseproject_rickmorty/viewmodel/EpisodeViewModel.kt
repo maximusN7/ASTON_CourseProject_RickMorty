@@ -13,6 +13,7 @@ import com.example.aston_courseproject_rickmorty.R
 import com.example.aston_courseproject_rickmorty.fragments.EpisodeDetailsFragment
 import com.example.aston_courseproject_rickmorty.fragments.dialogs.Filter
 import com.example.aston_courseproject_rickmorty.model.database.ItemsDatabase
+import com.example.aston_courseproject_rickmorty.model.dto.CharacterForListDto
 import com.example.aston_courseproject_rickmorty.model.dto.EpisodeForListDto
 import com.example.aston_courseproject_rickmorty.repository.EpisodeRepository
 import com.example.aston_courseproject_rickmorty.retrofit.Common
@@ -21,26 +22,13 @@ import kotlinx.coroutines.flow.Flow
 
 @ExperimentalPagingApi
 class EpisodeViewModel(
-    val mainViewModel: MainViewModel,
-    val database: ItemsDatabase,
-    filterList: MutableList<Filter>
+    private val dataSource: Flow<PagingData<EpisodeForListDto>>
 ) : ViewModel() {
 
-    var retrofitServices: RetrofitServices = Common.retrofitService
-    private val repository = EpisodeRepository(retrofitServices, database)
-    private var dataSource = repository.getEpisodesFromMediator(
-            filterList[0].stringToFilter,
-            filterList[1].stringToFilter
-        )
     val episodeCodeFilter = MutableLiveData<Filter>()
 
     val episodes: Flow<PagingData<EpisodeForListDto>> by lazy {
         dataSource.cachedIn(viewModelScope)
-    }
-
-    fun openFragment(episode: EpisodeForListDto?) {
-        val fragment: Fragment = EpisodeDetailsFragment.newInstance(episode?.id!!)
-        mainViewModel.changeCurrentDetailsFragment(fragment)
     }
 
     fun onApplyClick(dialog: Dialog) {

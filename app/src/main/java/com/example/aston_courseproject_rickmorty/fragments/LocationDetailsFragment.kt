@@ -1,5 +1,6 @@
 package com.example.aston_courseproject_rickmorty.fragments
 
+
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -16,6 +17,9 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.example.aston_courseproject_rickmorty.App
+import com.example.aston_courseproject_rickmorty.MainViewModel
+import com.example.aston_courseproject_rickmorty.MainViewModelFactory
 import com.example.aston_courseproject_rickmorty.R
 import com.example.aston_courseproject_rickmorty.model.dto.CharacterForListDto
 import com.example.aston_courseproject_rickmorty.model.dto.LocationDto
@@ -26,7 +30,7 @@ import com.example.aston_courseproject_rickmorty.utils.RecyclerDecorator
 import com.example.aston_courseproject_rickmorty.viewmodel.LocationDetailsViewModel
 import com.example.aston_courseproject_rickmorty.viewmodel.factory.LocationDetailsViewModelFactory
 import kotlinx.coroutines.launch
-
+import javax.inject.Inject
 
 private const val ARG_LOCATION_ID = "locationId"
 
@@ -37,9 +41,15 @@ private const val ARG_LOCATION_ID = "locationId"
  */
 
 @ExperimentalPagingApi
-class LocationDetailsFragment : Fragment(), CharacterRecyclerAdapter.CharacterViewHolder.ItemClickListener {
+class LocationDetailsFragment : Fragment(),
+    CharacterRecyclerAdapter.CharacterViewHolder.ItemClickListener {
     private var locationId: Int? = null
 
+    @Inject
+    lateinit var vmMainFactory: MainViewModelFactory
+    @Inject
+    lateinit var vmFactory: LocationDetailsViewModelFactory
+    private lateinit var mainViewModel: MainViewModel
     private lateinit var viewModel: LocationDetailsViewModel
     private var listForRecycler: MutableList<CharacterForListDto> = mutableListOf()
     private lateinit var recyclerCharacterList: RecyclerView
@@ -49,6 +59,13 @@ class LocationDetailsFragment : Fragment(), CharacterRecyclerAdapter.CharacterVi
         arguments?.let {
             locationId = it.getInt(ARG_LOCATION_ID)
         }
+        val locationDetailsComponent = (requireActivity().applicationContext as App).appComponent.getLocationDetailsComponentBuilder()
+            .locationId(locationId!!)
+            .characterItemClickListener(this)
+            .build()
+        locationDetailsComponent.inject(this)
+
+        mainViewModel = ViewModelProvider(requireActivity(), vmMainFactory)[MainViewModel::class.java]
     }
 
     override fun onCreateView(
@@ -78,8 +95,7 @@ class LocationDetailsFragment : Fragment(), CharacterRecyclerAdapter.CharacterVi
     }
 
     private fun initView() {
-        val appContext = requireActivity().applicationContext
-        viewModel = ViewModelProvider(this, LocationDetailsViewModelFactory(locationId!!, appContext, requireContext(), requireActivity()))[LocationDetailsViewModel::class.java]
+        viewModel = ViewModelProvider(this, vmFactory)[LocationDetailsViewModel::class.java]
 
         val detailsLayout = view?.findViewById<ConstraintLayout>(R.id.location_detailsLayout)
         detailsLayout?.visibility = View.INVISIBLE
@@ -191,6 +207,9 @@ class LocationDetailsFragment : Fragment(), CharacterRecyclerAdapter.CharacterVi
     }
 
     override fun onItemClick(character: CharacterForListDto?) {
-        viewModel.openFragment(character)
+        if (character?.name != "") {
+            val fragment: Fragment = CharacterDetailsFragment.newInstance(character?.id!!)
+            mainViewModel.changeCurrentDetailsFragment(fragment)
+        }
     }
 }

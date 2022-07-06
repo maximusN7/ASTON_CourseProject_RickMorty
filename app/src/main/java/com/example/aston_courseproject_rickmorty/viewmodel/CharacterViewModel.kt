@@ -5,38 +5,20 @@ import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.RadioButton
 import android.widget.RadioGroup
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.*
-import com.example.aston_courseproject_rickmorty.MainViewModel
 import com.example.aston_courseproject_rickmorty.R
-import com.example.aston_courseproject_rickmorty.fragments.CharacterDetailsFragment
 import com.example.aston_courseproject_rickmorty.fragments.dialogs.Filter
-import com.example.aston_courseproject_rickmorty.model.database.ItemsDatabase
 import com.example.aston_courseproject_rickmorty.model.dto.CharacterForListDto
-import com.example.aston_courseproject_rickmorty.repository.CharacterRepository
-import com.example.aston_courseproject_rickmorty.retrofit.Common
-import com.example.aston_courseproject_rickmorty.retrofit.RetrofitServices
 import kotlinx.coroutines.flow.Flow
 
 @ExperimentalPagingApi
 class CharacterViewModel(
-    val mainViewModel: MainViewModel,
-    val database: ItemsDatabase,
-    filterList: MutableList<Filter>
+    private val dataSource: Flow<PagingData<CharacterForListDto>>
 ) : ViewModel() {
 
-    var retrofitServices: RetrofitServices = Common.retrofitService
-    private val repository = CharacterRepository(retrofitServices, database)
-    private val dataSource = repository.getCharactersFromMediator(
-        filterList[0].stringToFilter,
-        filterList[1].stringToFilter,
-        filterList[2].stringToFilter,
-        filterList[3].stringToFilter,
-        filterList[4].stringToFilter
-    )
     val statusFilter = MutableLiveData<Filter>()
     val speciesFilter = MutableLiveData<Filter>()
     val typeFilter = MutableLiveData<Filter>()
@@ -44,11 +26,6 @@ class CharacterViewModel(
 
     val characters: Flow<PagingData<CharacterForListDto>> by lazy {
         dataSource.cachedIn(viewModelScope)
-    }
-
-    fun openFragment(character: CharacterForListDto?) {
-        val fragment: Fragment = CharacterDetailsFragment.newInstance(character?.id!!)
-        mainViewModel.changeCurrentDetailsFragment(fragment)
     }
 
     fun onApplyClick(dialog: Dialog) {

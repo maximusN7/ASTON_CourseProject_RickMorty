@@ -13,21 +13,15 @@ class CharacterRepository(
 ) {
 
     @ExperimentalPagingApi
-    fun getCharactersFromMediator(
-        name: String,
-        status: String,
-        species: String,
-        type: String,
-        gender: String
-    ): Flow<PagingData<CharacterForListDto>> {
+    fun getCharactersFromMediator(queryData: MutableList<String>): Flow<PagingData<CharacterForListDto>> {
         return Pager(PagingConfig(pageSize = 20, maxSize = 60),
             remoteMediator = CharacterRemoteMediator(
                 mService,
                 database,
-                mutableListOf(name, status, species, type, gender)
+                queryData
             ),
             pagingSourceFactory = {
-                database.getCharacterDao().getSeveralForFilter(name, status, species, type, gender)
+                database.getCharacterDao().getSeveralForFilter(queryData[0], queryData[1], queryData[2], queryData[3], queryData[4])
             }).flow
     }
 }

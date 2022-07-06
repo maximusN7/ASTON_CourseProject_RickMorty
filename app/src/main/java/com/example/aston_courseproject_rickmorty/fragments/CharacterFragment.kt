@@ -17,18 +17,24 @@ import androidx.lifecycle.lifecycleScope
 import androidx.paging.CombinedLoadStates
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadState
-import androidx.recyclerview.widget.*
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.example.aston_courseproject_rickmorty.App
+import com.example.aston_courseproject_rickmorty.MainViewModel
+import com.example.aston_courseproject_rickmorty.MainViewModelFactory
 import com.example.aston_courseproject_rickmorty.R
 import com.example.aston_courseproject_rickmorty.fragments.dialogs.CharacterFilterDialog
 import com.example.aston_courseproject_rickmorty.fragments.dialogs.Filter
 import com.example.aston_courseproject_rickmorty.model.dto.CharacterForListDto
-import com.example.aston_courseproject_rickmorty.recycler_view.MyLoaderStateAdapter
 import com.example.aston_courseproject_rickmorty.recycler_view.CharacterPaginationRecyclerAdapter
+import com.example.aston_courseproject_rickmorty.recycler_view.MyLoaderStateAdapter
+import com.example.aston_courseproject_rickmorty.repository.CharacterRepository
 import com.example.aston_courseproject_rickmorty.utils.RecyclerDecorator
 import com.example.aston_courseproject_rickmorty.viewmodel.CharacterViewModel
 import com.example.aston_courseproject_rickmorty.viewmodel.factory.CharacterViewModelFactory
 import kotlinx.coroutines.flow.collectLatest
+import javax.inject.Inject
 
 
 /**
@@ -41,14 +47,27 @@ class CharacterFragment : Fragment(),
     CharacterPaginationRecyclerAdapter.CharacterViewHolder.ItemClickListener,
     CharacterFilterDialog.ApplyClickListener {
 
+    @Inject
+    lateinit var vmMainFactory: MainViewModelFactory
+    @Inject
+    lateinit var repository: CharacterRepository
+    @Inject
+    lateinit var mAdapter: CharacterPaginationRecyclerAdapter
+    @Inject
+    lateinit var dialogProcessor: CharacterFilterDialog
     private lateinit var viewModel: CharacterViewModel
     private lateinit var recyclerCharacterList: RecyclerView
-    private lateinit var mAdapter: CharacterPaginationRecyclerAdapter
     private var filterList = mutableListOf(Filter(), Filter(), Filter(), Filter(), Filter())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let { }
+        val characterComponent = (requireActivity().applicationContext as App).appComponent.getCharacterComponentBuilder()
+            .fragmentContext(requireContext())
+            .characterItemClickListener(this)
+            .applyItemClickListener(this)
+            .build()
+        characterComponent.inject(this)
     }
 
     override fun onCreateView(
@@ -63,10 +82,8 @@ class CharacterFragment : Fragment(),
         super.onViewCreated(view, savedInstanceState)
 
         recyclerCharacterList = view.findViewById(R.id.recyclerView_characters)
-        mAdapter = CharacterPaginationRecyclerAdapter(this)
 
         createViewModelUpdateAdapter()
-        filterList = mutableListOf(Filter(), Filter(), Filter(), Filter(), Filter())
 
         initRecyclerView()
 
@@ -75,6 +92,7 @@ class CharacterFragment : Fragment(),
         swipeRefreshLayout.setOnRefreshListener {
             this.viewModelStore.clear()
 
+            filterList = mutableListOf(Filter(), Filter(), Filter(), Filter(), Filter())
             createViewModelUpdateAdapter()
 
             if (editTextName.text.toString() != "") editTextName.setText("")
@@ -84,7 +102,6 @@ class CharacterFragment : Fragment(),
 
         val filterButton = view.findViewById<Button>(R.id.button_filter)
         filterButton.setOnClickListener {
-            val dialogProcessor = CharacterFilterDialog(requireContext(), this)
             dialogProcessor.showDialog(filterList[1], filterList[2], filterList[3], filterList[4])
         }
 
@@ -108,7 +125,6 @@ class CharacterFragment : Fragment(),
                     filterList[0].stringToFilter = ""
                     filterList[0].isApplied = false
                 }
-
                 clearView()
                 createViewModelUpdateAdapter()
             }
@@ -129,16 +145,17 @@ class CharacterFragment : Fragment(),
     }
 
     private fun createViewModelUpdateAdapter() {
-        val appContext = activity?.applicationContext
-        viewModel = ViewModelProvider(
-            this,
-            CharacterViewModelFactory(
-                requireContext(),
-                appContext!!,
-                requireActivity(),
-                filterList
+
+        val dataSource = repository.getCharactersFromMediator(
+            mutableListOf(
+            filterList[0].stringToFilter,
+            filterList[1].stringToFilter,
+            filterList[2].stringToFilter,
+            filterList[3].stringToFilter,
+            filterList[4].stringToFilter
             )
-        )[CharacterViewModel::class.java]
+        )
+        viewModel = ViewModelProvider(this, CharacterViewModelFactory(dataSource))[CharacterViewModel::class.java]
         lifecycleScope.launchWhenCreated {
             viewModel.characters.collectLatest {
                 mAdapter.submitData(it)
@@ -232,7 +249,9 @@ class CharacterFragment : Fragment(),
     }
 
     override fun onItemClick(character: CharacterForListDto?) {
-        viewModel.openFragment(character)
+        val fragment: Fragment = CharacterDetailsFragment.newInstance(character?.id!!)
+        val mainViewModel = ViewModelProvider(requireActivity(), vmMainFactory)[MainViewModel::class.java]
+        mainViewModel.changeCurrentDetailsFragment(fragment)
     }
 
     override fun onApplyClick(dialog: Dialog) {

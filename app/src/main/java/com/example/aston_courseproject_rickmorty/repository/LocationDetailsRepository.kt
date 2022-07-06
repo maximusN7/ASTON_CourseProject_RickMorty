@@ -6,6 +6,8 @@ import com.example.aston_courseproject_rickmorty.model.database.ItemsDatabase
 import com.example.aston_courseproject_rickmorty.model.dto.LocationDto
 import com.example.aston_courseproject_rickmorty.retrofit.ApiState
 import com.example.aston_courseproject_rickmorty.retrofit.RetrofitServices
+import com.example.aston_courseproject_rickmorty.utils.mapper.CharacterEpisodeJoinMapper
+import com.example.aston_courseproject_rickmorty.utils.mapper.CharacterToDbMapper
 import com.example.aston_courseproject_rickmorty.utils.mapper.LocationDbMapper
 import com.example.aston_courseproject_rickmorty.utils.mapper.LocationMapper
 import kotlinx.coroutines.Dispatchers
@@ -49,5 +51,11 @@ class LocationDetailsRepository(
             }
             emit(ApiState.success(characters))
         }.flowOn(Dispatchers.IO)
+    }
+
+    suspend fun saveInDb(characterList: MutableList<Character>) {
+        database.getCharacterDao().insertAll(CharacterToDbMapper().transform(characterList))
+        val listOfCharacterToEpisodes = CharacterEpisodeJoinMapper().transform(characterList)
+        database.getCharacterEpisodeJoinDao().insertAll(listOfCharacterToEpisodes)
     }
 }

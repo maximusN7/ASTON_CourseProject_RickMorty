@@ -1,23 +1,18 @@
 package com.example.aston_courseproject_rickmorty.viewmodel.factory
 
-import android.content.Context
-import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.paging.ExperimentalPagingApi
-import com.example.aston_courseproject_rickmorty.MainViewModel
-import com.example.aston_courseproject_rickmorty.MainViewModelFactory
-import com.example.aston_courseproject_rickmorty.fragments.dialogs.Filter
-import com.example.aston_courseproject_rickmorty.model.database.ItemsDatabase
+import androidx.paging.PagingData
+import com.example.aston_courseproject_rickmorty.model.dto.EpisodeForListDto
 import com.example.aston_courseproject_rickmorty.viewmodel.EpisodeViewModel
+import kotlinx.coroutines.flow.Flow
 
 
 @ExperimentalPagingApi
-class EpisodeViewModelFactory(context: Context, appContext: Context, owner: FragmentActivity, private val filterList: MutableList<Filter>) : ViewModelProvider.Factory {
-    private var mainViewModel: MainViewModel = ViewModelProvider(owner, MainViewModelFactory(context))[MainViewModel::class.java]
-    private var database = ItemsDatabase.getDatabase(appContext)
+class EpisodeViewModelFactory(private val dataSource: Flow<PagingData<EpisodeForListDto>>) : ViewModelProvider.Factory {
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return EpisodeViewModel(mainViewModel, database, filterList) as T
+        return EpisodeViewModel(dataSource) as T
     }
 }

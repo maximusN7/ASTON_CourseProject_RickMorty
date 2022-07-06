@@ -4,13 +4,12 @@ import com.example.aston_courseproject_rickmorty.model.Episode
 import com.example.aston_courseproject_rickmorty.model.Location
 import com.example.aston_courseproject_rickmorty.model.database.EpisodeForListDb
 import com.example.aston_courseproject_rickmorty.model.database.ItemsDatabase
+import com.example.aston_courseproject_rickmorty.model.database.LocationDb
 import com.example.aston_courseproject_rickmorty.model.database.LocationForListDb
 import com.example.aston_courseproject_rickmorty.model.dto.CharacterDto
 import com.example.aston_courseproject_rickmorty.retrofit.ApiState
 import com.example.aston_courseproject_rickmorty.retrofit.RetrofitServices
-import com.example.aston_courseproject_rickmorty.utils.mapper.CharacterDbMapper
-import com.example.aston_courseproject_rickmorty.utils.mapper.CharacterMapper
-import com.example.aston_courseproject_rickmorty.utils.mapper.LocationForCharacterMapper
+import com.example.aston_courseproject_rickmorty.utils.mapper.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -66,5 +65,17 @@ class CharacterDetailsRepository(
             val location = database.getLocationDao().getOneForListById(locationId)
             emit(ApiState.success(location))
         }.flowOn(Dispatchers.IO)
+    }
+
+    suspend fun saveEpisodesInDb(episodesList: MutableList<Episode>) {
+        database.getEpisodeDao().insertAll(EpisodeToDMapper().transform(episodesList))
+        val listOfCharacterToEpisodes = EpisodeCharacterJoinMapper().transform(episodesList)
+        database.getEpisodeCharacterJoinDao().insertAll(listOfCharacterToEpisodes)
+    }
+
+    suspend fun saveLocationInDb(location: Location) {
+        database.getLocationDao().insertAll(LocationDb.locationToDb(mutableListOf(location)))
+        val listOfCharacterToEpisodes = LocationCharacterJoinMapper().transform(mutableListOf(location))
+        database.getLocationCharacterJoinDao().insertAll(listOfCharacterToEpisodes)
     }
 }

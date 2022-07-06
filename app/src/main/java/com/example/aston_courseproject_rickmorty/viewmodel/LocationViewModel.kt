@@ -15,6 +15,7 @@ import com.example.aston_courseproject_rickmorty.fragments.dialogs.Filter
 import com.example.aston_courseproject_rickmorty.fragments.dialogs.LocationFilterDialog
 import com.example.aston_courseproject_rickmorty.model.*
 import com.example.aston_courseproject_rickmorty.model.database.ItemsDatabase
+import com.example.aston_courseproject_rickmorty.model.dto.EpisodeForListDto
 import com.example.aston_courseproject_rickmorty.model.dto.LocationForListDto
 import com.example.aston_courseproject_rickmorty.repository.LocationRepository
 import com.example.aston_courseproject_rickmorty.retrofit.Common
@@ -23,28 +24,14 @@ import kotlinx.coroutines.flow.Flow
 
 @ExperimentalPagingApi
 class LocationViewModel(
-    val mainViewModel: MainViewModel,
-    val database: ItemsDatabase,
-    filterList: MutableList<Filter>
+    private val dataSource: Flow<PagingData<LocationForListDto>>
 ) : ViewModel() {
 
-    var retrofitServices: RetrofitServices = Common.retrofitService
-    private val repository = LocationRepository(retrofitServices, database)
-    private val dataSource = repository.getLocationsFromMediator(
-        filterList[0].stringToFilter,
-        filterList[1].stringToFilter,
-        filterList[2].stringToFilter
-    )
     val typeFilter = MutableLiveData<Filter>()
     val dimensionFilter = MutableLiveData<Filter>()
 
     val locations: Flow<PagingData<LocationForListDto>> by lazy {
         dataSource.cachedIn(viewModelScope)
-    }
-
-    fun openFragment(location: LocationForListDto?) {
-        val fragment: Fragment = LocationDetailsFragment.newInstance(location?.id!!)
-        mainViewModel.changeCurrentDetailsFragment(fragment)
     }
 
     fun onApplyClick(dialog: Dialog) {

@@ -2,7 +2,6 @@ package com.example.aston_courseproject_rickmorty
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.MenuItem
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
@@ -11,10 +10,13 @@ import com.example.aston_courseproject_rickmorty.fragments.CharacterFragment
 import com.example.aston_courseproject_rickmorty.fragments.EpisodeFragment
 import com.example.aston_courseproject_rickmorty.fragments.LocationFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import javax.inject.Inject
 
 @ExperimentalPagingApi
 class MainActivity : AppCompatActivity() {
 
+    @Inject
+    lateinit var vmFactory: MainViewModelFactory
     lateinit var viewModel: MainViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,7 +24,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        viewModel = ViewModelProvider(this, MainViewModelFactory(this))[MainViewModel::class.java]
+        (applicationContext as App).appComponent.inject(this)
+
+        viewModel = ViewModelProvider(this, vmFactory)[MainViewModel::class.java]
 
         viewModel.titleString.observe(this) {
             title = it

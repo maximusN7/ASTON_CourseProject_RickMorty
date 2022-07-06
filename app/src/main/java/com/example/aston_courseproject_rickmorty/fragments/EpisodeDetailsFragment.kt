@@ -1,5 +1,6 @@
 package com.example.aston_courseproject_rickmorty.fragments
 
+
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -16,6 +17,9 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.example.aston_courseproject_rickmorty.App
+import com.example.aston_courseproject_rickmorty.MainViewModel
+import com.example.aston_courseproject_rickmorty.MainViewModelFactory
 import com.example.aston_courseproject_rickmorty.R
 import com.example.aston_courseproject_rickmorty.model.dto.CharacterForListDto
 import com.example.aston_courseproject_rickmorty.model.dto.EpisodeDto
@@ -26,7 +30,7 @@ import com.example.aston_courseproject_rickmorty.utils.RecyclerDecorator
 import com.example.aston_courseproject_rickmorty.viewmodel.EpisodeDetailsViewModel
 import com.example.aston_courseproject_rickmorty.viewmodel.factory.EpisodeDetailsViewModelFactory
 import kotlinx.coroutines.launch
-
+import javax.inject.Inject
 
 private const val ARG_EPISODE_ID = "episodeId"
 
@@ -37,9 +41,15 @@ private const val ARG_EPISODE_ID = "episodeId"
  */
 
 @ExperimentalPagingApi
-class EpisodeDetailsFragment : Fragment(), CharacterRecyclerAdapter.CharacterViewHolder.ItemClickListener {
+class EpisodeDetailsFragment : Fragment(),
+    CharacterRecyclerAdapter.CharacterViewHolder.ItemClickListener {
     private var episodeId: Int? = null
 
+    @Inject
+    lateinit var vmMainFactory: MainViewModelFactory
+    @Inject
+    lateinit var vmFactory: EpisodeDetailsViewModelFactory
+    private lateinit var mainViewModel: MainViewModel
     private lateinit var viewModel: EpisodeDetailsViewModel
     private var listForRecycler: MutableList<CharacterForListDto> = mutableListOf()
     private lateinit var recyclerCharacterList: RecyclerView
@@ -49,6 +59,13 @@ class EpisodeDetailsFragment : Fragment(), CharacterRecyclerAdapter.CharacterVie
         arguments?.let {
             episodeId = it.getInt(ARG_EPISODE_ID)
         }
+        val episodeDetailsComponent = (requireActivity().applicationContext as App).appComponent.getEpisodeDetailsComponentBuilder()
+            .episodeId(episodeId!!)
+            .characterItemClickListener(this)
+            .build()
+        episodeDetailsComponent.inject(this)
+
+        mainViewModel = ViewModelProvider(requireActivity(), vmMainFactory)[MainViewModel::class.java]
     }
 
     override fun onCreateView(
@@ -78,8 +95,7 @@ class EpisodeDetailsFragment : Fragment(), CharacterRecyclerAdapter.CharacterVie
     }
 
     private fun initView() {
-        val appContext = activity?.applicationContext
-        viewModel = ViewModelProvider(this, EpisodeDetailsViewModelFactory(episodeId!!, appContext!!, requireContext(), requireActivity()))[EpisodeDetailsViewModel::class.java]
+        viewModel = ViewModelProvider(this, vmFactory)[EpisodeDetailsViewModel::class.java]
 
         val detailsLayout = view?.findViewById<ConstraintLayout>(R.id.episode_detailsLayout)
         detailsLayout?.visibility = View.INVISIBLE
@@ -192,6 +208,9 @@ class EpisodeDetailsFragment : Fragment(), CharacterRecyclerAdapter.CharacterVie
     }
 
     override fun onItemClick(character: CharacterForListDto?) {
-        viewModel.openFragment(character)
+        if (character?.name != "") {
+            val fragment: Fragment = CharacterDetailsFragment.newInstance(character?.id!!)
+            mainViewModel.changeCurrentDetailsFragment(fragment)
+        }
     }
 }

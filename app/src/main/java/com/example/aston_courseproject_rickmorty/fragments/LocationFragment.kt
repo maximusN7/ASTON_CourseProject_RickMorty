@@ -1,6 +1,7 @@
 package com.example.aston_courseproject_rickmorty.fragments
 
 import android.app.Dialog
+import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -20,16 +21,21 @@ import androidx.paging.LoadState
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.example.aston_courseproject_rickmorty.App
+import com.example.aston_courseproject_rickmorty.MainViewModel
+import com.example.aston_courseproject_rickmorty.MainViewModelFactory
 import com.example.aston_courseproject_rickmorty.R
 import com.example.aston_courseproject_rickmorty.fragments.dialogs.Filter
 import com.example.aston_courseproject_rickmorty.fragments.dialogs.LocationFilterDialog
 import com.example.aston_courseproject_rickmorty.model.dto.LocationForListDto
 import com.example.aston_courseproject_rickmorty.recycler_view.MyLoaderStateAdapter
 import com.example.aston_courseproject_rickmorty.recycler_view.LocationPaginationRecyclerAdapter
+import com.example.aston_courseproject_rickmorty.repository.LocationRepository
 import com.example.aston_courseproject_rickmorty.utils.RecyclerDecorator
 import com.example.aston_courseproject_rickmorty.viewmodel.LocationViewModel
 import com.example.aston_courseproject_rickmorty.viewmodel.factory.LocationViewModelFactory
 import kotlinx.coroutines.flow.collectLatest
+import javax.inject.Inject
 
 
 /**
@@ -42,10 +48,31 @@ class LocationFragment : Fragment(),
     LocationPaginationRecyclerAdapter.LocationViewHolder.ItemClickListener,
     LocationFilterDialog.ApplyClickListener {
 
+    @Inject
+    lateinit var vmMainFactory: MainViewModelFactory
+
+    @Inject
+    lateinit var repository: LocationRepository
+
+    @Inject
+    lateinit var mAdapter: LocationPaginationRecyclerAdapter
+
+    @Inject
+    lateinit var dialogProcessor: LocationFilterDialog
     private lateinit var viewModel: LocationViewModel
     private lateinit var recyclerLocationList: RecyclerView
-    private lateinit var mAdapter: LocationPaginationRecyclerAdapter
     private var filterList = mutableListOf(Filter(), Filter(), Filter())
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        val locationComponent =
+            (requireActivity().applicationContext as App).appComponent.getLocationComponentBuilder()
+                .fragmentContext(requireContext())
+                .locationItemClickListener(this)
+                .applyItemClickListener(this)
+                .build()
+        locationComponent.inject(this)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,6 +102,7 @@ class LocationFragment : Fragment(),
         swipeRefreshLayout.setOnRefreshListener {
             this.viewModelStore.clear()
 
+            filterList = mutableListOf(Filter(), Filter(), Filter())
             createViewModelUpdateAdapter()
 
             if (editTextName.text.toString() != "") editTextName.setText("")
@@ -84,7 +112,6 @@ class LocationFragment : Fragment(),
 
         val filterButton = view.findViewById<Button>(R.id.button_filter)
         filterButton.setOnClickListener {
-            val dialogProcessor = LocationFilterDialog(requireContext(), this)
             dialogProcessor.showDialog(filterList[1], filterList[2])
         }
 
@@ -128,10 +155,16 @@ class LocationFragment : Fragment(),
     }
 
     private fun createViewModelUpdateAdapter() {
-        val appContext = activity?.applicationContext
+        val dataSource = repository.getLocationsFromMediator(
+            mutableListOf(
+                filterList[0].stringToFilter,
+                filterList[1].stringToFilter,
+                filterList[2].stringToFilter
+            )
+        )
         viewModel = ViewModelProvider(
             this,
-            LocationViewModelFactory(requireContext(), appContext!!, requireActivity(), filterList)
+            LocationViewModelFactory(dataSource)
         )[LocationViewModel::class.java]
         lifecycleScope.launchWhenCreated {
             viewModel.locations.collectLatest {
@@ -204,7 +237,10 @@ class LocationFragment : Fragment(),
     }
 
     override fun onItemClick(location: LocationForListDto?) {
-        viewModel.openFragment(location)
+        val fragment: Fragment = LocationDetailsFragment.newInstance(location?.id!!)
+        val mainViewModel =
+            ViewModelProvider(requireActivity(), vmMainFactory)[MainViewModel::class.java]
+        mainViewModel.changeCurrentDetailsFragment(fragment)
     }
 
     override fun onApplyClick(dialog: Dialog) {

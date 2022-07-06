@@ -17,16 +17,21 @@ import androidx.paging.LoadState
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.example.aston_courseproject_rickmorty.App
+import com.example.aston_courseproject_rickmorty.MainViewModel
+import com.example.aston_courseproject_rickmorty.MainViewModelFactory
 import com.example.aston_courseproject_rickmorty.R
 import com.example.aston_courseproject_rickmorty.fragments.dialogs.EpisodeFilterDialog
 import com.example.aston_courseproject_rickmorty.fragments.dialogs.Filter
 import com.example.aston_courseproject_rickmorty.model.dto.EpisodeForListDto
 import com.example.aston_courseproject_rickmorty.recycler_view.EpisodePaginationRecyclerAdapter
 import com.example.aston_courseproject_rickmorty.recycler_view.MyLoaderStateAdapter
+import com.example.aston_courseproject_rickmorty.repository.EpisodeRepository
 import com.example.aston_courseproject_rickmorty.utils.RecyclerDecorator
 import com.example.aston_courseproject_rickmorty.viewmodel.EpisodeViewModel
 import com.example.aston_courseproject_rickmorty.viewmodel.factory.EpisodeViewModelFactory
 import kotlinx.coroutines.flow.collectLatest
+import javax.inject.Inject
 
 
 /**
@@ -39,14 +44,28 @@ class EpisodeFragment : Fragment(),
     EpisodePaginationRecyclerAdapter.EpisodeViewHolder.ItemClickListener,
     EpisodeFilterDialog.ApplyClickListener {
 
+    @Inject
+    lateinit var vmMainFactory: MainViewModelFactory
+    @Inject
+    lateinit var repository: EpisodeRepository
+    @Inject
+    lateinit var mAdapter: EpisodePaginationRecyclerAdapter
+    @Inject
+    lateinit var dialogProcessor: EpisodeFilterDialog
     private lateinit var viewModel: EpisodeViewModel
     private lateinit var recyclerEpisodeList: RecyclerView
-    private lateinit var mAdapter: EpisodePaginationRecyclerAdapter
     private var filterList = mutableListOf(Filter(), Filter())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let { }
+        val episodeComponent =
+            (requireActivity().applicationContext as App).appComponent.getEpisodeComponentBuilder()
+                .fragmentContext(requireContext())
+                .episodeItemClickListener(this)
+                .applyItemClickListener(this)
+                .build()
+        episodeComponent.inject(this)
     }
 
     override fun onCreateView(
@@ -61,7 +80,6 @@ class EpisodeFragment : Fragment(),
         super.onViewCreated(view, savedInstanceState)
 
         recyclerEpisodeList = view.findViewById(R.id.recyclerView_episodes)
-        mAdapter = EpisodePaginationRecyclerAdapter(this)
 
         createViewModelUpdateAdapter()
 
@@ -72,6 +90,7 @@ class EpisodeFragment : Fragment(),
         swipeRefreshLayout.setOnRefreshListener {
             this.viewModelStore.clear()
 
+            filterList = mutableListOf(Filter(), Filter())
             createViewModelUpdateAdapter()
 
             if (editTextName.text.toString() != "") editTextName.setText("")
@@ -81,7 +100,6 @@ class EpisodeFragment : Fragment(),
 
         val filterButton = view.findViewById<Button>(R.id.button_filter)
         filterButton.setOnClickListener {
-            val dialogProcessor = EpisodeFilterDialog(requireContext(), this)
             dialogProcessor.showDialog(filterList[1])
         }
 
@@ -91,6 +109,7 @@ class EpisodeFragment : Fragment(),
                 s: CharSequence, start: Int,
                 count: Int, after: Int
             ) {
+                editTextName.isCursorVisible = true
             }
 
             override fun onTextChanged(
@@ -124,15 +143,15 @@ class EpisodeFragment : Fragment(),
     }
 
     private fun createViewModelUpdateAdapter() {
-        val appContext = activity?.applicationContext
+        val dataSource = repository.getEpisodesFromMediator(
+            mutableListOf(
+                filterList[0].stringToFilter,
+                filterList[1].stringToFilter
+            )
+        )
         viewModel = ViewModelProvider(
             this,
-            EpisodeViewModelFactory(
-                requireContext(),
-                appContext!!,
-                requireActivity(),
-                filterList
-            )
+            EpisodeViewModelFactory(dataSource)
         )[EpisodeViewModel::class.java]
         lifecycleScope.launchWhenCreated {
             viewModel.episodes.collectLatest {
@@ -194,7 +213,10 @@ class EpisodeFragment : Fragment(),
     }
 
     override fun onItemClick(episode: EpisodeForListDto?) {
-        viewModel.openFragment(episode)
+        val fragment: Fragment = EpisodeDetailsFragment.newInstance(episode?.id!!)
+        val mainViewModel =
+            ViewModelProvider(requireActivity(), vmMainFactory)[MainViewModel::class.java]
+        mainViewModel.changeCurrentDetailsFragment(fragment)
     }
 
     override fun onApplyClick(dialog: Dialog) {
