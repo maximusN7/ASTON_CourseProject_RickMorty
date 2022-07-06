@@ -3,8 +3,8 @@ package com.example.aston_courseproject_rickmorty.dagger.modules
 
 import android.content.Context
 import androidx.paging.ExperimentalPagingApi
-import com.example.aston_courseproject_rickmorty.fragments.dialogs.LocationFilterDialog
-import com.example.aston_courseproject_rickmorty.recycler_view.LocationPaginationRecyclerAdapter
+import com.example.aston_courseproject_rickmorty.view.dialogs.LocationFilterDialog
+import com.example.aston_courseproject_rickmorty.view.recycler_view.LocationPaginationRecyclerAdapter
 import dagger.Module
 import dagger.Provides
 import javax.inject.Named

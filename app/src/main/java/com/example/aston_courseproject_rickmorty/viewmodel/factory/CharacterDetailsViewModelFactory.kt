@@ -4,7 +4,7 @@ package com.example.aston_courseproject_rickmorty.viewmodel.factory
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.paging.ExperimentalPagingApi
-import com.example.aston_courseproject_rickmorty.repository.CharacterDetailsRepository
+import com.example.aston_courseproject_rickmorty.model.repository.CharacterDetailsRepository
 import com.example.aston_courseproject_rickmorty.utils.InternetConnectionChecker
 import com.example.aston_courseproject_rickmorty.viewmodel.CharacterDetailsViewModel
 

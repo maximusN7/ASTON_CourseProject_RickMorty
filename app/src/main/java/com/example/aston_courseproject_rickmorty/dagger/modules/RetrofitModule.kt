@@ -1,7 +1,6 @@
 package com.example.aston_courseproject_rickmorty.dagger.modules
 
-import com.example.aston_courseproject_rickmorty.retrofit.RetrofitClient
-import com.example.aston_courseproject_rickmorty.retrofit.RetrofitServices
+import com.example.aston_courseproject_rickmorty.model.retrofit.RetrofitServices
 import dagger.Module
 import dagger.Provides
 import retrofit2.Retrofit

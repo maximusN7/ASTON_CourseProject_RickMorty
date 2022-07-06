@@ -6,9 +6,9 @@ import android.view.MenuItem
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
 import androidx.paging.ExperimentalPagingApi
-import com.example.aston_courseproject_rickmorty.fragments.CharacterFragment
-import com.example.aston_courseproject_rickmorty.fragments.EpisodeFragment
-import com.example.aston_courseproject_rickmorty.fragments.LocationFragment
+import com.example.aston_courseproject_rickmorty.view.fragments.CharacterFragment
+import com.example.aston_courseproject_rickmorty.view.fragments.EpisodeFragment
+import com.example.aston_courseproject_rickmorty.view.fragments.LocationFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import javax.inject.Inject
 

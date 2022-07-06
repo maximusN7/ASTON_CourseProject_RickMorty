@@ -2,8 +2,8 @@ package com.example.aston_courseproject_rickmorty.dagger.subcomponents
 
 import androidx.paging.ExperimentalPagingApi
 import com.example.aston_courseproject_rickmorty.dagger.modules.LocationDetailsModule
-import com.example.aston_courseproject_rickmorty.fragments.LocationDetailsFragment
-import com.example.aston_courseproject_rickmorty.recycler_view.CharacterRecyclerAdapter
+import com.example.aston_courseproject_rickmorty.view.fragments.LocationDetailsFragment
+import com.example.aston_courseproject_rickmorty.view.recycler_view.CharacterRecyclerAdapter
 import dagger.BindsInstance
 import dagger.Subcomponent
 

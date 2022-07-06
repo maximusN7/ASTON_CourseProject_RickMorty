@@ -8,7 +8,7 @@ import androidx.room.withTransaction
 import com.example.aston_courseproject_rickmorty.model.database.EpisodeRemoteKey
 import com.example.aston_courseproject_rickmorty.model.database.ItemsDatabase
 import com.example.aston_courseproject_rickmorty.model.dto.EpisodeForListDto
-import com.example.aston_courseproject_rickmorty.retrofit.RetrofitServices
+import com.example.aston_courseproject_rickmorty.model.retrofit.RetrofitServices
 import com.example.aston_courseproject_rickmorty.utils.mapper.EpisodeCharacterJoinMapper
 import com.example.aston_courseproject_rickmorty.utils.mapper.EpisodeToDMapper
 import kotlinx.coroutines.delay

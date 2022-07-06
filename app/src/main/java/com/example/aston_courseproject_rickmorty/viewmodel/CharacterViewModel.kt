@@ -10,7 +10,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.*
 import com.example.aston_courseproject_rickmorty.R
-import com.example.aston_courseproject_rickmorty.fragments.dialogs.Filter
+import com.example.aston_courseproject_rickmorty.view.dialogs.Filter
 import com.example.aston_courseproject_rickmorty.model.dto.CharacterForListDto
 import kotlinx.coroutines.flow.Flow
 

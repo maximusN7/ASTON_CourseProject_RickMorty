@@ -6,9 +6,9 @@ import androidx.paging.ExperimentalPagingApi
 import com.example.aston_courseproject_rickmorty.model.dto.CharacterDto
 import com.example.aston_courseproject_rickmorty.model.dto.EpisodeForListDto
 import com.example.aston_courseproject_rickmorty.model.dto.LocationForListDto
-import com.example.aston_courseproject_rickmorty.repository.CharacterDetailsRepository
-import com.example.aston_courseproject_rickmorty.retrofit.ApiState
-import com.example.aston_courseproject_rickmorty.retrofit.Status
+import com.example.aston_courseproject_rickmorty.model.repository.CharacterDetailsRepository
+import com.example.aston_courseproject_rickmorty.model.retrofit.ApiState
+import com.example.aston_courseproject_rickmorty.model.retrofit.Status
 import com.example.aston_courseproject_rickmorty.utils.InternetConnectionChecker
 import com.example.aston_courseproject_rickmorty.utils.mapper.*
 import kotlinx.coroutines.flow.Flow

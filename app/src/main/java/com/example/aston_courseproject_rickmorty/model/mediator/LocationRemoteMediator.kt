@@ -9,7 +9,7 @@ import com.example.aston_courseproject_rickmorty.model.database.ItemsDatabase
 import com.example.aston_courseproject_rickmorty.model.database.LocationDb
 import com.example.aston_courseproject_rickmorty.model.database.LocationRemoteKey
 import com.example.aston_courseproject_rickmorty.model.dto.LocationForListDto
-import com.example.aston_courseproject_rickmorty.retrofit.RetrofitServices
+import com.example.aston_courseproject_rickmorty.model.retrofit.RetrofitServices
 import com.example.aston_courseproject_rickmorty.utils.mapper.LocationCharacterJoinMapper
 import kotlinx.coroutines.delay
 import retrofit2.HttpException

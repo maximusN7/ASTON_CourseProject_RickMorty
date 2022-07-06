@@ -3,9 +3,9 @@ package com.example.aston_courseproject_rickmorty.dagger.subcomponents
 import android.content.Context
 import androidx.paging.ExperimentalPagingApi
 import com.example.aston_courseproject_rickmorty.dagger.modules.EpisodeModule
-import com.example.aston_courseproject_rickmorty.fragments.EpisodeFragment
-import com.example.aston_courseproject_rickmorty.fragments.dialogs.EpisodeFilterDialog
-import com.example.aston_courseproject_rickmorty.recycler_view.EpisodePaginationRecyclerAdapter
+import com.example.aston_courseproject_rickmorty.view.fragments.EpisodeFragment
+import com.example.aston_courseproject_rickmorty.view.dialogs.EpisodeFilterDialog
+import com.example.aston_courseproject_rickmorty.view.recycler_view.EpisodePaginationRecyclerAdapter
 import dagger.BindsInstance
 import dagger.Subcomponent
 import javax.inject.Named

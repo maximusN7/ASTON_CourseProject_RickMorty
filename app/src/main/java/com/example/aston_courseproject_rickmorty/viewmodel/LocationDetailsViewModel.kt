@@ -6,9 +6,9 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.ExperimentalPagingApi
 import com.example.aston_courseproject_rickmorty.model.dto.CharacterForListDto
 import com.example.aston_courseproject_rickmorty.model.dto.LocationDto
-import com.example.aston_courseproject_rickmorty.repository.LocationDetailsRepository
-import com.example.aston_courseproject_rickmorty.retrofit.ApiState
-import com.example.aston_courseproject_rickmorty.retrofit.Status
+import com.example.aston_courseproject_rickmorty.model.repository.LocationDetailsRepository
+import com.example.aston_courseproject_rickmorty.model.retrofit.ApiState
+import com.example.aston_courseproject_rickmorty.model.retrofit.Status
 import com.example.aston_courseproject_rickmorty.utils.InternetConnectionChecker
 import com.example.aston_courseproject_rickmorty.utils.mapper.CharacterForListDbMapper
 import com.example.aston_courseproject_rickmorty.utils.mapper.CharacterForListMapper

@@ -2,9 +2,8 @@ package com.example.aston_courseproject_rickmorty.dagger.modules
 
 import android.content.Context
 import androidx.paging.ExperimentalPagingApi
-import com.example.aston_courseproject_rickmorty.fragments.dialogs.CharacterFilterDialog
-import com.example.aston_courseproject_rickmorty.fragments.dialogs.EpisodeFilterDialog
-import com.example.aston_courseproject_rickmorty.recycler_view.EpisodePaginationRecyclerAdapter
+import com.example.aston_courseproject_rickmorty.view.dialogs.EpisodeFilterDialog
+import com.example.aston_courseproject_rickmorty.view.recycler_view.EpisodePaginationRecyclerAdapter
 import dagger.Module
 import dagger.Provides
 import javax.inject.Named

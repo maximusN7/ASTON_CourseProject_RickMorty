@@ -3,9 +3,9 @@ package com.example.aston_courseproject_rickmorty.dagger.subcomponents
 import android.content.Context
 import androidx.paging.ExperimentalPagingApi
 import com.example.aston_courseproject_rickmorty.dagger.modules.LocationModule
-import com.example.aston_courseproject_rickmorty.fragments.LocationFragment
-import com.example.aston_courseproject_rickmorty.fragments.dialogs.LocationFilterDialog
-import com.example.aston_courseproject_rickmorty.recycler_view.LocationPaginationRecyclerAdapter
+import com.example.aston_courseproject_rickmorty.view.fragments.LocationFragment
+import com.example.aston_courseproject_rickmorty.view.dialogs.LocationFilterDialog
+import com.example.aston_courseproject_rickmorty.view.recycler_view.LocationPaginationRecyclerAdapter
 import dagger.BindsInstance
 import dagger.Subcomponent
 import javax.inject.Named
