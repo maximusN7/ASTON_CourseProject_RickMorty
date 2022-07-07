@@ -18,34 +18,37 @@ class EpisodeMapper : Mapper<Episode, EpisodeDto> {
         }
 
         return EpisodeDto(
-            id = data.id,
-            name = data.name,
-            air_date = data.air_date,
-            episode = data.episode,
+            id = data.id ?: 0,
+            name = data.name ?: "",
+            air_date = data.air_date ?: "",
+            episode = data.episode ?: "",
             characters = str
         )
     }
 }
 
-class EpisodeDbMapper(private val array: Array<Int>) : Mapper<EpisodeDb, EpisodeDto> {
+class EpisodeDbMapper(private val array: Array<Int>?) : Mapper<EpisodeDb, EpisodeDto> {
     override fun transform(data: EpisodeDb): EpisodeDto {
         var str = ""
-        for (url in array) {
-            str += "${url},"
+        if (array != null) {
+            for (url in array) {
+                str += "${url},"
+            }
+            str = str.dropLast(1)
         }
-        str = str.dropLast(1)
 
         return EpisodeDto(
-            id = data.id,
-            name = data.name,
-            air_date = data.air_date,
-            episode = data.episode,
+            id = data.id ?: 0,
+            name = data.name ?: "",
+            air_date = data.air_date ?: "",
+            episode = data.episode ?: "",
             characters = str
         )
     }
 }
 
-class EpisodeToDMapper : Mapper<MutableList<Episode>, MutableList<EpisodeDb>> {
+
+class EpisodeToDbMapper : Mapper<MutableList<Episode>, MutableList<EpisodeDb>> {
     override fun transform(data: MutableList<Episode>): MutableList<EpisodeDb> {
         val newMutableList = mutableListOf<EpisodeDb>()
         for (episode in data) {
@@ -60,5 +63,4 @@ class EpisodeToDMapper : Mapper<MutableList<Episode>, MutableList<EpisodeDb>> {
         }
         return newMutableList
     }
-
 }

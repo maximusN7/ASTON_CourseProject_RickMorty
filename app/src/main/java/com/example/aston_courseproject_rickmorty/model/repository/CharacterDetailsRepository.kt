@@ -68,7 +68,7 @@ class CharacterDetailsRepository(
     }
 
     suspend fun saveEpisodesInDb(episodesList: MutableList<Episode>) {
-        database.getEpisodeDao().insertAll(EpisodeToDMapper().transform(episodesList))
+        database.getEpisodeDao().insertAll(EpisodeToDbMapper().transform(episodesList))
         val listOfCharacterToEpisodes = EpisodeCharacterJoinMapper().transform(episodesList)
         database.getEpisodeCharacterJoinDao().insertAll(listOfCharacterToEpisodes)
     }

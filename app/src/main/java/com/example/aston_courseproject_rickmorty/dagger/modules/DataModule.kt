@@ -8,6 +8,8 @@ import com.example.aston_courseproject_rickmorty.utils.InternetConnectionChecker
 import com.example.aston_courseproject_rickmorty.utils.ResourceProvider
 import dagger.Module
 import dagger.Provides
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import javax.inject.Singleton
 
 @Module
@@ -55,7 +57,12 @@ class DataModule {
     }
 
     @Provides
-    fun provideLocationDetailsRepository(mService: RetrofitServices, database: ItemsDatabase): LocationDetailsRepository {
-        return LocationDetailsRepository(mService, database)
+    fun provideLocationDetailsRepository(mService: RetrofitServices, database: ItemsDatabase, dispatcher: CoroutineDispatcher): LocationDetailsRepository {
+        return LocationDetailsRepository(mService, database, dispatcher)
+    }
+
+    @Provides
+    fun provideCoroutineDispatcher(): CoroutineDispatcher {
+        return Dispatchers.IO
     }
 }

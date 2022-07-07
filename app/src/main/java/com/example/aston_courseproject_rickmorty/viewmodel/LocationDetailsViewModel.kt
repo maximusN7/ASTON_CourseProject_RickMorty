@@ -12,6 +12,7 @@ import com.example.aston_courseproject_rickmorty.model.retrofit.Status
 import com.example.aston_courseproject_rickmorty.utils.InternetConnectionChecker
 import com.example.aston_courseproject_rickmorty.utils.mapper.CharacterForListDbMapper
 import com.example.aston_courseproject_rickmorty.utils.mapper.CharacterForListMapper
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
@@ -21,10 +22,12 @@ import kotlinx.coroutines.launch
 class LocationDetailsViewModel(
     locationID: Int,
     val repository: LocationDetailsRepository,
-    internetChecker: InternetConnectionChecker
+    internetChecker: InternetConnectionChecker,
+    private val dispatcher: CoroutineDispatcher
 ) : ViewModel() {
 
     val location = MutableStateFlow(ApiState(Status.LOADING, LocationDto(), ""))
+    fun getLocationValue(): MutableStateFlow<ApiState<LocationDto>> = location
     val characters =
         MutableStateFlow(ApiState(Status.LOADING, mutableListOf<CharacterForListDto>(), ""))
     private val network: Boolean = internetChecker.isOnline()
@@ -35,7 +38,7 @@ class LocationDetailsViewModel(
 
     private fun getLocation(locationID: Int) {
         location.value = ApiState.loading()
-        viewModelScope.launch {
+        viewModelScope.launch(dispatcher) {
             val gottenLocation: Flow<ApiState<LocationDto>> = if (network) {
                 repository.getLocation(locationID)
             } else {
