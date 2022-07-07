@@ -8,7 +8,7 @@ import com.example.aston_courseproject_rickmorty.utils.ResourceProvider
 import com.example.aston_courseproject_rickmorty.view.fragments.*
 
 @ExperimentalPagingApi
-class MainViewModel(val mResourceProvider: ResourceProvider) : ViewModel() {
+class MainViewModel(private val mResourceProvider: ResourceProvider) : ViewModel() {
 
     val titleString = MutableLiveData<String>()
     val showToolbar = MutableLiveData<Boolean>()
