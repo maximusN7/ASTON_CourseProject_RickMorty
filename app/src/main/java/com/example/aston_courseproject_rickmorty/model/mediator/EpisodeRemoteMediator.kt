@@ -10,7 +10,7 @@ import com.example.aston_courseproject_rickmorty.model.database.ItemsDatabase
 import com.example.aston_courseproject_rickmorty.model.dto.EpisodeForListDto
 import com.example.aston_courseproject_rickmorty.model.retrofit.RetrofitServices
 import com.example.aston_courseproject_rickmorty.utils.mapper.EpisodeCharacterJoinMapper
-import com.example.aston_courseproject_rickmorty.utils.mapper.EpisodeToDMapper
+import com.example.aston_courseproject_rickmorty.utils.mapper.EpisodeToDbMapper
 import kotlinx.coroutines.delay
 import retrofit2.HttpException
 import java.io.IOException
@@ -75,7 +75,7 @@ class EpisodeRemoteMediator(
                     )
                 }
                 db.getEpisodeKeysDao().insertAll(keys)
-                db.getEpisodeDao().insertAll(EpisodeToDMapper().transform(response.results))
+                db.getEpisodeDao().insertAll(EpisodeToDbMapper().transform(response.results))
                 val listOfCharacterToEpisodes = EpisodeCharacterJoinMapper().transform(response.results)
                 db.getEpisodeCharacterJoinDao().insertAll(listOfCharacterToEpisodes)
             }

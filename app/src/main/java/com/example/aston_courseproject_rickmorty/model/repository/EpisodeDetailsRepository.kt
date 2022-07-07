@@ -36,7 +36,7 @@ class EpisodeDetailsRepository(
 
     suspend fun getEpisodeDb(episodeId: Int): Flow<ApiState<EpisodeDto>> {
         return flow {
-            val array: Array<Int> = database.getEpisodeCharacterJoinDao().getCharactersIdForEpisode(episodeId)
+            val array: Array<Int>? = database.getEpisodeCharacterJoinDao().getCharactersIdForEpisode(episodeId)
             val episode = EpisodeDbMapper(array).transform(database.getEpisodeDao().getOneById(episodeId))
             emit(ApiState.success(episode))
         }.flowOn(Dispatchers.IO)

@@ -18,10 +18,10 @@ class LocationMapper : Mapper<Location, LocationDto> {
         }
 
         return LocationDto(
-            id = data.id,
-            name = data.name,
-            type = data.type,
-            dimension = data.dimension,
+            id = data.id ?: 0,
+            name = data.name ?: "",
+            type = data.type ?: "",
+            dimension = data.dimension ?: "",
             residents = str
         )
     }
@@ -36,10 +36,10 @@ class LocationDbMapper(private val array: Array<Int>) : Mapper<LocationDb, Locat
         str = str.dropLast(1)
 
         return LocationDto(
-            id = data.id,
-            name = data.name,
-            type = data.type,
-            dimension = data.dimension,
+            id = data.id ?: 0,
+            name = data.name ?: "",
+            type = data.type ?: "",
+            dimension = data.dimension ?: "",
             residents = str
         )
     }
